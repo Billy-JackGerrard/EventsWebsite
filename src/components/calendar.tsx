@@ -23,7 +23,7 @@ export default function Calendar() {
     month: today.getMonth(),
     year: today.getFullYear(),
   });
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<number | null>(null);
 
   const firstDay    = new Date(current.year, current.month, 1).getDay();
   const daysInMonth = new Date(current.year, current.month + 1, 0).getDate();
@@ -39,7 +39,7 @@ export default function Calendar() {
 
   const getKey     = (day: number) => `${current.year}-${current.month + 1}-${day}`;
   const isToday    = (day: number) => day === today.getDate() && current.month === today.getMonth() && current.year === today.getFullYear();
-  const isSelected = (day: number) => selected === getKey(day);
+  const isSelected = (day: number) => selected === day;
   const hasEvents  = (day: number) => !!events[getKey(day)];
 
   const cells = [
@@ -47,8 +47,8 @@ export default function Calendar() {
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
 
-  const selectedEvents = selected ? (events[selected] || []) : [];
-  const selectedDay    = selected ? selected.replace(`${current.year}-${current.month + 1}-`, "") : null;
+  const selectedEvents = selected ? (events[getKey(selected)] || []) : [];
+  const selectedDay    = selected ?? null;
 
   return (
     <div className="calendar-page">
@@ -85,7 +85,7 @@ export default function Calendar() {
               <div
                 key={i}
                 className={cellClass}
-                onClick={() => day && setSelected(getKey(day))}
+                onClick={() => day && setSelected(day)}
               >
                 {day && (
                   <>

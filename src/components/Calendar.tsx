@@ -64,7 +64,14 @@ export default function Calendar() {
       return c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year };
     });
   
-    const toUTCDateString = (iso: string) => iso.slice(0, 10); // "YYYY-MM-DD", no timezone shift
+    const toLocalDateString = (iso: string) => {
+      const d = new Date(iso);
+      return [
+        d.getFullYear(),
+        String(d.getMonth() + 1).padStart(2, "0"),
+        String(d.getDate()).padStart(2, "0"),
+      ].join("-");
+    };
 
     const eventsOnDay = (day: number) => {
       const cell = [
@@ -74,8 +81,8 @@ export default function Calendar() {
       ].join("-"); // e.g. "2026-03-13"
     
       return events.filter(e => {
-        const start  = toUTCDateString(e.starts_at);
-        const finish = toUTCDateString(e.finishes_at ?? e.starts_at);
+        const start  = toLocalDateString(e.starts_at);
+        const finish = toLocalDateString(e.finishes_at ?? e.starts_at);
         return cell >= start && cell <= finish;
       });
     };

@@ -4,13 +4,17 @@ export const MONTHS = [
 ];
   
 export const formatDate = (isoString: string): string => {
-    const [year, month, day] = isoString.slice(0, 10).split("-").map(Number);
-    return `${day} ${MONTHS[month - 1]} ${year}`;
+  return new Date(isoString).toLocaleDateString("en-GB", {
+    day: "numeric", month: "long", year: "numeric"
+  });
+  // → "1 June 2026"
 };
-  
+
 export const formatTime = (isoString: string): string => {
-  const [, time] = isoString.split("T");
-  return time.slice(0, 5); // "HH:MM"
+  return new Date(isoString).toLocaleTimeString("en-GB", {
+    hour: "2-digit", minute: "2-digit"
+  });
+  // → "19:00"
 };
 
 export const formatDateTimeRange = (start: string, finish?: string): string => {

@@ -1,13 +1,9 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
+import { MONTHS } from "../utils/dates";
 import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-const MONTHS = [
-  "January","February","March","April","May","June",
-  "July","August","September","October","November","December"
-];
-
 type Event = {
   id: string;
   title: string;
@@ -34,12 +30,14 @@ export default function Calendar() {
       const from = new Date(current.year, current.month, 1).toISOString();
       const to   = new Date(current.year, current.month + 1, 0, 23, 59, 59).toISOString();
 
+      // Fetch events that overlap with this month:
+      // - starts within the month, OR
+      // - started before the month but finishes during or after it
       const { data, error } = await supabase
         .from("events")
         .select("*")
         .eq("approved", true)
-        .gte("starts_at", from)
-        .lte("starts_at", to)
+        .or(`and(starts_at.gte.${from},starts_at.lte.${to}),and(starts_at.lt.${from},finishes_at.gte.${from})`)
         .order("starts_at", { ascending: true });
 
       if (error) console.error("Error fetching events:", error);
@@ -63,7 +61,6 @@ export default function Calendar() {
   const eventsOnDay = (day: number) =>
     events.filter(e => {
       const start  = new Date(e.starts_at);
-      // Always create a fresh Date for finish to avoid mutating start
       const finish = new Date(e.finishes_at ?? e.starts_at);
       const cell   = new Date(current.year, current.month, day);
 

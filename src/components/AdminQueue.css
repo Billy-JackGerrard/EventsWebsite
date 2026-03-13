@@ -124,3 +124,13 @@
     color: #ff6b6b;
     border: 1px solid #ff6b6b;
   }
+
+  .queue-btn--cancel {
+    background: transparent;
+    color: #f5f0e8;
+    border: 1px solid #4a4a6a;
+  }
+   
+  .queue-btn--cancel:hover {
+    border-color: #f5f0e8;
+  }

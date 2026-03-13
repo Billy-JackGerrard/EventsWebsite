@@ -4,7 +4,7 @@
     min-height: 100vh;
     background: #f5f0e8;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: center;
     padding: 2rem;
 }
@@ -13,8 +13,7 @@
     background: #1a1a2e;
     border-radius: 2px;
     overflow: hidden;
-    width: 100%;
-    max-width: 680px;
+    width: 580px;
     box-shadow: 12px 12px 0 #c9b99a;
 }
   

@@ -66,9 +66,22 @@ export default function AdminQueue() {
     else setEvents(prev => prev.filter(e => e.id !== id));
   };
 
-  const formatDateTime = (isoString: string) => {
+  const formatDate = (isoString: string) => {
     const d = new Date(isoString);
-    return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()} · ${d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`;
+    return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
+  };
+
+  const formatTime = (isoString: string) =>
+    new Date(isoString).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+
+  const formatDateTimeRange = (start: string, finish?: string) => {
+    const sameDay = finish && formatDate(start) === formatDate(finish);
+    if (finish && !sameDay) {
+      return `${formatDate(start)} ${formatTime(start)} – ${formatDate(finish)} ${formatTime(finish)}`;
+    }
+    const dateStr = formatDate(start);
+    const timeStr = finish ? `${formatTime(start)} – ${formatTime(finish)}` : formatTime(start);
+    return `${timeStr} · ${dateStr}`;
   };
 
   return (
@@ -88,14 +101,10 @@ export default function AdminQueue() {
               <div key={ev.id} className="queue-card">
                 <div className="queue-card-header">
                   <div className="queue-event-title">{ev.title}</div>
-                  <div className="queue-event-date">{formatDateTime(ev.starts_at)}</div>
-                </div>
-
-                {ev.finishes_at && (
-                  <div className="queue-event-meta">
-                    Ends: {formatDateTime(ev.finishes_at)}
+                  <div className="queue-event-date">
+                    {formatDateTimeRange(ev.starts_at, ev.finishes_at)}
                   </div>
-                )}
+                </div>
 
                 {ev.location && (
                   <div className="queue-event-meta">📍 {ev.location}</div>

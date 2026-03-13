@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import "./AddEvent.css";
 
@@ -9,8 +9,16 @@ export default function AddEvent() {
   const [startsAt, setStartsAt] = useState("");
   const [finishesAt, setFinishesAt] = useState("");
   const [submitted, setSubmitted] = useState(false);
+  const [wasAdmin, setWasAdmin] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setIsAdmin(!!session);
+    });
+  }, []);
 
   const handleSubmit = async () => {
     if (!title || !startsAt) {
@@ -21,18 +29,23 @@ export default function AddEvent() {
     setLoading(true);
     setError(null);
 
+    const { data: { session } } = await supabase.auth.getSession();
+    const adminSession = !!session;
+
     const { error } = await supabase.from("events").insert({
       title,
       description: description || null,
       location: location || null,
       starts_at: startsAt,
       finishes_at: finishesAt || null,
-      approved: false,
+      approved: adminSession,
+      admin_id: adminSession ? session.user.id : null,
     });
 
     if (error) {
       setError(error.message);
     } else {
+      setWasAdmin(adminSession);
       setSubmitted(true);
     }
 
@@ -47,7 +60,9 @@ export default function AddEvent() {
             <div className="addevent-success-icon">✓</div>
             <h2 className="addevent-title">Event Added!</h2>
             <p className="addevent-success-msg">
-              Thank you! Your event has been submitted and is awaiting approval from an admin.
+              {wasAdmin
+                ? "Your event has been published directly to the calendar."
+                : "Thank you! Your event has been submitted and is awaiting approval from an admin."}
             </p>
             <button className="addevent-btn" onClick={() => setSubmitted(false)}>
               Add Another Event
@@ -62,9 +77,11 @@ export default function AddEvent() {
     <div className="addevent-page">
       <div className="addevent-card">
         <h2 className="addevent-title">Add an Event</h2>
-        <p className="addevent-subtitle">
-          Events are reviewed by an admin before appearing on the calendar.
-        </p>
+        {!isAdmin && (
+          <p className="addevent-subtitle">
+            Events are reviewed by an admin before appearing on the calendar.
+          </p>
+        )}
 
         {error && <div className="addevent-error">{error}</div>}
 

@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { supabase } from "../supabaseClient";
 import "./calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -7,26 +8,48 @@ const MONTHS = [
   "July","August","September","October","November","December"
 ];
 
-// Replace with your own events data or fetch from an API
-const events: Record<string, string[]> = {
-  "2026-3-5":  ["Team standup"],
-  "2026-3-12": ["Design review", "Lunch with Sarah"],
-  "2026-3-18": ["Sprint planning"],
-  "2026-3-25": ["Product demo"],
-  "2026-3-28": ["Monthly retro"],
+type Event = {
+  id: string;
+  title: string;
+  description?: string;
+  location?: string;
+  starts_at: string;
+  finishes_at?: string;
 };
 
 export default function Calendar() {
-  
   const today = new Date();
   const [current, setCurrent] = useState({
     month: today.getMonth(),
     year: today.getFullYear(),
   });
   const [selected, setSelected] = useState<number | null>(null);
+  const [events, setEvents] = useState<Event[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const firstDay    = new Date(current.year, current.month, 1).getDay();
-  const daysInMonth = new Date(current.year, current.month + 1, 0).getDate();
+  // Fetch events for the current month whenever month/year changes
+  useEffect(() => {
+    const fetchEvents = async () => {
+      setLoading(true);
+
+      const from = new Date(current.year, current.month, 1).toISOString();
+      const to   = new Date(current.year, current.month + 1, 0, 23, 59, 59).toISOString();
+
+      const { data, error } = await supabase
+        .from("events")
+        .select("*")
+        .gte("starts_at", from)
+        .lte("starts_at", to)
+        .order("starts_at", { ascending: true });
+
+      if (error) console.error("Error fetching events:", error);
+      else setEvents(data || []);
+
+      setLoading(false);
+    };
+
+    fetchEvents();
+  }, [current.month, current.year]);
 
   const prev = () =>
     setCurrent(c =>
@@ -37,18 +60,34 @@ export default function Calendar() {
       c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year }
     );
 
-  const getKey     = (day: number) => `${current.year}-${current.month + 1}-${day}`;
+  const eventsOnDay = (day: number) =>
+    events.filter(e => {
+      const start  = new Date(e.starts_at);
+      const finish = e.finishes_at ? new Date(e.finishes_at) : start;
+      const cell   = new Date(current.year, current.month, day);
+  
+      // Strip times, compare dates only
+      start.setHours(0, 0, 0, 0);
+      finish.setHours(23, 59, 59, 999);
+  
+      return cell >= start && cell <= finish;
+    });
+
   const isToday    = (day: number) => day === today.getDate() && current.month === today.getMonth() && current.year === today.getFullYear();
   const isSelected = (day: number) => selected === day;
-  const hasEvents  = (day: number) => !!events[getKey(day)];
+
+  const firstDay    = new Date(current.year, current.month, 1).getDay();
+  const daysInMonth = new Date(current.year, current.month + 1, 0).getDate();
 
   const cells = [
     ...Array(firstDay).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
 
-  const selectedEvents = selected ? (events[getKey(selected)] || []) : [];
-  const selectedDay    = selected ?? null;
+  const selectedEvents = selected ? eventsOnDay(selected) : [];
+
+  const formatTime = (isoString: string) =>
+    new Date(isoString).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 
   return (
     <div className="calendar-page">
@@ -76,21 +115,17 @@ export default function Calendar() {
           {cells.map((day, i) => {
             const cellClass = [
               "calendar-cell",
-              !day            ? "calendar-cell--empty"    : "",
+              !day                   ? "calendar-cell--empty"    : "",
               day && isToday(day)    ? "calendar-cell--today"    : "",
               day && isSelected(day) ? "calendar-cell--selected" : "",
             ].filter(Boolean).join(" ");
 
             return (
-              <div
-                key={i}
-                className={cellClass}
-                onClick={() => day && setSelected(day)}
-              >
+              <div key={i} className={cellClass} onClick={() => day && setSelected(day)}>
                 {day && (
                   <>
                     <span className="calendar-day-number">{day}</span>
-                    {hasEvents(day) && <span className="calendar-event-dot" />}
+                    {eventsOnDay(day).length > 0 && <span className="calendar-event-dot" />}
                   </>
                 )}
               </div>
@@ -100,14 +135,19 @@ export default function Calendar() {
 
         {/* Event panel */}
         <div className="calendar-event-panel">
-          {selected ? (
+          {loading ? (
+            <div className="calendar-event-placeholder">Loading events…</div>
+          ) : selected ? (
             <>
               <div className="calendar-event-date">
-                {selectedDay} {MONTHS[current.month]}
+                {selected} {MONTHS[current.month]}
               </div>
               {selectedEvents.length > 0 ? (
-                selectedEvents.map((ev, i) => (
-                  <div key={i} className="calendar-event-item">· {ev}</div>
+                selectedEvents.map(ev => (
+                  <div key={ev.id} className="calendar-event-item">
+                    · {formatTime(ev.starts_at)}{ev.finishes_at ? ` – ${formatTime(ev.finishes_at)}` : ""} — {ev.title}
+                    {ev.location && <span style={{ opacity: 0.6 }}> @ {ev.location}</span>}
+                  </div>
                 ))
               ) : (
                 <div className="calendar-event-empty">No events scheduled</div>

@@ -2,6 +2,15 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import "./AddEvent.css";
 
+/**
+ * Converts a datetime-local string ("YYYY-MM-DDTHH:mm") to a UTC ISO string.
+ * The browser parses datetime-local values as local time, so new Date() on
+ * that string correctly applies the user's timezone offset before .toISOString()
+ * converts it to UTC — which is what Supabase's timestamptz column expects.
+ */
+const toUTCIso = (localDateTimeStr: string): string =>
+  new Date(localDateTimeStr).toISOString();
+
 export default function AddEvent() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
@@ -33,8 +42,11 @@ export default function AddEvent() {
       title,
       description: description || null,
       location: location || null,
-      starts_at: startsAt,
-      finishes_at: finishesAt || null,
+      // Convert local datetime-local values to UTC ISO before storing.
+      // Without this, a user entering "19:00" in Edinburgh (BST, UTC+1)
+      // would have the event stored as 19:00 UTC instead of 18:00 UTC.
+      starts_at: toUTCIso(startsAt),
+      finishes_at: finishesAt ? toUTCIso(finishesAt) : null,
       approved: isAdmin,
       admin_id: isAdmin ? (await supabase.auth.getUser()).data.user?.id : null,
     });

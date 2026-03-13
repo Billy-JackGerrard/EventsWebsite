@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../supabaseClient";
-import { MONTHS, formatTime } from "../utils/dates";
+import { MONTHS, formatTime, toLocalDateKey } from "../utils/dates";
 import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+
 type Event = {
   id: string;
   title: string;
@@ -18,78 +19,91 @@ export default function Calendar() {
     month: new Date().getMonth(),
     year: new Date().getFullYear(),
   });
-  
-  const today = useMemo(() => new Date(), [current.month, current.year]);
-  
+
+  // today is a stable reference — no deps needed. It won't change during a
+  // session, and re-creating it each render would be equally fine.
+  const today = useMemo(() => new Date(), []);
+
   const [selected, setSelected] = useState<number | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let isCurrent = true;
-  
+
     const fetchEvents = async () => {
       setLoading(true);
-  
-      const from = new Date(current.year, current.month, 1).toISOString();
-      const to   = new Date(current.year, current.month + 1, 0, 23, 59, 59).toISOString();
-  
+
+      // Build bounds at local midnight converted to UTC ISO strings.
+      // Date.UTC gives us midnight UTC, but we want midnight *local* time as
+      // the boundary so that events on the 1st and last day of the month are
+      // fully included regardless of the user's UTC offset.
+      const fromDate = new Date(current.year, current.month, 1, 0, 0, 0, 0);
+      const toDate   = new Date(current.year, current.month + 1, 0, 23, 59, 59, 999);
+
+      const from = fromDate.toISOString();
+      const to   = toDate.toISOString();
+
       const { data, error } = await supabase
         .from("events")
         .select("*")
         .eq("approved", true)
         .or(`and(starts_at.gte.${from},starts_at.lte.${to}),and(starts_at.lt.${from},finishes_at.gte.${from})`)
         .order("starts_at", { ascending: true });
-  
+
       if (!isCurrent) return;
-  
+
       if (error) console.error("Error fetching events:", error);
       else setEvents(data || []);
-  
+
       setLoading(false);
     };
-  
+
     fetchEvents();
-  
+
     return () => { isCurrent = false; };
   }, [current.month, current.year]);
 
   const prev = () =>
     setCurrent(c => {
       setSelected(null);
-      return c.month === 0 ? { month: 11, year: c.year - 1 } : { month: c.month - 1, year: c.year };
+      return c.month === 0
+        ? { month: 11, year: c.year - 1 }
+        : { month: c.month - 1, year: c.year };
     });
-  
+
   const next = () =>
     setCurrent(c => {
       setSelected(null);
-      return c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year };
+      return c.month === 11
+        ? { month: 0, year: c.year + 1 }
+        : { month: c.month + 1, year: c.year };
     });
-  
-    const toLocalDateString = (iso: string) => {
-      const d = new Date(iso);
-      return [
-        d.getFullYear(),
-        String(d.getMonth() + 1).padStart(2, "0"),
-        String(d.getDate()).padStart(2, "0"),
-      ].join("-");
-    };
 
-    const eventsOnDay = (day: number) => {
-      const cell = [
-        current.year,
-        String(current.month + 1).padStart(2, "0"),
-        String(day).padStart(2, "0"),
-      ].join("-"); // e.g. "2026-03-13"
-    
-      return events.filter(e => {
-        const start  = toLocalDateString(e.starts_at);
-        const finish = toLocalDateString(e.finishes_at ?? e.starts_at);
-        return cell >= start && cell <= finish;
-      });
-    };
+  /**
+   * Returns all events that overlap a given calendar day.
+   * Both the cell key and the event keys are "YYYY-MM-DD" in local time,
+   * so the comparison is consistent.
+   */
+  const eventsOnDay = (day: number) => {
+    const cell = [
+      current.year,
+      String(current.month + 1).padStart(2, "0"),
+      String(day).padStart(2, "0"),
+    ].join("-");
 
-  const isToday    = (day: number) => day === today.getDate() && current.month === today.getMonth() && current.year === today.getFullYear();
+    return events.filter(e => {
+      const start  = toLocalDateKey(e.starts_at);
+      const finish = toLocalDateKey(e.finishes_at ?? e.starts_at);
+      return cell >= start && cell <= finish;
+    });
+  };
+
+  const isToday = (day: number) =>
+    day === today.getDate() &&
+    current.month === today.getMonth() &&
+    current.year === today.getFullYear();
+
   const isSelected = (day: number) => selected === day;
 
   const firstDay    = new Date(current.year, current.month, 1).getDay();

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 import { MONTHS, formatTime } from "../utils/dates";
 import "./Calendar.css";
@@ -14,11 +14,13 @@ type Event = {
 };
 
 export default function Calendar() {
-  const today = new Date();
   const [current, setCurrent] = useState({
-    month: today.getMonth(),
-    year: today.getFullYear(),
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
   });
+  
+  const today = useMemo(() => new Date(), [current.month, current.year]);
+  
   const [selected, setSelected] = useState<number | null>(null);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);

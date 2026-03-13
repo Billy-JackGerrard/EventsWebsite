@@ -110,7 +110,7 @@ export default function AdminQueue() {
                       onClick={() => approve(ev.id)}
                       disabled={isActing}
                     >
-                      {isActing && !isConfirming ? "Approving…" : "✓ Approve"}
+                      {isActing ? "Approving…" : "✓ Approve"}
                     </button>
 
                     {isConfirming ? (

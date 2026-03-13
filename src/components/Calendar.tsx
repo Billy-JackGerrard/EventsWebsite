@@ -31,9 +31,13 @@ export default function Calendar() {
   useEffect(() => {
     let isCurrent = true;
 
-    const fetchEvents = async () => {
-      setLoading(true);
+    // Fix #3: Clear events and set loading synchronously before the async
+    // fetch begins, so the old month's events never flash in the panel
+    // while the new month's data is in flight.
+    setEvents([]);
+    setLoading(true);
 
+    const fetchEvents = async () => {
       // Build bounds at local midnight converted to UTC ISO strings.
       // Date.UTC gives us midnight UTC, but we want midnight *local* time as
       // the boundary so that events on the 1st and last day of the month are

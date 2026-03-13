@@ -28,6 +28,15 @@ function App() {
     return () => subscription.unsubscribe();
   }, []);
 
+  // Fix #5: If the user somehow ends up on admin-queue while logged out
+  // (e.g. session expires mid-visit), redirect them to login rather than
+  // showing a blank screen.
+  useEffect(() => {
+    if (view === "admin-queue" && !isLoggedIn) {
+      setView("login");
+    }
+  }, [view, isLoggedIn]);
+
   const handleLogin = () => {
     setIsLoggedIn(true);
     setView("calendar");

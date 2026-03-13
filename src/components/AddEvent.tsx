@@ -23,10 +23,18 @@ export default function AddEvent() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
+  // Fix #2: Subscribe to auth state changes so isAdmin never goes stale
+  // if the user logs in or out while this component is mounted.
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAdmin(!!session);
     });
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      setIsAdmin(!!session);
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const handleSubmit = async () => {
@@ -38,23 +46,26 @@ export default function AddEvent() {
     setLoading(true);
     setError(null);
 
+    // Fix #1: Fetch the user once and reuse it, rather than making a second
+    // async call inside the insert — avoids a race condition where the session
+    // could expire between the isAdmin check and the admin_id lookup.
+    const { data: { user } } = await supabase.auth.getUser();
+    const admin = !!user;
+
     const { error } = await supabase.from("events").insert({
       title,
       description: description || null,
       location: location || null,
-      // Convert local datetime-local values to UTC ISO before storing.
-      // Without this, a user entering "19:00" in Edinburgh (BST, UTC+1)
-      // would have the event stored as 19:00 UTC instead of 18:00 UTC.
       starts_at: toUTCIso(startsAt),
       finishes_at: finishesAt ? toUTCIso(finishesAt) : null,
-      approved: isAdmin,
-      admin_id: isAdmin ? (await supabase.auth.getUser()).data.user?.id : null,
+      approved: admin,
+      admin_id: admin ? user!.id : null,
     });
 
     if (error) {
       setError(error.message);
     } else {
-      setWasAdmin(isAdmin);
+      setWasAdmin(admin);
       setSubmitted(true);
     }
 

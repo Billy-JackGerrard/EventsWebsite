@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
-import { MONTHS } from "../utils/dates";
+import { MONTHS, formatTime } from "../utils/dates";
 import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -57,18 +57,17 @@ export default function Calendar() {
     setCurrent(c =>
       c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year }
     );
+  
+  const eventsOnDay = (day: number) => {
+    const cell = new Date(current.year, current.month, day).toLocaleDateString("en-CA");
 
-  const eventsOnDay = (day: number) =>
-    events.filter(e => {
-      const start  = new Date(e.starts_at);
-      const finish = new Date(e.finishes_at ?? e.starts_at);
-      const cell   = new Date(current.year, current.month, day);
-
-      start.setHours(0, 0, 0, 0);
-      finish.setHours(23, 59, 59, 999);
+    return events.filter(e => {
+      const start  = new Date(e.starts_at).toLocaleDateString("en-CA");
+      const finish = new Date(e.finishes_at ?? e.starts_at).toLocaleDateString("en-CA");
 
       return cell >= start && cell <= finish;
     });
+  };
 
   const isToday    = (day: number) => day === today.getDate() && current.month === today.getMonth() && current.year === today.getFullYear();
   const isSelected = (day: number) => selected === day;
@@ -82,9 +81,6 @@ export default function Calendar() {
   ];
 
   const selectedEvents = selected ? eventsOnDay(selected) : [];
-
-  const formatTime = (isoString: string) =>
-    new Date(isoString).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
 
   return (
     <div className="calendar-page">

@@ -29,23 +29,20 @@ export default function AddEvent() {
     setLoading(true);
     setError(null);
 
-    const { data: { session } } = await supabase.auth.getSession();
-    const adminSession = !!session;
-
     const { error } = await supabase.from("events").insert({
       title,
       description: description || null,
       location: location || null,
       starts_at: startsAt,
       finishes_at: finishesAt || null,
-      approved: adminSession,
-      admin_id: adminSession ? session.user.id : null,
+      approved: isAdmin,
+      admin_id: isAdmin ? (await supabase.auth.getUser()).data.user?.id : null,
     });
 
     if (error) {
       setError(error.message);
     } else {
-      setWasAdmin(adminSession);
+      setWasAdmin(isAdmin);
       setSubmitted(true);
     }
 

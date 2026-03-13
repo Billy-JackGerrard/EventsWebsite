@@ -58,16 +58,21 @@ export default function Calendar() {
       c.month === 11 ? { month: 0, year: c.year + 1 } : { month: c.month + 1, year: c.year }
     );
   
-  const eventsOnDay = (day: number) => {
-    const cell = new Date(current.year, current.month, day).toLocaleDateString("en-CA");
+    const toUTCDateString = (iso: string) => iso.slice(0, 10); // "YYYY-MM-DD", no timezone shift
 
-    return events.filter(e => {
-      const start  = new Date(e.starts_at).toLocaleDateString("en-CA");
-      const finish = new Date(e.finishes_at ?? e.starts_at).toLocaleDateString("en-CA");
-
-      return cell >= start && cell <= finish;
-    });
-  };
+    const eventsOnDay = (day: number) => {
+      const cell = [
+        current.year,
+        String(current.month + 1).padStart(2, "0"),
+        String(day).padStart(2, "0"),
+      ].join("-"); // e.g. "2026-03-13"
+    
+      return events.filter(e => {
+        const start  = toUTCDateString(e.starts_at);
+        const finish = toUTCDateString(e.finishes_at ?? e.starts_at);
+        return cell >= start && cell <= finish;
+      });
+    };
 
   const isToday    = (day: number) => day === today.getDate() && current.month === today.getMonth() && current.year === today.getFullYear();
   const isSelected = (day: number) => selected === day;

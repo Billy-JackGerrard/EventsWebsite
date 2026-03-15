@@ -1,13 +1,13 @@
 .event-detail-card {
-    background: #1a1a2e;
+    background: var(--color-bg-card);
     border-radius: 2px;
-    box-shadow: 12px 12px 0 #c9b99a;
+    box-shadow: 12px 12px 0 var(--color-shadow);
     padding: 1.5rem;
     position: relative;
     width: 100%;
     box-sizing: border-box;
     animation: detail-in 0.2s ease;
-    border-top: 3px solid #e8c547;
+    border-top: 3px solid var(--color-accent);
 }
 
 @media (min-width: 700px) {
@@ -30,8 +30,8 @@
     top: 0.75rem;
     right: 0.75rem;
     background: transparent;
-    border: 1px solid #4a4a6a;
-    color: #6b6b8a;
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-muted);
     font-size: 0.7rem;
     width: 24px;
     height: 24px;
@@ -45,8 +45,8 @@
 }
 
 .event-detail-close:hover {
-    border-color: #ff6b6b;
-    color: #ff6b6b;
+    border-color: var(--color-text-error);
+    color: var(--color-text-error);
 }
 
 .event-detail-header {
@@ -55,7 +55,7 @@
 }
 
 .event-detail-title {
-    color: #e8c547;
+    color: var(--color-accent);
     font-family: Georgia, serif;
     font-size: 1.15rem;
     margin: 0 0 0.4rem;
@@ -63,7 +63,7 @@
 }
 
 .event-detail-datetime {
-    color: #f5f0e8;
+    color: var(--color-text-light);
     font-family: monospace;
     font-size: 0.78rem;
     opacity: 0.65;
@@ -84,25 +84,25 @@
 }
 
 .event-detail-text {
-    color: #f5f0e8;
+    color: var(--color-text-light);
     font-size: 0.88rem;
     opacity: 0.8;
 }
 
 .event-detail-description {
-    color: #f5f0e8;
+    color: var(--color-text-light);
     font-size: 0.88rem;
     line-height: 1.65;
     padding: 0.75rem;
-    background: #16213e;
+    background: var(--color-bg-inset);
     border-radius: 2px;
-    border-left: 3px solid #e8c547;
+    border-left: 3px solid var(--color-accent);
     white-space: pre-wrap;
     margin-bottom: 0.75rem;
 }
 
 .event-detail-nodesc {
-    color: #6b6b8a;
+    color: var(--color-text-muted);
     font-style: italic;
     font-size: 0.85rem;
     margin-bottom: 0.75rem;
@@ -110,13 +110,13 @@
 
 /* ── Contact section ── */
 .event-detail-contact {
-    border-top: 1px solid #2d2d5e;
+    border-top: 1px solid var(--color-border);
     margin-top: 0.5rem;
     padding-top: 0.85rem;
 }
 
 .event-detail-contact-heading {
-    color: #e8c547;
+    color: var(--color-accent);
     font-family: monospace;
     font-size: 0.72rem;
     letter-spacing: 0.1em;
@@ -125,7 +125,7 @@
 }
 
 .event-detail-link {
-    color: #a8b4e8;
+    color: var(--color-text-link);
     font-size: 0.88rem;
     text-decoration: none;
     word-break: break-all;
@@ -133,6 +133,6 @@
 }
 
 .event-detail-link:hover {
-    color: #e8c547;
+    color: var(--color-accent);
     text-decoration: underline;
 }

@@ -1,136 +1,136 @@
 .queue-page {
-    min-height: 100vh;
-    background: #f5f0e8;
-    display: flex;
-    justify-content: center;
-    padding: 2rem;
-  }
-  
-  .queue-container {
-    width: 620px;
-    max-width: 100%;
-  }
-  
-  .queue-title {
-    color: #1a1a2e;
-    font-family: Georgia, serif;
-    font-size: 1.4rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    margin: 0 0 1.5rem;
-    text-align: center;
-  }
-  
-  .queue-error {
-    background: #3d1a1a;
-    color: #ff6b6b;
-    font-size: 0.85rem;
-    padding: 0.5rem 0.8rem;
-    border-radius: 2px;
-    margin-bottom: 1rem;
-  }
-  
-  .queue-empty {
-    color: #6b6b8a;
-    font-style: italic;
-    text-align: center;
-    margin-top: 3rem;
-    font-size: 0.95rem;
-  }
-  
-  .queue-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-  
-  .queue-card {
-    background: #1a1a2e;
-    border-radius: 2px;
-    box-shadow: 6px 6px 0 #c9b99a;
-    padding: 1.25rem 1.5rem;
-  }
-  
-  .queue-card-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 0.5rem;
-    gap: 1rem;
-  }
-  
-  .queue-event-title {
-    color: #e8c547;
-    font-family: Georgia, serif;
-    font-size: 1.1rem;
-    font-weight: bold;
-  }
-  
-  .queue-event-date {
-    color: #f5f0e8;
-    font-family: monospace;
-    font-size: 0.8rem;
-    opacity: 0.7;
-    white-space: nowrap;
-  }
-  
-  .queue-event-meta {
-    color: #f5f0e8;
-    font-size: 0.85rem;
-    opacity: 0.7;
-    margin-bottom: 0.35rem;
-  }
-  
-  .queue-event-description {
-    color: #f5f0e8;
-    font-size: 0.9rem;
-    line-height: 1.5;
-    margin: 0.75rem 0;
-    padding: 0.75rem;
-    background: #16213e;
-    border-radius: 2px;
-    border-left: 3px solid #e8c547;
-  }
-  
-  .queue-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1rem;
-  }
-  
-  .queue-btn {
-    flex: 1;
-    padding: 0.6rem;
-    border: none;
-    border-radius: 2px;
-    font-size: 0.9rem;
-    font-weight: bold;
-    font-family: Georgia, serif;
-    cursor: pointer;
-    transition: opacity 0.15s;
-  }
-  
-  .queue-btn:hover {
-    opacity: 0.85;
-  }
-  
-  .queue-btn--approve {
-    background: #e8c547;
-    color: #1a1a2e;
-  }
-  
-  .queue-btn--reject {
-    background: #3d1a1a;
-    color: #ff6b6b;
-    border: 1px solid #ff6b6b;
-  }
+  min-height: 100vh;
+  background: var(--color-bg-page);
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+}
 
-  .queue-btn--cancel {
-    background: transparent;
-    color: #f5f0e8;
-    border: 1px solid #4a4a6a;
-  }
-   
-  .queue-btn--cancel:hover {
-    border-color: #f5f0e8;
-  }
+.queue-container {
+  width: 620px;
+  max-width: 100%;
+}
+
+.queue-title {
+  color: var(--color-text-dark);
+  font-family: Georgia, serif;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin: 0 0 1.5rem;
+  text-align: center;
+}
+
+.queue-error {
+  background: var(--color-bg-error);
+  color: var(--color-text-error);
+  font-size: 0.85rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+}
+
+.queue-empty {
+  color: var(--color-text-muted);
+  font-style: italic;
+  text-align: center;
+  margin-top: 3rem;
+  font-size: 0.95rem;
+}
+
+.queue-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.queue-card {
+  background: var(--color-bg-card);
+  border-radius: 2px;
+  box-shadow: 6px 6px 0 var(--color-shadow);
+  padding: 1.25rem 1.5rem;
+}
+
+.queue-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.5rem;
+  gap: 1rem;
+}
+
+.queue-event-title {
+  color: var(--color-accent);
+  font-family: Georgia, serif;
+  font-size: 1.1rem;
+  font-weight: bold;
+}
+
+.queue-event-date {
+  color: var(--color-text-light);
+  font-family: monospace;
+  font-size: 0.8rem;
+  opacity: 0.7;
+  white-space: nowrap;
+}
+
+.queue-event-meta {
+  color: var(--color-text-light);
+  font-size: 0.85rem;
+  opacity: 0.7;
+  margin-bottom: 0.35rem;
+}
+
+.queue-event-description {
+  color: var(--color-text-light);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  margin: 0.75rem 0;
+  padding: 0.75rem;
+  background: var(--color-bg-inset);
+  border-radius: 2px;
+  border-left: 3px solid var(--color-accent);
+}
+
+.queue-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 1rem;
+}
+
+.queue-btn {
+  flex: 1;
+  padding: 0.6rem;
+  border: none;
+  border-radius: 2px;
+  font-size: 0.9rem;
+  font-weight: bold;
+  font-family: Georgia, serif;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.queue-btn:hover {
+  opacity: 0.85;
+}
+
+.queue-btn--approve {
+  background: var(--color-accent);
+  color: var(--color-text-dark);
+}
+
+.queue-btn--reject {
+  background: var(--color-bg-error);
+  color: var(--color-text-error);
+  border: 1px solid var(--color-text-error);
+}
+
+.queue-btn--cancel {
+  background: transparent;
+  color: var(--color-text-light);
+  border: 1px solid var(--color-border-subtle);
+}
+ 
+.queue-btn--cancel:hover {
+  border-color: var(--color-text-light);
+}

@@ -1,4 +1,32 @@
 :root {
+  /* ── Palette ─────────────────────────────────────────────
+     Edit here to retheme the entire app.
+     ───────────────────────────────────────────────────── */
+
+  /* Page / surface backgrounds */
+  --color-bg-page:          #f5f0e8;   /* warm cream — outer page */
+  --color-bg-card:          #1a1a2e;   /* deep navy — cards, navbar */
+  --color-bg-inset:         #16213e;   /* darker navy — inputs, inset panels */
+  --color-bg-error:         #3d1a1a;   /* dark red — error banners */
+
+  /* Borders */
+  --color-border:           #2d2d5e;   /* mid navy — field borders */
+  --color-border-subtle:    #4a4a6a;   /* lighter navy — secondary borders */
+
+  /* Accent */
+  --color-accent:           #e8c547;   /* gold — primary highlight */
+
+  /* Text */
+  --color-text-light:       #f5f0e8;   /* cream — text on dark surfaces */
+  --color-text-dark:        #1a1a2e;   /* navy — text on light surfaces */
+  --color-text-muted:       #6b6b8a;   /* muted purple-grey — placeholders */
+  --color-text-error:       #ff6b6b;   /* red — error messages, logout */
+  --color-text-link:        #a8b4e8;   /* soft blue — hyperlinks */
+
+  /* Decorative */
+  --color-shadow:           #c9b99a;   /* tan — offset box shadows */
+
+  /* ── Typography & base ──────────────────────────────── */
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;

@@ -1,22 +1,22 @@
 .login-page {
     min-height: 100vh;
-    background: #f5f0e8;
+    background: var(--color-bg-page);
     display: flex;
     align-items: center;
     justify-content: center;
 }
   
 .login-card {
-    background: #1a1a2e;
+    background: var(--color-bg-card);
     border-radius: 2px;
-    box-shadow: 12px 12px 0 #c9b99a;
+    box-shadow: 12px 12px 0 var(--color-shadow);
     padding: 2rem;
     width: 340px;
     max-width: 100%;
 }
   
 .login-title {
-    color: #e8c547;
+    color: var(--color-accent);
     font-family: Georgia, serif;
     text-align: center;
     margin: 0 0 1.5rem;
@@ -32,7 +32,7 @@
 }
   
 .login-label {
-    color: #e8c547;
+    color: var(--color-accent);
     font-size: 0.75rem;
     letter-spacing: 0.1em;
     text-transform: uppercase;
@@ -41,10 +41,10 @@
 }
   
 .login-input {
-    background: #16213e;
-    border: 1px solid #2d2d5e;
+    background: var(--color-bg-inset);
+    border: 1px solid var(--color-border);
     border-radius: 2px;
-    color: #f5f0e8;
+    color: var(--color-text-light);
     padding: 0.6rem 0.8rem;
     font-size: 0.95rem;
     outline: none;
@@ -52,12 +52,12 @@
 }
   
 .login-input:focus {
-    border-color: #e8c547;
+    border-color: var(--color-accent);
 }
   
 .login-error {
-    background: #3d1a1a;
-    color: #ff6b6b;
+    background: var(--color-bg-error);
+    color: var(--color-text-error);
     font-size: 0.85rem;
     padding: 0.5rem 0.8rem;
     border-radius: 2px;
@@ -66,8 +66,8 @@
   
 .login-btn {
     width: 100%;
-    background: #e8c547;
-    color: #1a1a2e;
+    background: var(--color-accent);
+    color: var(--color-text-dark);
     border: none;
     border-radius: 2px;
     padding: 0.75rem;

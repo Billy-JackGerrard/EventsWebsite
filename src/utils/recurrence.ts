@@ -2,6 +2,9 @@
  * Recurrence utilities
  * Generates a list of start/finish Date pairs for a recurring event,
  * up to 1 year from the initial start date.
+ *
+ * weekday and ordinal are now always derived from firstStart — they are
+ * no longer stored in RecurrenceRule, removing the redundant picker UI.
  */
 
 export type RecurrenceFrequency =
@@ -9,8 +12,8 @@ export type RecurrenceFrequency =
   | "daily"
   | "weekly"
   | "monthly-date"       // e.g. every 15th
-  | "monthly-weekday"    // e.g. last Thursday, 2nd Monday
-  | "custom-monthly";    // every N months on Nth weekday or date
+  | "monthly-weekday"    // e.g. last Thursday, 2nd Monday — derived from firstStart
+  | "custom-monthly";    // every N months on Nth weekday or date — derived from firstStart
 
 export type WeekdayOrdinal = "1st" | "2nd" | "3rd" | "4th" | "last";
 
@@ -18,12 +21,35 @@ export type RecurrenceRule = {
   frequency: RecurrenceFrequency;
   // For "custom-monthly": how many months between occurrences
   intervalMonths?: number;
-  // For "monthly-weekday" and "custom-monthly" when useWeekday=true
-  weekday?: number;         // 0=Sun … 6=Sat
-  ordinal?: WeekdayOrdinal; // which occurrence in the month
-  // For "custom-monthly": whether to repeat by weekday or by date
+  // For "custom-monthly": whether to repeat by weekday position or by date
   useWeekday?: boolean;
+  // NOTE: weekday and ordinal are intentionally removed from the rule —
+  // they are always derived from the firstStart date at expansion time.
 };
+
+/** Returns which ordinal occurrence of a weekday a date falls on within its month. */
+export function getOrdinalOfWeekdayInMonth(date: Date): WeekdayOrdinal {
+  const weekday = date.getDay();
+  const dayOfMonth = date.getDate();
+
+  // Count how many times this weekday has appeared so far this month
+  let count = 0;
+  const d = new Date(date.getFullYear(), date.getMonth(), 1);
+  while (d.getDate() <= dayOfMonth) {
+    if (d.getDay() === weekday) count++;
+    d.setDate(d.getDate() + 1);
+  }
+
+  // Check if this is also the LAST occurrence of that weekday in the month
+  const next = new Date(date);
+  next.setDate(date.getDate() + 7);
+  if (next.getMonth() !== date.getMonth()) {
+    return "last";
+  }
+
+  const ordinals: WeekdayOrdinal[] = ["1st", "2nd", "3rd", "4th"];
+  return ordinals[count - 1] ?? "last";
+}
 
 /** Returns the Nth weekday (or last) in a given year/month. */
 function nthWeekdayInMonth(
@@ -33,7 +59,6 @@ function nthWeekdayInMonth(
   ordinal: WeekdayOrdinal
 ): Date | null {
   if (ordinal === "last") {
-    // Walk backwards from last day of month
     const last = new Date(year, month + 1, 0);
     while (last.getDay() !== weekday) last.setDate(last.getDate() - 1);
     return new Date(last);
@@ -49,12 +74,14 @@ function nthWeekdayInMonth(
     }
     d.setDate(d.getDate() + 1);
   }
-  return null; // e.g. 5th Monday doesn't exist this month
+  return null;
 }
 
 /**
  * Given a rule and the first start/finish datetime, produce all occurrences
  * within one year of the start date.
+ *
+ * weekday and ordinal are always derived from firstStart.
  */
 export function expandRecurrences(
   rule: RecurrenceRule,
@@ -71,7 +98,10 @@ export function expandRecurrences(
   const duration = firstFinish ? firstFinish.getTime() - firstStart.getTime() : null;
   const results: Array<{ start: Date; finish: Date | null }> = [];
 
-  // Helper: create a start date with the same time as firstStart but on a new calendar date
+  // Derive weekday and ordinal from the anchor date
+  const weekday = firstStart.getDay();
+  const ordinal = getOrdinalOfWeekdayInMonth(firstStart);
+
   const withTime = (d: Date): Date => {
     const out = new Date(d);
     out.setHours(firstStart.getHours(), firstStart.getMinutes(), 0, 0);
@@ -101,13 +131,11 @@ export function expandRecurrences(
   }
 
   if (rule.frequency === "monthly-date") {
-    // Every month on the same date (e.g. every 15th)
     const dayOfMonth = firstStart.getDate();
     let year = firstStart.getFullYear();
     let month = firstStart.getMonth();
 
     while (true) {
-      // Clamp to end of month (e.g. 31st → 28th in Feb)
       const daysInMonth = new Date(year, month + 1, 0).getDate();
       const day = Math.min(dayOfMonth, daysInMonth);
       const s = withTime(new Date(year, month, day));
@@ -123,8 +151,6 @@ export function expandRecurrences(
   }
 
   if (rule.frequency === "monthly-weekday") {
-    // e.g. "last Thursday" every month
-    const { weekday = 4, ordinal = "last" } = rule;
     let year = firstStart.getFullYear();
     let month = firstStart.getMonth();
 
@@ -145,8 +171,7 @@ export function expandRecurrences(
   }
 
   if (rule.frequency === "custom-monthly") {
-    // Every N months, on either the same date or the same Nth weekday
-    const { intervalMonths = 2, useWeekday = false, weekday = 1, ordinal = "1st" } = rule;
+    const { intervalMonths = 2, useWeekday = false } = rule;
     let year = firstStart.getFullYear();
     let month = firstStart.getMonth();
     let isFirst = true;

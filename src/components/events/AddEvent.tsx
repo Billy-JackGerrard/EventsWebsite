@@ -36,8 +36,6 @@ const DEFAULT_RULE: RecurrenceRule = {
   frequency: "weekly",
   intervalMonths: 2,
   useWeekday: false,
-  ordinal: "1st",
-  weekday: 1,
 };
 
 export default function AddEvent() {

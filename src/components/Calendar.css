@@ -12,7 +12,7 @@
 .calendar-card {
     background: #1a1a2e;
     border-radius: 2px;
-    overflow: hidden;
+    overflow: visible;
     width: 580px;
     max-width: 100%;
     box-shadow: 12px 12px 0 #c9b99a;
@@ -25,6 +25,26 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
+    gap: 0.5rem;
+    border-radius: 2px 2px 0 0;
+    position: relative;
+    z-index: 10;
+}
+
+.calendar-header-center {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 0;
+    position: relative;
+}
+
+.calendar-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-shrink: 0;
 }
 
 .calendar-nav-btn {
@@ -51,7 +71,6 @@
   
 .calendar-title {
     text-align: center;
-    width: 220px;
 }
   
 .calendar-month {
@@ -67,7 +86,147 @@
     color: #1a1a2e;
     opacity: 0.7;
 }
-  
+
+/* ── Search button ── */
+.calendar-search-btn {
+    background: #1a1a2e;
+    border: none;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    font-size: 17px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #e8c547;
+    transition: background 0.15s, transform 0.1s;
+    flex-shrink: 0;
+    line-height: 1;
+}
+
+.calendar-search-btn:hover {
+    background: #2d2d5e;
+    transform: scale(1.08);
+}
+
+.calendar-search-btn--active {
+    background: #3d1a1a;
+    color: #ff6b6b;
+    font-size: 13px;
+}
+
+.calendar-search-btn--active:hover {
+    background: #5a2020;
+}
+
+/* ── Search wrap — positions the dropdown relative to the bar ── */
+.calendar-search-wrap {
+    position: relative;
+    width: 100%;
+}
+
+/* ── Search bar ── */
+.calendar-search-bar {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    width: 100%;
+    background: rgba(26, 26, 46, 0.15);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    border: 1.5px solid rgba(26, 26, 46, 0.3);
+    box-sizing: border-box;
+}
+
+.calendar-search-icon {
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    opacity: 0.6;
+    color: #1a1a2e;
+}
+
+.calendar-search-input {
+    flex: 1;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #1a1a2e;
+    min-width: 0;
+}
+
+.calendar-search-input::placeholder {
+    color: rgba(26, 26, 46, 0.45);
+}
+
+/* ── Dropdown ── */
+.calendar-search-dropdown {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    background: #1a1a2e;
+    border-radius: 2px;
+    box-shadow: 8px 8px 0 #c9b99a, 0 4px 24px rgba(0,0,0,0.35);
+    overflow: hidden;
+    z-index: 50;
+    animation: dropdown-in 0.12s ease;
+}
+
+@keyframes dropdown-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.calendar-search-dropdown-empty {
+    color: #6b6b8a;
+    font-size: 0.85rem;
+    font-style: italic;
+    padding: 0.85rem 1rem;
+    font-family: monospace;
+}
+
+.calendar-search-result {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.2rem;
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid #2d2d5e;
+    padding: 0.7rem 1rem;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.1s;
+    border-radius: 0;
+}
+
+.calendar-search-result:last-child {
+    border-bottom: none;
+}
+
+.calendar-search-result:hover {
+    background: rgba(232, 197, 71, 0.1);
+    border-color: #2d2d5e;
+}
+
+.calendar-search-result-title {
+    color: #e8c547;
+    font-family: Georgia, serif;
+    font-size: 0.95rem;
+    font-weight: bold;
+}
+
+.calendar-search-result-date {
+    color: #f5f0e8;
+    font-family: monospace;
+    font-size: 0.75rem;
+    opacity: 0.6;
+}
+
 /* ── Day Labels ── */
 .calendar-day-labels {
     display: grid;
@@ -177,6 +336,18 @@
     font-size: 0.9rem;
     padding: 0.35rem 0;
     border-bottom: 1px solid #2d2d5e;
+}
+
+.calendar-event-item--clickable {
+    cursor: pointer;
+    border-radius: 2px;
+    padding-left: 0.3rem;
+    transition: color 0.12s, background 0.12s;
+}
+
+.calendar-event-item--clickable:hover {
+    color: #e8c547;
+    background: rgba(232, 197, 71, 0.07);
 }
   
 .calendar-event-item:last-child {

@@ -1,0 +1,107 @@
+.event-detail-card {
+    background: #1a1a2e;
+    border-radius: 2px;
+    box-shadow: 12px 12px 0 #c9b99a;
+    padding: 1.5rem;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    animation: detail-in 0.2s ease;
+    border-top: 3px solid #e8c547;
+}
+
+@media (min-width: 700px) {
+    .event-detail-card {
+        width: 300px;
+        flex-shrink: 0;
+        align-self: flex-start;
+        position: sticky;
+        top: 80px;
+    }
+}
+
+@keyframes detail-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+.event-detail-close {
+    position: absolute;
+    top: 0.75rem;
+    right: 0.75rem;
+    background: transparent;
+    border: 1px solid #4a4a6a;
+    color: #6b6b8a;
+    font-size: 0.7rem;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.event-detail-close:hover {
+    border-color: #ff6b6b;
+    color: #ff6b6b;
+}
+
+.event-detail-header {
+    padding-right: 1.5rem;
+    margin-bottom: 1rem;
+}
+
+.event-detail-title {
+    color: #e8c547;
+    font-family: Georgia, serif;
+    font-size: 1.15rem;
+    margin: 0 0 0.4rem;
+    line-height: 1.3;
+}
+
+.event-detail-datetime {
+    color: #f5f0e8;
+    font-family: monospace;
+    font-size: 0.78rem;
+    opacity: 0.65;
+    line-height: 1.5;
+}
+
+.event-detail-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    margin-bottom: 0.75rem;
+}
+
+.event-detail-icon {
+    font-size: 0.9rem;
+    flex-shrink: 0;
+    margin-top: 0.05rem;
+}
+
+.event-detail-text {
+    color: #f5f0e8;
+    font-size: 0.88rem;
+    opacity: 0.8;
+}
+
+.event-detail-description {
+    color: #f5f0e8;
+    font-size: 0.88rem;
+    line-height: 1.65;
+    padding: 0.75rem;
+    background: #16213e;
+    border-radius: 2px;
+    border-left: 3px solid #e8c547;
+    white-space: pre-wrap;
+}
+
+.event-detail-nodesc {
+    color: #6b6b8a;
+    font-style: italic;
+    font-size: 0.85rem;
+}

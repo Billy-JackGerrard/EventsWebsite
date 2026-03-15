@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
-import { supabase } from "../supabaseClient";
-import { formatDateTimeRange } from "../utils/dates";
-import type { Event } from "../utils/types";
+import { supabase } from "../../supabaseClient";
+import { formatDateTimeRange } from "../../utils/dates";
+import type { Event } from "../../utils/types";
 import "./AdminQueue.css";
 
 export default function AdminQueue() {

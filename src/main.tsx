@@ -7,7 +7,7 @@ import Calendar from "./components/Calendar.tsx";
 import Login from "./components/Login.tsx";
 import Navbar from "./components/Navbar.tsx";
 import AddEvent from "./components/submit_events/AddEvent.tsx";
-import AdminQueue from "./components/AdminQueue.tsx";
+import AdminQueue from "./components/submit_events/AdminQueue.tsx";
 
 type View = "calendar" | "login" | "add-event" | "admin-queue";
 

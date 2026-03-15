@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
-import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
+import { MONTHS, formatDateTimeRange } from "../utils/dates";
 import type { Event } from "../utils/types";
 import EventDetails from "./events/EventDetails";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";

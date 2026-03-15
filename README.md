@@ -1,13 +1,9 @@
 
-TODO:
-
-Usability gaps:
+Gaps:
 
 No way for event submitters to edit or follow up on their submission (eg what if there's a time or room change?)
 No way for admins (or normal peeps) to cancel events (it should show cancelled instead of deleted so peeps know)
 No way for admins to edit an event before approving it (e.g. fix a typo)
-
-Critical gaps:
 
 No email notifications — admins won't know when something is pending approval unless they log in and check
 Mobile navbar — it'll break on small screens with all those buttons in a row
@@ -24,8 +20,6 @@ email announcements?
 
 integrate with socials!!
 
-for adding events, add a languages box to show interpreters etc
-
 when adding events:
 - when their event is approved, they receive an email if they've put one in
 - optionally add an image 
@@ -35,8 +29,11 @@ event queue for admins:
 - when an event is approved, also publish that event to socials? or email announcements?
 - different types of admin requests - "New recurring event request", "Cancel Event Request", "Event edit Request"
 
-add to navbar:
-contact us / report a bug
-
 
 make it phone-screen friendly!
+
+
+
+once domain is sorted, i need to add the domain to these places:
+- cloudflare turnstile allowed urls
+- supabase redirected urls allowed

@@ -87,3 +87,28 @@
     opacity: 0.5;
     cursor: not-allowed;
 }
+
+.login-success-icon {
+    font-size: 2.5rem;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+}
+  
+.login-back-btn {
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-family: monospace;
+    font-size: 0.78rem;
+    cursor: pointer;
+    margin-top: 1rem;
+    width: 100%;
+    padding: 0.25rem;
+    transition: color 0.15s;
+    border-radius: 0;
+}
+  
+.login-back-btn:hover {
+    color: var(--color-accent);
+    border-color: transparent;
+}

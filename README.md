@@ -18,6 +18,9 @@ Mobile navbar — it'll break on small screens with all those buttons in a row
 
 IDEAS:
 
+
+to be able to click on an event, and have it pop up next to or under the calendar, and it shows the full description as well as submitting edit or remove requests
+
 reoccurring events
 
 final bug checker

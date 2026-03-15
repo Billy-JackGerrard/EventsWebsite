@@ -1,3 +1,7 @@
+TODO ASAP:
+finish convo with claude about approving recurring events, then copy those updated files
+1. why are you approving all the events other than the first one? they havent been approved yet by the admin, what if they're spam?
+2. do you think we should put the recurrence_id in the new db column - recurrence_summary json
 
 Gaps:
 
@@ -8,6 +12,7 @@ No way for admins to edit an event before approving it (e.g. fix a typo)
 No email notifications — admins won't know when something is pending approval unless they log in and check
 Mobile navbar — it'll break on small screens with all those buttons in a row
 
+Biweekly is not an option when adding recurring events.
 
 IDEAS:
 

@@ -161,3 +161,10 @@
     color: var(--color-accent);
     text-decoration: underline;
 }
+
+/* ── Actions slot (e.g. admin approve/reject) ── */
+.event-detail-actions {
+    border-top: 1px solid var(--color-border);
+    margin-top: 0.85rem;
+    padding-top: 0.85rem;
+}

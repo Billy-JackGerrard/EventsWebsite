@@ -7,9 +7,11 @@ type Props = {
   isLoggedIn: boolean;
   onClose: () => void;
   onEdit: (event: Event) => void;
+  /** Optional slot rendered below the description / contact section */
+  actions?: React.ReactNode;
 };
 
-export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit }: Props) {
+export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, actions }: Props) {
   const hasContact =
     event.contact_name || event.contact_email ||
     event.url || event.whatsapp_url;
@@ -118,6 +120,12 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit }: 
               </a>
             </div>
           )}
+        </div>
+      )}
+
+      {actions && (
+        <div className="event-detail-actions">
+          {actions}
         </div>
       )}
     </div>

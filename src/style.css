@@ -111,33 +111,36 @@
   
   /* =====================================================
      LIGHT MODE
+     Flipped scheme: pale gold backgrounds, navy as the
+     structural/header colour, cream text on navy surfaces.
      Only variables that differ from dark mode above.
-     Everything else inherits from :root unchanged.
      ===================================================== */
   @media (prefers-color-scheme: light) {
     :root {
-      /* Page / surface backgrounds */
-      --color-bg-page:        #ede8df;   /* warm off-white page */
-      --color-bg-card:        #ffffff;   /* white cards */
-      --color-bg-inset:       #f5f0e8;   /* cream inputs / inset panels */
-      --color-bg-error:       #fff0f0;   /* pale red error banners */
+      /* Page / surface backgrounds
+         Cards and navbar are now navy (like the dark mode grid/inset),
+         page and inset areas are warm pale gold tones              */
+      --color-bg-page:        #f5edcc;   /* pale gold — outer page */
+      --color-bg-card:        #1a1a2e;   /* deep navy — cards, navbar (same as dark) */
+      --color-bg-inset:       #eddfa0;   /* deeper gold — inputs, inset panels */
+      --color-bg-error:       #3d1a1a;   /* dark red — error banners (same as dark) */
   
-      /* Borders */
-      --color-border:         #d4c9b8;   /* warm grey-tan borders */
-      --color-border-subtle:  #e0d9ce;   /* lighter warm-grey */
+      /* Borders — warm gold tones to sit on the pale gold page */
+      --color-border:         #c9a800;   /* mid gold — field borders */
+      --color-border-subtle:  #d4bc5a;   /* lighter gold — secondary borders */
   
-      /* Accent — slightly deeper gold for contrast on white */
-      --color-accent:         #c8a800;
+      /* Accent — navy, so headers/highlights stand out on gold */
+      --color-accent:         #1a1a2e;
   
       /* Text */
-      --color-text-primary:   #1a1a2e;   /* dark navy — main text */
-      --color-text-dark:      #1a1a2e;   /* same — text on accent buttons */
-      --color-text-muted:     #7a7088;   /* slightly darker muted */
-      --color-text-error:     #cc3333;   /* deeper red readable on light bg */
-      --color-text-link:      #4a5ab8;   /* deeper blue for contrast */
+      --color-text-primary:   #f5f0e8;   /* cream — text on navy surfaces (unchanged) */
+      --color-text-dark:      #f5f0e8;   /* cream — text on navy accent surfaces */
+      --color-text-muted:     #8a7a3a;   /* muted gold-brown — placeholders on gold */
+      --color-text-error:     #ff6b6b;   /* red — unchanged, works on navy */
+      --color-text-link:      #e8c547;   /* bright gold — links on navy surfaces */
   
       /* Decorative */
-      --color-shadow:         #b8a888;   /* slightly darker tan shadow */
+      --color-shadow:         #a89040;   /* deeper gold shadow */
     }
   
     a:hover {

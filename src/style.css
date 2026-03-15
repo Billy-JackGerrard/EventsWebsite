@@ -31,8 +31,8 @@
     font-weight: 400;
   
     color-scheme: light dark;
-    color: rgba(255, 255, 255, 0.87);
-    background-color: #242424;
+    color: var(--color-text-primary);
+    background-color: var(--color-bg-page);
   
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -111,42 +111,32 @@
   
   /* =====================================================
      LIGHT MODE
-     Flipped scheme: pale gold backgrounds, navy as the
-     structural/header colour, cream text on navy surfaces.
-     Only variables that differ from dark mode above.
+     Genuinely light UI: cream/warm-white surfaces,
+     darkened gold accent for contrast, navy text.
      ===================================================== */
   @media (prefers-color-scheme: light) {
     :root {
-      /* Page / surface backgrounds
-         Cards and navbar are now navy (like the dark mode grid/inset),
-         page and inset areas are warm pale gold tones              */
-      --color-bg-page:        #f5edcc;   /* pale gold — outer page */
-      --color-bg-card:        #1a1a2e;   /* deep navy — cards, navbar (same as dark) */
-      --color-bg-inset:       #eddfa0;   /* deeper gold — inputs, inset panels */
-      --color-bg-error:       #3d1a1a;   /* dark red — error banners (same as dark) */
+      /* Page / surface backgrounds */
+      --color-bg-page:          #f5edcc;   /* pale gold — outer page */
+      --color-bg-card:          #fffdf5;   /* warm white — cards, navbar */
+      --color-bg-inset:         #ede8d5;   /* deeper cream — inputs, inset panels */
+      --color-bg-error:         #fde8e8;   /* light red — error banners */
   
-      /* Borders — warm gold tones to sit on the pale gold page */
-      --color-border:         #c9a800;   /* mid gold — field borders */
-      --color-border-subtle:  #d4bc5a;   /* lighter gold — secondary borders */
+      /* Borders */
+      --color-border:           #c9a800;   /* mid gold — field borders */
+      --color-border-subtle:    #d4bc5a;   /* lighter gold — secondary borders */
   
-      /* Accent — navy, so headers/highlights stand out on gold */
-      --color-accent:         #1a1a2e;
+      /* Accent — darkened gold for sufficient contrast on light surfaces */
+      --color-accent:           #b8960a;
   
       /* Text */
-      --color-text-primary:   #f5f0e8;   /* cream — text on navy surfaces (unchanged) */
-      --color-text-dark:      #f5f0e8;   /* cream — text on navy accent surfaces */
-      --color-text-muted:     #8a7a3a;   /* muted gold-brown — placeholders on gold */
-      --color-text-error:     #ff6b6b;   /* red — unchanged, works on navy */
-      --color-text-link:      #e8c547;   /* bright gold — links on navy surfaces */
+      --color-text-primary:     #1a1a2e;   /* navy — main text on light surfaces */
+      --color-text-dark:        #1a1a2e;   /* navy — text on accent-coloured surfaces */
+      --color-text-muted:       #7a7050;   /* warm grey-brown — placeholders */
+      --color-text-error:       #c0392b;   /* darker red — readable on light bg */
+      --color-text-link:        #4a5abf;   /* readable blue on cream */
   
       /* Decorative */
-      --color-shadow:         #a89040;   /* deeper gold shadow */
-    }
-  
-    a:hover {
-      color: #747bff;
-    }
-    button {
-      background-color: #f9f9f9;
+      --color-shadow:           #c9b580;   /* deeper gold shadow — visible on light cards */
     }
   }

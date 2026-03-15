@@ -286,7 +286,7 @@
   
 .calendar-day-number {
     font-size: 0.95rem;
-    color: #d4cfc7;
+    color: var(--color-text-primary);
 }
   
 .calendar-cell--today .calendar-day-number {

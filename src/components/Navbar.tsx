@@ -1,6 +1,6 @@
 import "./Navbar.css";
 
-type View = "calendar" | "login" | "add-event" | "admin-queue";
+type View = "calendar" | "login" | "add-event" | "admin-queue" | "contact";
 
 type Props = {
   currentView: View;
@@ -26,6 +26,13 @@ export default function Navbar({ currentView, isLoggedIn, onNavigate, onLogout }
           onClick={() => onNavigate("add-event")}
         >
           Add Event
+        </button>
+
+        <button
+          className={`navbar-link ${currentView === "contact" ? "navbar-link--active" : ""}`}
+          onClick={() => onNavigate("contact")}
+        >
+          Contact
         </button>
 
         {isLoggedIn ? (

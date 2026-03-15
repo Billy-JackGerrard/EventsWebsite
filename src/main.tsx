@@ -8,8 +8,9 @@ import Login from "./components/Login.tsx";
 import Navbar from "./components/Navbar.tsx";
 import AddEvent from "./components/events/AddEvent.tsx";
 import AdminQueue from "./components/events/AdminQueue.tsx";
+import Contact from "./components/Contact.tsx";
 
-type View = "calendar" | "login" | "add-event" | "admin-queue";
+type View = "calendar" | "login" | "add-event" | "admin-queue" | "contact";
 
 function App() {
   const [view, setView] = useState<View>("calendar");
@@ -59,6 +60,7 @@ function App() {
         {view === "login" && <Login onLogin={handleLogin} />}
         {view === "add-event" && <AddEvent />}
         {view === "admin-queue" && isLoggedIn && <AdminQueue />}
+        {view === "contact" && <Contact />}
       </div>
     </>
   );

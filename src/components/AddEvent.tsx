@@ -31,12 +31,27 @@ const getMinDateTime = (): string => {
   ].join(":");
 };
 
+const isValidEmail = (v: string) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const isValidPhone = (v: string) => !v || /^[+\d\s\-().]{7,20}$/.test(v);
+const isValidUrl   = (v: string) => {
+  if (!v) return true;
+  try { new URL(v.startsWith("http") ? v : `https://${v}`); return true; }
+  catch { return false; }
+};
+
 export default function AddEvent() {
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [location, setLocation] = useState("");
   const [startsAt, setStartsAt] = useState("");
   const [finishesAt, setFinishesAt] = useState("");
+
+  // Contact fields
+  const [contactName, setContactName] = useState("");
+  const [contactEmail, setContactEmail] = useState("");
+  const [contactPhone, setContactPhone] = useState("");
+  const [eventUrl, setEventUrl] = useState("");
+
   const [submitted, setSubmitted] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
@@ -110,6 +125,21 @@ export default function AddEvent() {
       return;
     }
 
+    if (!isValidEmail(contactEmail)) {
+      setError("Please enter a valid email address, or leave it blank.");
+      return;
+    }
+
+    if (!isValidPhone(contactPhone)) {
+      setError("Please enter a valid phone number, or leave it blank.");
+      return;
+    }
+
+    if (!isValidUrl(eventUrl)) {
+      setError("Please enter a valid URL (e.g. https://example.com), or leave it blank.");
+      return;
+    }
+
     if (!turnstileToken) {
       setError("Please complete the captcha check.");
       return;
@@ -138,6 +168,11 @@ export default function AddEvent() {
       return;
     }
 
+    // Normalise URL — ensure it has a scheme
+    const normUrl = eventUrl && !eventUrl.startsWith("http")
+      ? `https://${eventUrl}`
+      : eventUrl || null;
+
     // Captcha passed — insert the event
     const { data: { session } } = await supabase.auth.getSession();
     const admin = !!session?.user;
@@ -150,6 +185,10 @@ export default function AddEvent() {
       finishes_at: finishesAt ? toUTCIso(finishesAt) : null,
       approved: admin,
       admin_id: admin ? session!.user.id : null,
+      contact_name:  contactName  || null,
+      contact_email: contactEmail || null,
+      contact_phone: contactPhone || null,
+      url:   normUrl,
     });
 
     if (error) {
@@ -160,6 +199,16 @@ export default function AddEvent() {
     }
 
     setLoading(false);
+  };
+
+  const resetForm = () => {
+    setTitle(""); setDescription(""); setLocation("");
+    setStartsAt(""); setFinishesAt("");
+    setContactName(""); setContactEmail("");
+    setContactPhone(""); setEventUrl("");
+    setSubmitted(false);
+    setTurnstileToken(null);
+    widgetIdRef.current = null;
   };
 
   if (submitted) {
@@ -174,11 +223,7 @@ export default function AddEvent() {
                 ? "Your event has been published directly to the calendar."
                 : "Thank you! Your event has been submitted and is awaiting approval from an admin."}
             </p>
-            <button className="addevent-btn" onClick={() => {
-              setSubmitted(false);
-              setTurnstileToken(null);
-              widgetIdRef.current = null;
-            }}>
+            <button className="addevent-btn" onClick={resetForm}>
               Add Another Event
             </button>
           </div>
@@ -254,6 +299,55 @@ export default function AddEvent() {
               onChange={e => setFinishesAt(e.target.value)}
             />
           </div>
+        </div>
+
+        {/* Contact section */}
+        <div className="addevent-section-label">Contact Info <span className="addevent-section-optional">(optional)</span></div>
+
+        <div className="addevent-row">
+          <div className="addevent-field">
+            <label className="addevent-label">Name</label>
+            <input
+              className="addevent-input"
+              type="text"
+              placeholder="e.g. Jamie"
+              value={contactName}
+              onChange={e => setContactName(e.target.value)}
+            />
+          </div>
+
+          <div className="addevent-field">
+            <label className="addevent-label">Phone</label>
+            <input
+              className="addevent-input"
+              type="tel"
+              placeholder="e.g. 07700 900123"
+              value={contactPhone}
+              onChange={e => setContactPhone(e.target.value)}
+            />
+          </div>
+        </div>
+
+        <div className="addevent-field">
+          <label className="addevent-label">Email</label>
+          <input
+            className="addevent-input"
+            type="email"
+            placeholder="e.g. hello@example.com"
+            value={contactEmail}
+            onChange={e => setContactEmail(e.target.value)}
+          />
+        </div>
+
+        <div className="addevent-field">
+          <label className="addevent-label">Even Website or Booking Link</label>
+          <input
+            className="addevent-input"
+            type="url"
+            placeholder="e.g. https://eventbrite.com/…"
+            value={eventUrl}
+            onChange={e => setEventUrl(e.target.value)}
+          />
         </div>
 
         {/* Turnstile widget */}

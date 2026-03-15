@@ -1,128 +1,147 @@
 .addevent-page {
-    min-height: 100vh;
-    background: #f5f0e8;
-    display: flex;
-    align-items: flex-start;
-    justify-content: center;
-    padding: 2rem;
+  min-height: 100vh;
+  background: #f5f0e8;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem;
 }
-  
+
 .addevent-card {
-    background: #1a1a2e;
-    border-radius: 2px;
-    box-shadow: 12px 12px 0 #c9b99a;
-    padding: 2rem;
-    width: 520px;
-    max-width: 100%;
+  background: #1a1a2e;
+  border-radius: 2px;
+  box-shadow: 12px 12px 0 #c9b99a;
+  padding: 2rem;
+  width: 520px;
+  max-width: 100%;
 }
-  
+
 .addevent-title {
-    color: #e8c547;
-    font-family: Georgia, serif;
-    text-align: center;
-    margin: 0 0 0.5rem;
-    font-size: 1.4rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+  color: #e8c547;
+  font-family: Georgia, serif;
+  text-align: center;
+  margin: 0 0 0.5rem;
+  font-size: 1.4rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
-  
+
 .addevent-subtitle {
-    color: #6b6b8a;
-    font-size: 0.85rem;
-    text-align: center;
-    margin: 0 0 1.5rem;
-    font-style: italic;
+  color: #6b6b8a;
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0 0 1.5rem;
+  font-style: italic;
 }
-  
+
 .addevent-field {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
 }
-  
+
 .addevent-label {
-    color: #e8c547;
-    font-size: 0.75rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    font-family: monospace;
-    margin-bottom: 0.4rem;
+  color: #e8c547;
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: monospace;
+  margin-bottom: 0.4rem;
 }
-  
-  .addevent-input {
-    background: #16213e;
-    border: 1px solid #2d2d5e;
-    border-radius: 2px;
-    color: #f5f0e8;
-    padding: 0.6rem 0.8rem;
-    font-size: 0.95rem;
-    outline: none;
-    transition: border-color 0.15s;
-    font-family: inherit;
-  }
-  
-  .addevent-input:focus {
-    border-color: #e8c547;
-  }
-  
-  .addevent-textarea {
-    resize: vertical;
-    min-height: 80px;
-  }
-  
-  .addevent-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-  }
-  
-  .addevent-error {
-    background: #3d1a1a;
-    color: #ff6b6b;
-    font-size: 0.85rem;
-    padding: 0.5rem 0.8rem;
-    border-radius: 2px;
-    margin-bottom: 1rem;
-  }
-  
-  .addevent-btn {
-    width: 100%;
-    background: #e8c547;
-    color: #1a1a2e;
-    border: none;
-    border-radius: 2px;
-    padding: 0.75rem;
-    font-size: 1rem;
-    font-weight: bold;
-    font-family: Georgia, serif;
-    cursor: pointer;
-    margin-top: 0.5rem;
-    transition: opacity 0.15s;
-  }
-  
-  .addevent-btn:hover {
-    opacity: 0.9;
-  }
-  
-  .addevent-btn:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-  
-  .addevent-success {
-    text-align: center;
-    padding: 1rem 0;
-  }
-  
-  .addevent-success-icon {
-    font-size: 3rem;
-    color: #e8c547;
-    margin-bottom: 1rem;
-  }
-  
-  .addevent-success-msg {
-    color: #f5f0e8;
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
-    line-height: 1.6;
-  }
+
+/* Section divider label */
+.addevent-section-label {
+  color: #e8c547;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: monospace;
+  padding: 0.6rem 0 0.75rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid #2d2d5e;
+}
+
+.addevent-section-optional {
+  color: #6b6b8a;
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.75rem;
+}
+
+.addevent-input {
+  background: #16213e;
+  border: 1px solid #2d2d5e;
+  border-radius: 2px;
+  color: #f5f0e8;
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.addevent-input:focus {
+  border-color: #e8c547;
+}
+
+.addevent-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.addevent-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.addevent-error {
+  background: #3d1a1a;
+  color: #ff6b6b;
+  font-size: 0.85rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+}
+
+.addevent-btn {
+  width: 100%;
+  background: #e8c547;
+  color: #1a1a2e;
+  border: none;
+  border-radius: 2px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: Georgia, serif;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: opacity 0.15s;
+}
+
+.addevent-btn:hover {
+  opacity: 0.9;
+}
+
+.addevent-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.addevent-success {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+.addevent-success-icon {
+  font-size: 3rem;
+  color: #e8c547;
+  margin-bottom: 1rem;
+}
+
+.addevent-success-msg {
+  color: #f5f0e8;
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}

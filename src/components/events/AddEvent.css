@@ -49,6 +49,13 @@
   margin-bottom: 0.4rem;
 }
 
+.addevent-hint {
+  color: #6b6b8a;
+  font-size: 0.72rem;
+  font-family: monospace;
+  margin-top: 0.35rem;
+}
+
 /* Section divider label */
 .addevent-section-label {
   color: #e8c547;
@@ -59,6 +66,10 @@
   padding: 0.6rem 0 0.75rem;
   margin-top: 0.5rem;
   border-top: 1px solid #2d2d5e;
+}
+
+.addevent-section-label--centered {
+  text-align: center;
 }
 
 .addevent-section-optional {

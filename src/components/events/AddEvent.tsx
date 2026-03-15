@@ -336,8 +336,9 @@ export default function AddEvent() {
         />
 
         {/* Contact section */}
-        <div className="addevent-section-label">
+        <div className="addevent-section-label addevent-section-label--centered">
           Contact Info <span className="addevent-section-optional">(optional)</span>
+          <div className="addevent-hint">Visible publicly on the event listing</div>
         </div>
 
         <div className="addevent-field">

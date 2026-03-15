@@ -1,0 +1,144 @@
+/* ── Recurrence toggle ── */
+.recurrence-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1rem;
+    cursor: pointer;
+    user-select: none;
+  }
+  
+  .recurrence-toggle-track {
+    width: 36px;
+    height: 20px;
+    border-radius: 999px;
+    border: 1px solid #2d2d5e;
+    background: #16213e;
+    position: relative;
+    transition: background 0.2s, border-color 0.2s;
+    flex-shrink: 0;
+  }
+  
+  .recurrence-toggle-track--on {
+    background: #e8c547;
+    border-color: #e8c547;
+  }
+  
+  .recurrence-toggle-thumb {
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: #6b6b8a;
+    transition: transform 0.2s, background 0.2s;
+  }
+  
+  .recurrence-toggle-track--on .recurrence-toggle-thumb {
+    transform: translateX(16px);
+    background: #1a1a2e;
+  }
+  
+  .recurrence-toggle-label {
+    color: #e8c547;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: monospace;
+  }
+  
+  /* ── Recurrence panel ── */
+  .recurrence-panel {
+    background: #16213e;
+    border: 1px solid #2d2d5e;
+    border-radius: 2px;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+    animation: recurrence-in 0.15s ease;
+  }
+  
+  @keyframes recurrence-in {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  
+  .recurrence-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+  }
+  
+  .recurrence-label {
+    color: #e8c547;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    font-family: monospace;
+  }
+  
+  .recurrence-select {
+    background: #1a1a2e;
+    border: 1px solid #2d2d5e;
+    border-radius: 2px;
+    color: #f5f0e8;
+    padding: 0.5rem 0.7rem;
+    font-size: 0.9rem;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+    cursor: pointer;
+    width: 100%;
+  }
+  
+  .recurrence-select:focus {
+    border-color: #e8c547;
+  }
+  
+  .recurrence-inline {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+  }
+  
+  .recurrence-inline .recurrence-select {
+    flex: 1;
+  }
+  
+  .recurrence-inline-sep {
+    color: #6b6b8a;
+    font-size: 0.8rem;
+    font-family: monospace;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  
+  .recurrence-preview {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.7rem;
+    background: rgba(232, 197, 71, 0.07);
+    border: 1px solid rgba(232, 197, 71, 0.2);
+    border-radius: 2px;
+  }
+  
+  .recurrence-preview-icon {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  
+  .recurrence-preview-text {
+    color: #e8c547;
+    font-family: monospace;
+    font-size: 0.78rem;
+    line-height: 1.4;
+  }
+  
+  .recurrence-preview-count {
+    color: #6b6b8a;
+    font-size: 0.72rem;
+  }

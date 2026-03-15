@@ -9,7 +9,6 @@ No way for admins to edit an event before approving it (e.g. fix a typo)
 
 Critical gaps:
 
-there's no way to share or link to a specific event
 No email notifications — admins won't know when something is pending approval unless they log in and check
 Mobile navbar — it'll break on small screens with all those buttons in a row
 
@@ -30,9 +29,7 @@ integrate with socials!!
 for adding events, add a languages box to show interpreters etc
 
 when adding events:
-- add a public contact email/number for that event specifically
 - possible to make the event happen on repeat
-- can add an organiser name (or "added by"?)
 - when their event is approved, they receive an email if they've put one in
 - optionally add an image 
 

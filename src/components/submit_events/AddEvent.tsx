@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from "react";
+import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { supabase } from "../supabaseClient";
+import { expandRecurrences } from "../utils/recurrence";
+import type { RecurrenceRule } from "../utils/recurrence";
+import RecurrencePicker from "./RecurrencePicker";
 import "./AddEvent.css";
 
 declare global {
@@ -10,9 +14,6 @@ declare global {
     };
   }
 }
-
-const toUTCIso = (localDateTimeStr: string): string =>
-  new Date(localDateTimeStr).toISOString();
 
 /**
  * Returns "YYYY-MM-DDTHH:mm" for one hour ago, used as the `min` attribute
@@ -31,12 +32,12 @@ const getMinDateTime = (): string => {
   ].join(":");
 };
 
-const isValidEmail = (v: string) => !v || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
-const isValidPhone = (v: string) => !v || /^[+\d\s\-().]{7,20}$/.test(v);
-const isValidUrl   = (v: string) => {
-  if (!v) return true;
-  try { new URL(v.startsWith("http") ? v : `https://${v}`); return true; }
-  catch { return false; }
+const DEFAULT_RULE: RecurrenceRule = {
+  frequency: "weekly",
+  intervalMonths: 2,
+  useWeekday: false,
+  ordinal: "1st",
+  weekday: 1,
 };
 
 export default function AddEvent() {
@@ -45,34 +46,34 @@ export default function AddEvent() {
   const [location, setLocation] = useState("");
   const [startsAt, setStartsAt] = useState("");
   const [finishesAt, setFinishesAt] = useState("");
-
-  // Contact fields
-  const [contactName, setContactName] = useState("");
-  const [contactEmail, setContactEmail] = useState("");
-  const [contactPhone, setContactPhone] = useState("");
-  const [eventUrl, setEventUrl] = useState("");
-
   const [submitted, setSubmitted] = useState(false);
+  const [submittedCount, setSubmittedCount] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
   const [authChecked, setAuthChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
+  // Recurrence state
+  const [recurrenceEnabled, setRecurrenceEnabled] = useState(false);
+  const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>(DEFAULT_RULE);
+
   const turnstileRef = useRef<HTMLDivElement>(null);
   const widgetIdRef = useRef<string | null>(null);
   const minDateTime = getMinDateTime();
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setIsAdmin(!!session);
       setAuthChecked(true);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAdmin(!!session);
-      setAuthChecked(true);
-    });
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event: AuthChangeEvent, session: Session | null) => {
+        setIsAdmin(!!session);
+        setAuthChecked(true);
+      }
+    );
 
     return () => subscription.unsubscribe();
   }, []);
@@ -125,21 +126,6 @@ export default function AddEvent() {
       return;
     }
 
-    if (!isValidEmail(contactEmail)) {
-      setError("Please enter a valid email address, or leave it blank.");
-      return;
-    }
-
-    if (!isValidPhone(contactPhone)) {
-      setError("Please enter a valid phone number, or leave it blank.");
-      return;
-    }
-
-    if (!isValidUrl(eventUrl)) {
-      setError("Please enter a valid URL (e.g. https://example.com), or leave it blank.");
-      return;
-    }
-
     if (!turnstileToken) {
       setError("Please complete the captcha check.");
       return;
@@ -168,33 +154,44 @@ export default function AddEvent() {
       return;
     }
 
-    // Normalise URL — ensure it has a scheme
-    const normUrl = eventUrl && !eventUrl.startsWith("http")
-      ? `https://${eventUrl}`
-      : eventUrl || null;
-
-    // Captcha passed — insert the event
-    const { data: { session } } = await supabase.auth.getSession();
+    // Captcha passed — build rows to insert
+    const { data: { session } }: { data: { session: Session | null } } =
+      await supabase.auth.getSession();
     const admin = !!session?.user;
 
-    const { error } = await supabase.from("events").insert({
+    const firstStart: Date = new Date(startsAt);
+    const firstFinish: Date | null = finishesAt ? new Date(finishesAt) : null;
+
+    // Generate occurrences (single item if not recurring)
+    const activeRule: RecurrenceRule = recurrenceEnabled
+      ? recurrenceRule
+      : { frequency: "none" };
+
+    const occurrences = expandRecurrences(activeRule, firstStart, firstFinish);
+
+    // If recurring, stamp all with the same recurrence_id
+    const recurrenceId: string | null = recurrenceEnabled && occurrences.length > 1
+      ? crypto.randomUUID()
+      : null;
+
+    const rows = occurrences.map(({ start, finish }: { start: Date; finish: Date | null }) => ({
       title,
       description: description || null,
       location: location || null,
-      starts_at: toUTCIso(startsAt),
-      finishes_at: finishesAt ? toUTCIso(finishesAt) : null,
+      starts_at: start.toISOString(),
+      finishes_at: finish ? finish.toISOString() : null,
       approved: admin,
       admin_id: admin ? session!.user.id : null,
-      contact_name:  contactName  || null,
-      contact_email: contactEmail || null,
-      contact_phone: contactPhone || null,
-      url:   normUrl,
-    });
+      recurrence_id: recurrenceId,
+    }));
 
-    if (error) {
-      setError(error.message);
+    const { error: insertError } = await supabase.from("events").insert(rows);
+
+    if (insertError) {
+      setError(insertError.message);
       if (widgetIdRef.current) window.turnstile.reset(widgetIdRef.current);
     } else {
+      setSubmittedCount(rows.length);
       setSubmitted(true);
     }
 
@@ -202,26 +199,39 @@ export default function AddEvent() {
   };
 
   const resetForm = () => {
-    setTitle(""); setDescription(""); setLocation("");
-    setStartsAt(""); setFinishesAt("");
-    setContactName(""); setContactEmail("");
-    setContactPhone(""); setEventUrl("");
+    setTitle("");
+    setDescription("");
+    setLocation("");
+    setStartsAt("");
+    setFinishesAt("");
     setSubmitted(false);
+    setSubmittedCount(1);
+    setRecurrenceEnabled(false);
+    setRecurrenceRule(DEFAULT_RULE);
     setTurnstileToken(null);
     widgetIdRef.current = null;
   };
 
   if (submitted) {
+    const isRecurring = submittedCount > 1;
     return (
       <div className="addevent-page">
         <div className="addevent-card">
           <div className="addevent-success">
             <div className="addevent-success-icon">✓</div>
-            <h2 className="addevent-title">Event Added!</h2>
+            <h2 className="addevent-title">
+              {isRecurring ? "Recurring Event Added!" : "Event Added!"}
+            </h2>
             <p className="addevent-success-msg">
-              {isAdmin
-                ? "Your event has been published directly to the calendar."
-                : "Thank you! Your event has been submitted and is awaiting approval from an admin."}
+              {isAdmin ? (
+                isRecurring
+                  ? `${submittedCount} occurrences have been published directly to the calendar.`
+                  : "Your event has been published directly to the calendar."
+              ) : (
+                isRecurring
+                  ? `Thank you! ${submittedCount} occurrences have been submitted and are awaiting approval from an admin.`
+                  : "Thank you! Your event has been submitted and is awaiting approval from an admin."
+              )}
             </p>
             <button className="addevent-btn" onClick={resetForm}>
               Add Another Event
@@ -301,60 +311,24 @@ export default function AddEvent() {
           </div>
         </div>
 
-        {/* Contact section */}
-        <div className="addevent-section-label">Contact Info <span className="addevent-section-optional">(optional)</span></div>
-
-        <div className="addevent-row">
-          <div className="addevent-field">
-            <label className="addevent-label">Name</label>
-            <input
-              className="addevent-input"
-              type="text"
-              placeholder="e.g. Jamie"
-              value={contactName}
-              onChange={e => setContactName(e.target.value)}
-            />
-          </div>
-
-          <div className="addevent-field">
-            <label className="addevent-label">Phone</label>
-            <input
-              className="addevent-input"
-              type="tel"
-              placeholder="e.g. 07700 900123"
-              value={contactPhone}
-              onChange={e => setContactPhone(e.target.value)}
-            />
-          </div>
-        </div>
-
-        <div className="addevent-field">
-          <label className="addevent-label">Email</label>
-          <input
-            className="addevent-input"
-            type="email"
-            placeholder="e.g. hello@example.com"
-            value={contactEmail}
-            onChange={e => setContactEmail(e.target.value)}
-          />
-        </div>
-
-        <div className="addevent-field">
-          <label className="addevent-label">Even Website or Booking Link</label>
-          <input
-            className="addevent-input"
-            type="url"
-            placeholder="e.g. https://eventbrite.com/…"
-            value={eventUrl}
-            onChange={e => setEventUrl(e.target.value)}
-          />
-        </div>
+        {/* Recurrence picker */}
+        <RecurrencePicker
+          enabled={recurrenceEnabled}
+          rule={recurrenceRule}
+          startsAt={startsAt}
+          onToggle={setRecurrenceEnabled}
+          onRuleChange={setRecurrenceRule}
+        />
 
         {/* Turnstile widget */}
         <div ref={turnstileRef} style={{ margin: "1rem 0" }} />
 
         <button className="addevent-btn" onClick={handleSubmit} disabled={loading || !turnstileToken}>
-          {loading ? "Submitting…" : "Add Event"}
+          {loading
+            ? "Submitting…"
+            : recurrenceEnabled
+              ? "Add Recurring Event"
+              : "Add Event"}
         </button>
       </div>
     </div>

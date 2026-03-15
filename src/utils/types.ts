@@ -12,4 +12,5 @@ export type Event = {
   contact_email?: string;
   contact_phone?: string;
   url?: string;
+  recurrence_id?: string
 };

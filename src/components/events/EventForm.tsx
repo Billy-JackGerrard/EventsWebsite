@@ -42,6 +42,8 @@ type Props = {
   onSubmit: (rows: EventFormRow[]) => void;
   /** Optional cancel button — shown when provided */
   onCancel?: () => void;
+  /** Called whenever the starts_at field changes — lets parents (e.g. EditEvent) track the live value */
+  onStartsAtChange?: (value: string) => void;
   /** Extra content rendered below the fields but above the submit button (e.g. Turnstile) */
   children?: React.ReactNode;
 };
@@ -87,6 +89,7 @@ export default function EventForm({
   submitting = false,
   onSubmit,
   onCancel,
+  onStartsAtChange,
   children,
 }: Props) {
   const [title, setTitle] = useState(initialValues?.title ?? "");
@@ -132,6 +135,7 @@ export default function EventForm({
   const handleStartsAtChange = (value: string) => {
     setStartsAt(value);
     if (finishesAt && finishesAt <= value) setFinishesAt("");
+    onStartsAtChange?.(value);
   };
 
   const handleSubmit = () => {

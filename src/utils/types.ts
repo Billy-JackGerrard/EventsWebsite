@@ -3,6 +3,8 @@ export type Event = {
   title: string;
   description?: string;
   location?: string;
+  price?: string;
+  booking_info?: string;
   starts_at: string;
   finishes_at?: string;
   admin_id?: string;
@@ -12,5 +14,5 @@ export type Event = {
   contact_email?: string;
   url?: string;
   whatsapp_url?: string;
-  recurrence_id?: string
+  recurrence_id?: string;
 };

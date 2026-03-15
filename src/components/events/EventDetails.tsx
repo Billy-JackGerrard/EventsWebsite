@@ -11,7 +11,6 @@ export default function EventDetailCard({ event, onClose }: Props) {
   const hasContact =
     event.contact_name || event.contact_email ||
     event.url || event.whatsapp_url;
-
   const normUrl = event.url
     ? (event.url.startsWith("http") ? event.url : `https://${event.url}`)
     : null;
@@ -46,6 +45,20 @@ export default function EventDetailCard({ event, onClose }: Props) {
         <div className="event-detail-row">
           <span className="event-detail-icon">📍</span>
           <span className="event-detail-text">{event.location}</span>
+        </div>
+      )}
+
+      {event.price && (
+        <div className="event-detail-row">
+          <span className="event-detail-icon">🎟</span>
+          <span className="event-detail-text">{event.price}</span>
+        </div>
+      )}
+
+      {event.booking_info && (
+        <div className="event-detail-row">
+          <span className="event-detail-icon">📋</span>
+          <span className="event-detail-text">{event.booking_info}</span>
         </div>
       )}
 

@@ -48,6 +48,8 @@ export default function AddEvent() {
   const [contactEmail, setContactEmail] = useState("");
   const [url, setUrl] = useState("");
   const [whatsappUrl, setWhatsappUrl] = useState("");
+  const [price, setPrice] = useState("");
+  const [bookingInfo, setBookingInfo] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
   const [isAdmin, setIsAdmin] = useState(false);
@@ -199,6 +201,8 @@ export default function AddEvent() {
       contact_email: contactEmail || null,
       url: url || null,
       whatsapp_url: whatsappUrl || null,
+      price: price || null,
+      booking_info: bookingInfo || null,
     }));
 
     const { error: insertError } = await supabase.from("events").insert(rows);
@@ -224,6 +228,8 @@ export default function AddEvent() {
     setContactEmail("");
     setUrl("");
     setWhatsappUrl("");
+    setPrice("");
+    setBookingInfo("");
     setSubmitted(false);
     setSubmittedCount(1);
     setRecurrenceEnabled(false);
@@ -339,6 +345,31 @@ export default function AddEvent() {
           onToggle={setRecurrenceEnabled}
           onRuleChange={setRecurrenceRule}
         />
+
+        {/* Pricing & booking */}
+        <div className="addevent-row">
+          <div className="addevent-field">
+            <label className="addevent-label">Price</label>
+            <input
+              className="addevent-input"
+              type="text"
+              placeholder="e.g. Free, £5, £3–£8"
+              value={price}
+              onChange={e => setPrice(e.target.value)}
+            />
+          </div>
+
+          <div className="addevent-field">
+            <label className="addevent-label">How to Book</label>
+            <input
+              className="addevent-input"
+              type="text"
+              placeholder="e.g. Just turn up"
+              value={bookingInfo}
+              onChange={e => setBookingInfo(e.target.value)}
+            />
+          </div>
+        </div>
 
         {/* Contact section */}
         <div className="addevent-section-label addevent-section-label--centered">

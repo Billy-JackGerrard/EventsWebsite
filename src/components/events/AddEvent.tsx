@@ -1,18 +1,10 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import type { AuthChangeEvent, Session } from "@supabase/supabase-js";
 import { supabase } from "../../supabaseClient";
+import { useTurnstile } from "../../hooks/useTurnstile";
 import EventForm from "./EventForm";
 import type { EventFormRow } from "./EventForm";
 import "./AddEvent.css";
-
-declare global {
-  interface Window {
-    turnstile: {
-      render: (container: string | HTMLElement, options: Record<string, unknown>) => string;
-      reset: (widgetId: string) => void;
-    };
-  }
-}
 
 export default function AddEvent() {
   const [submitted, setSubmitted] = useState(false);
@@ -21,11 +13,10 @@ export default function AddEvent() {
   const [authChecked, setAuthChecked] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [formKey, setFormKey] = useState(0);
 
-  const turnstileRef = useRef<HTMLDivElement>(null);
-  const widgetIdRef = useRef<string | null>(null);
+  const { containerRef: turnstileRef, token: turnstileToken, reset: resetTurnstile } =
+    useTurnstile(import.meta.env.VITE_TURNSTILE_SITE_KEY, formKey);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
@@ -42,35 +33,6 @@ export default function AddEvent() {
 
     return () => subscription.unsubscribe();
   }, []);
-
-  // Load the Turnstile script and render the widget
-  useEffect(() => {
-    const scriptId = "cf-turnstile-script";
-
-    const renderWidget = () => {
-      if (turnstileRef.current && window.turnstile && !widgetIdRef.current) {
-        widgetIdRef.current = window.turnstile.render(turnstileRef.current, {
-          sitekey: import.meta.env.VITE_TURNSTILE_SITE_KEY,
-          callback: (token: string) => setTurnstileToken(token),
-          "expired-callback": () => setTurnstileToken(null),
-          "error-callback": () => setTurnstileToken(null),
-          theme: "dark",
-        });
-      }
-    };
-
-    if (!document.getElementById(scriptId)) {
-      const script = document.createElement("script");
-      script.id = scriptId;
-      script.src = "https://challenges.cloudflare.com/turnstile/v0/api.js";
-      script.async = true;
-      script.defer = true;
-      script.onload = renderWidget;
-      document.head.appendChild(script);
-    } else if (window.turnstile) {
-      renderWidget();
-    }
-  }, [formKey]); // re-run when form resets so widget re-renders
 
   const handleSubmit = async (rows: EventFormRow[]) => {
     if (!turnstileToken) {
@@ -95,8 +57,7 @@ export default function AddEvent() {
 
     if (!verifyData.success) {
       setError("Captcha verification failed. Please try again.");
-      setTurnstileToken(null);
-      if (widgetIdRef.current) window.turnstile.reset(widgetIdRef.current);
+      resetTurnstile();
       setLoading(false);
       return;
     }
@@ -115,7 +76,7 @@ export default function AddEvent() {
 
     if (insertError) {
       setError(insertError.message);
-      if (widgetIdRef.current) window.turnstile.reset(widgetIdRef.current);
+      resetTurnstile();
     } else {
       setSubmittedCount(rows.length);
       setSubmitted(true);
@@ -128,9 +89,7 @@ export default function AddEvent() {
     setSubmitted(false);
     setSubmittedCount(1);
     setError(null);
-    setTurnstileToken(null);
-    widgetIdRef.current = null;
-    setFormKey(k => k + 1); // remount EventForm + re-render Turnstile
+    setFormKey(k => k + 1); // remounts EventForm and re-renders Turnstile via formKey
   };
 
   if (submitted) {
@@ -183,7 +142,7 @@ export default function AddEvent() {
           submitting={loading || !turnstileToken}
           onSubmit={handleSubmit}
         >
-          {/* Turnstile lives here so it stays inside the card */}
+          {/* Turnstile widget container — managed by useTurnstile */}
           <div ref={turnstileRef} style={{ margin: "1rem 0" }} />
         </EventForm>
       </div>

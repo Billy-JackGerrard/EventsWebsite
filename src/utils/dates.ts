@@ -52,3 +52,37 @@ export const formatDateTimeRange = (start: string, finish?: string): string => {
 
   return `${timeStr} · ${startDate}`;
 };
+
+/**
+ * Converts a UTC ISO string from Supabase into a "YYYY-MM-DDTHH:mm" local
+ * string suitable for <input type="datetime-local"> values.
+ */
+export const isoToLocal = (isoString: string): string => {
+  const d = parseLocal(isoString);
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, "0"),
+    String(d.getDate()).padStart(2, "0"),
+  ].join("-") + "T" + [
+    String(d.getHours()).padStart(2, "0"),
+    String(d.getMinutes()).padStart(2, "0"),
+  ].join(":");
+};
+
+/**
+ * Returns the minimum datetime string (1 hour in the past) for datetime-local
+ * inputs — prevents accidental far-past submissions while allowing slight
+ * back-dating.
+ */
+export const getMinDateTime = (): string => {
+  const d = new Date(Date.now() - 60 * 60 * 1000);
+  d.setSeconds(0, 0);
+  return [
+    d.getFullYear(),
+    String(d.getMonth() + 1).padStart(2, "0"),
+    String(d.getDate()).padStart(2, "0"),
+  ].join("-") + "T" + [
+    String(d.getHours()).padStart(2, "0"),
+    String(d.getMinutes()).padStart(2, "0"),
+  ].join(":");
+};

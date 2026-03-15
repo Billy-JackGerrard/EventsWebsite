@@ -22,19 +22,28 @@ export default function Calendar({ isLoggedIn, onEditEvent }: Props) {
 
   const [today, setToday] = useState(() => new Date());
 
+  // Fix: the previous implementation returned the clearInterval callback from
+  // inside the setTimeout callback, where it had no effect. The interval is now
+  // captured in the outer scope so the useEffect cleanup can cancel it.
   useEffect(() => {
-    const msUntilMidnight = () => {
+    let interval: ReturnType<typeof setInterval>;
+
+    const msUntilMidnight = (): number => {
       const now = new Date();
       const midnight = new Date(now);
       midnight.setHours(24, 0, 0, 0);
       return midnight.getTime() - now.getTime();
     };
+
     const timeout = setTimeout(() => {
       setToday(new Date());
-      const interval = setInterval(() => setToday(new Date()), 24 * 60 * 60 * 1000);
-      return () => clearInterval(interval);
+      interval = setInterval(() => setToday(new Date()), 24 * 60 * 60 * 1000);
     }, msUntilMidnight());
-    return () => clearTimeout(timeout);
+
+    return () => {
+      clearTimeout(timeout);
+      clearInterval(interval);
+    };
   }, []);
 
   const [current, setCurrent] = useState({

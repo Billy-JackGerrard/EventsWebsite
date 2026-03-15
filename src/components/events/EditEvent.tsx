@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
-import { expandRecurrences } from "../../utils/recurrence";
+import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
+import { isoToLocal } from "../../utils/dates";
 import RecurrencePicker from "./RecurrencePicker";
 import EventForm from "./EventForm";
 import type { EventFormRow } from "./EventForm";
@@ -17,24 +18,20 @@ type Props = {
 
 type RecurringScope = "single" | "all-future";
 
-const DEFAULT_RULE: RecurrenceRule = { frequency: "weekly", intervalMonths: 2, useWeekday: false };
-
 export default function EditEvent({ event, onSaved, onCancel }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch the admin user id once on mount rather than on every save (#11)
+  const [adminId, setAdminId] = useState<string | undefined>(undefined);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      setAdminId(user?.id);
+    });
+  }, []);
+
   // Tracks the form's current starts_at so RecurrencePicker always reflects the live date
-  const [liveStartsAt, setLiveStartsAt] = useState<string>(() => {
-    const d = new Date(event.starts_at);
-    return [
-      d.getFullYear(),
-      String(d.getMonth() + 1).padStart(2, "0"),
-      String(d.getDate()).padStart(2, "0"),
-    ].join("-") + "T" + [
-      String(d.getHours()).padStart(2, "0"),
-      String(d.getMinutes()).padStart(2, "0"),
-    ].join(":");
-  });
+  const [liveStartsAt, setLiveStartsAt] = useState<string>(() => isoToLocal(event.starts_at));
 
   // Recurrence editing — only relevant when event.recurrence_id is set
   const [recurrenceOpen, setRecurrenceOpen] = useState(false);
@@ -44,8 +41,6 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
 
   // For field edits on recurring events: hold the validated row while we ask scope
   const [pendingRow, setPendingRow] = useState<EventFormRow | null>(null);
-
-  // ── Helpers ──────────────────────────────────────────────────────
 
   // ── Step 1: EventForm submits ─────────────────────────────────────
 
@@ -66,28 +61,25 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
 
   // ── Field-only edit (patch existing rows) ────────────────────────
 
-  const buildPatch = async (row: EventFormRow) => {
-    const { data: { user } } = await supabase.auth.getUser();
-    return {
-      title:         row.title,
-      description:   row.description,
-      location:      row.location,
-      starts_at:     row.starts_at,
-      finishes_at:   row.finishes_at,
-      contact_name:  row.contact_name,
-      contact_email: row.contact_email,
-      url:           row.url,
-      whatsapp_url:  row.whatsapp_url,
-      price:         row.price,
-      booking_info:  row.booking_info,
-      admin_id:      user?.id,
-    };
-  };
+  const buildPatch = (row: EventFormRow) => ({
+    title:         row.title,
+    description:   row.description,
+    location:      row.location,
+    starts_at:     row.starts_at,
+    finishes_at:   row.finishes_at,
+    contact_name:  row.contact_name,
+    contact_email: row.contact_email,
+    url:           row.url,
+    whatsapp_url:  row.whatsapp_url,
+    price:         row.price,
+    booking_info:  row.booking_info,
+    admin_id:      adminId,
+  });
 
   const applyFieldEdit = async (row: EventFormRow, scope: RecurringScope) => {
     setSaving(true);
     setError(null);
-    const patch = await buildPatch(row);
+    const patch = buildPatch(row);
 
     if (scope === "single") {
       const { data, error: err } = await supabase
@@ -148,7 +140,6 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
   const applyRecurrenceChange = async (row: EventFormRow) => {
     setSaving(true);
     setError(null);
-    const { data: { user } } = await supabase.auth.getUser();
 
     // 1. Delete all future occurrences in this recurrence group
     const { error: deleteErr } = await supabase
@@ -159,13 +150,21 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
 
     if (deleteErr) { setError(deleteErr.message); setSaving(false); return; }
 
-    // 2. Expand the new rule from the edited start time
+    // 2. Expand the new rule from the edited start time.
+    //    Fix: when recurrenceEnabled is false the user toggled recurrence off,
+    //    so we use frequency "none" to produce a single occurrence rather than
+    //    expanding with whatever rule happens to be set.
+    const activeRule: RecurrenceRule = recurrenceEnabled
+      ? recurrenceRule
+      : { frequency: "none" };
+
     const firstStart  = new Date(row.starts_at);
     const firstFinish = row.finishes_at ? new Date(row.finishes_at) : null;
-    const occurrences = expandRecurrences(recurrenceRule, firstStart, firstFinish);
+    const occurrences = expandRecurrences(activeRule, firstStart, firstFinish);
 
-    // 3. Assign a new recurrence_id (the old one is now orphaned / partly used by past events)
-    const newRecurrenceId = crypto.randomUUID();
+    // 3. Assign a new recurrence_id (the old one is now orphaned / partly used
+    //    by past events). Only set one when there are multiple occurrences.
+    const newRecurrenceId = occurrences.length > 1 ? crypto.randomUUID() : null;
 
     const newRows = occurrences.map(({ start, finish }) => ({
       title:          row.title,
@@ -180,7 +179,7 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
       price:          row.price,
       booking_info:   row.booking_info,
       approved:       true,
-      admin_id:       user?.id,
+      admin_id:       adminId,
       recurrence_id:  newRecurrenceId,
     }));
 

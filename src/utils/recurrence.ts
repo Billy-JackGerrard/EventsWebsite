@@ -27,6 +27,13 @@ export type RecurrenceRule = {
   // they are always derived from the firstStart date at expansion time.
 };
 
+/** Shared default used by EventForm and EditEvent. */
+export const DEFAULT_RULE: RecurrenceRule = {
+  frequency: "weekly",
+  intervalMonths: 2,
+  useWeekday: false,
+};
+
 /** Returns which ordinal occurrence of a weekday a date falls on within its month. */
 export function getOrdinalOfWeekdayInMonth(date: Date): WeekdayOrdinal {
   const weekday = date.getDay();
@@ -174,7 +181,6 @@ export function expandRecurrences(
     const { intervalMonths = 2, useWeekday = false } = rule;
     let year = firstStart.getFullYear();
     let month = firstStart.getMonth();
-    let isFirst = true;
 
     while (true) {
       let s: Date | null = null;
@@ -190,13 +196,12 @@ export function expandRecurrences(
 
       if (s) {
         if (s > horizon) break;
-        if (isFirst || s >= firstStart) {
+        if (s >= firstStart) {
           const f = duration !== null ? new Date(s.getTime() + duration) : null;
           results.push({ start: s, finish: f });
         }
       }
 
-      isFirst = false;
       month += intervalMonths;
       while (month > 11) { month -= 12; year++; }
     }

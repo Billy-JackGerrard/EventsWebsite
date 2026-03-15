@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from "react";
-import { expandRecurrences } from "../../utils/recurrence";
+import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
+import { isoToLocal, getMinDateTime } from "../../utils/dates";
 import type { Event } from "../../utils/types";
 import RecurrencePicker from "./RecurrencePicker";
 
@@ -46,38 +47,6 @@ type Props = {
   onStartsAtChange?: (value: string) => void;
   /** Extra content rendered below the fields but above the submit button (e.g. Turnstile) */
   children?: React.ReactNode;
-};
-
-const DEFAULT_RULE: RecurrenceRule = {
-  frequency: "weekly",
-  intervalMonths: 2,
-  useWeekday: false,
-};
-
-const getMinDateTime = (): string => {
-  const d = new Date(Date.now() - 60 * 60 * 1000);
-  d.setSeconds(0, 0);
-  return [
-    d.getFullYear(),
-    String(d.getMonth() + 1).padStart(2, "0"),
-    String(d.getDate()).padStart(2, "0"),
-  ].join("-") + "T" + [
-    String(d.getHours()).padStart(2, "0"),
-    String(d.getMinutes()).padStart(2, "0"),
-  ].join(":");
-};
-
-/** Convert a UTC ISO string from Supabase to a "YYYY-MM-DDTHH:mm" local string for datetime-local inputs */
-const isoToLocal = (iso: string): string => {
-  const d = new Date(iso);
-  return [
-    d.getFullYear(),
-    String(d.getMonth() + 1).padStart(2, "0"),
-    String(d.getDate()).padStart(2, "0"),
-  ].join("-") + "T" + [
-    String(d.getHours()).padStart(2, "0"),
-    String(d.getMinutes()).padStart(2, "0"),
-  ].join(":");
 };
 
 export default function EventForm({

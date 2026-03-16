@@ -274,7 +274,11 @@ export default function EventForm({
           type="datetime-local"
           min={startsAt || minDateTime}
           value={finishesAt}
-          onChange={e => setFinishesAt(e.target.value)}
+          onChange={e => {
+            const val = e.target.value;
+            if (val && startsAt && val.slice(0, 10) === startsAt.slice(0, 10) && val <= startsAt) return;
+            setFinishesAt(val);
+          }}
         />
       </div>
 

@@ -1,33 +1,39 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
+import { toLocalDateKey } from "../utils/dates";
 
 // Shared base query — approved events ordered by start time.
 const approvedEvents = () =>
   supabase.from("events").select("*").eq("approved", true).order("starts_at", { ascending: true });
 
-/**
- * Fetches approved events for the given month/year and a separate
- * forward-looking list used by the search dropdown.
- *
- * Search window: up to 1 year ahead. The 10-result cap is applied by
- * Calendar.tsx after filtering so the cap always reflects actual matches
- * rather than the raw pool size.
- */
-export function useCalendarEvents(month: number, year: number) {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [allEvents, setAllEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
+type MonthKey = { month: number; year: number };
 
-  // Current-month events for the grid
+/**
+ * Fetches approved events for a range of months (windowStart → windowEnd)
+ * and a separate forward-looking list used by the search dropdown.
+ *
+ * Returns:
+ *   eventsByDate — Map<"YYYY-MM-DD", Event[]> covering the whole window
+ *   allEvents    — forward-looking events for search
+ *   loading      — true while the initial fetch is in-flight
+ */
+export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
+  const [events,   setEvents]   = useState<Event[]>([]);
+  const [allEvents, setAllEvents] = useState<Event[]>([]);
+  const [loading,  setLoading]  = useState(true);
+
+  // Stable cache keys so the effect only re-fires when the window actually changes
+  const fromKey = `${windowStart.year}-${windowStart.month}`;
+  const toKey   = `${windowEnd.year}-${windowEnd.month}`;
+
   useEffect(() => {
     let isCurrent = true;
-    setEvents([]);
     setLoading(true);
 
     const fetchEvents = async () => {
-      const fromDate = new Date(year, month, 1, 0, 0, 0, 0);
-      const toDate   = new Date(year, month + 1, 0, 23, 59, 59, 999);
+      const fromDate = new Date(windowStart.year, windowStart.month, 1, 0, 0, 0, 0);
+      const toDate   = new Date(windowEnd.year, windowEnd.month + 1, 0, 23, 59, 59, 999);
 
       const { data, error } = await approvedEvents()
         .or(
@@ -43,11 +49,10 @@ export function useCalendarEvents(month: number, year: number) {
 
     fetchEvents();
     return () => { isCurrent = false; };
-  }, [month, year]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fromKey, toKey]);
 
-  // Forward-looking events for the search dropdown.
-  // Fetches the full year window; the 10-result cap is applied after
-  // filtering in Calendar so the cap reflects actual matches.
+  // Forward-looking events for the search dropdown (up to 1 year ahead).
   useEffect(() => {
     const fetchAll = async () => {
       const now = new Date();
@@ -63,5 +68,25 @@ export function useCalendarEvents(month: number, year: number) {
     fetchAll();
   }, []);
 
-  return { events, allEvents, loading };
+  // Build eventsByDate map from the fetched events
+  const eventsByDate = useMemo(() => {
+    const map = new Map<string, Event[]>();
+    for (const e of events) {
+      const cursor = new Date(e.starts_at);
+      cursor.setHours(0, 0, 0, 0);
+
+      const end = e.finishes_at ? new Date(e.finishes_at) : new Date(e.starts_at);
+      end.setHours(0, 0, 0, 0);
+
+      while (cursor <= end) {
+        const key = toLocalDateKey(cursor.toISOString());
+        if (!map.has(key)) map.set(key, []);
+        map.get(key)!.push(e);
+        cursor.setDate(cursor.getDate() + 1);
+      }
+    }
+    return map;
+  }, [events]);
+
+  return { eventsByDate, allEvents, loading };
 }

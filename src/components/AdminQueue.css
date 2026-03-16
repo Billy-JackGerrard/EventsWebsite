@@ -169,3 +169,12 @@
   border-color: var(--color-text-primary);
   opacity: 1;
 }
+
+
+.queue-event-description {
+  color: var(--color-text-primary);
+  font-size: 0.85rem;
+  opacity: 0.85;
+  margin-top: 0.4rem;
+  line-height: 1.4;
+}

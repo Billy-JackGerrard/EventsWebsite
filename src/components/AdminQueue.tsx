@@ -191,9 +191,13 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
                       <div className="queue-event-meta">📍 {ev.location}</div>
                     )}
 
+                    {ev.description && (
+                      <div className="queue-event-description">{ev.description}</div>
+                    )}
+
                     {seriesCount && (
                       <div className="queue-event-recurrence-badge">
-                        ↻ Recurring series · {seriesCount} occurrence{seriesCount !== 1 ? "s" : ""}
+                        ↻ Recurring series
                       </div>
                     )}
                   </div>

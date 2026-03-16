@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";

@@ -434,6 +434,8 @@
 
 @media (prefers-color-scheme: dark) {
     .calendar-cell--today { background: rgba(59, 130, 246, 0.22); }
+    .calendar-cell--empty   { background: var(--color-bg-page); }
+    .calendar-cell--weekend:not(.calendar-cell--empty):not(.calendar-cell--selected) { background: var(--color-bg-inset); }
 }
 
 .calendar-day-number { font-size: 0.8rem; color: var(--color-text-primary); align-self: flex-end; line-height: 1; margin-bottom: 2px; }

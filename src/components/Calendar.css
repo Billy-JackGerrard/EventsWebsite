@@ -426,8 +426,8 @@
     background: rgba(37, 99, 235, 0.08);
 }
 
-.calendar-cell--empty   { cursor: default; background: var(--color-bg-page); }
-.calendar-cell--weekend:not(.calendar-cell--empty):not(.calendar-cell--selected) { background: var(--color-bg-inset); }
+.calendar-cell--empty   { cursor: default; background: var(--color-bg-inset); }
+.calendar-cell--weekend:not(.calendar-cell--empty):not(.calendar-cell--selected) { background: var(--color-bg-page); }
 .calendar-cell--today   { background: rgba(37, 99, 235, 0.12); }
 .calendar-cell--selected,
 .calendar-cell--selected:hover { background: var(--color-accent); }

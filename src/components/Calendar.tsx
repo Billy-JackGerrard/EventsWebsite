@@ -75,7 +75,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
       </div>
       <div className="calendar-grid">
         {cells.map((day, i) => {
-          const count = day ? eventsOnDay(day).length : 0;
+          const dayEvents = day ? eventsOnDay(day) : [];
           const colIndex = i % 7;
           const isWeekend = colIndex === 5 || colIndex === 6;
           const cellClass = [
@@ -86,12 +86,31 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
             isWeekend              ? "calendar-cell--weekend"  : "",
           ].filter(Boolean).join(" ");
 
+          const MAX_DOTS = 3;
+          const visibleEvents = dayEvents.slice(0, MAX_DOTS);
+          const overflow = dayEvents.length - MAX_DOTS;
+
           return (
             <div key={i} className={cellClass} onClick={() => { if (day) onSelectDay(day, month, year); }}>
               {day && (
                 <>
                   <span className="calendar-day-number">{day}</span>
-                  {count > 0 && <span className="calendar-event-dot" />}
+                  {dayEvents.length > 0 && (
+                    <div className="calendar-event-chips">
+                      {visibleEvents.map((ev, j) => (
+                        <span
+                          key={j}
+                          className="calendar-event-chip"
+                          style={{ background: CATEGORY_COLOURS[ev.category] }}
+                        >
+                          {ev.title}
+                        </span>
+                      ))}
+                      {overflow > 0 && (
+                        <span className="calendar-event-chip-overflow">+{overflow} more</span>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
             </div>

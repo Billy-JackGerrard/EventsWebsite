@@ -405,16 +405,19 @@
 }
 
 .calendar-cell {
-    aspect-ratio: 1;
+    min-height: 5.5rem;
     display: flex;
     flex-direction: column;
-    align-items: center;
-    justify-content: center;
+    align-items: stretch;
+    justify-content: flex-start;
     cursor: pointer;
     border-radius: 2px;
     position: relative;
     background: var(--color-bg-card);
     transition: background 0.15s;
+    padding: 0.3rem 0.25rem 0.25rem;
+    box-sizing: border-box;
+    gap: 2px;
 }
 
 .calendar-cell:hover:not(.calendar-cell--empty):not(.calendar-cell--selected) {
@@ -431,21 +434,42 @@
     .calendar-cell--today { background: rgba(59, 130, 246, 0.22); }
 }
 
-.calendar-day-number { font-size: 0.9rem; color: var(--color-text-primary); }
+.calendar-day-number { font-size: 0.8rem; color: var(--color-text-primary); align-self: flex-end; line-height: 1; margin-bottom: 2px; }
 .calendar-cell--today    .calendar-day-number { color: var(--color-accent); font-weight: bold; }
 .calendar-cell--selected .calendar-day-number,
 .calendar-cell--selected:hover .calendar-day-number { color: var(--color-text-dark); }
 
-.calendar-event-dot {
-    width: 4px;
-    height: 4px;
-    border-radius: 50%;
-    background: var(--color-accent);
-    position: absolute;
-    bottom: 3px;
+.calendar-event-chips {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    width: 100%;
 }
 
-.calendar-cell--selected .calendar-event-dot { background: var(--color-text-dark); }
+.calendar-event-chip {
+    display: block;
+    width: 100%;
+    border-radius: 3px;
+    padding: 1px 4px;
+    font-size: 0.62rem;
+    font-weight: 600;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.5;
+    box-sizing: border-box;
+}
+
+.calendar-event-chip-overflow {
+    font-size: 0.6rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    padding-left: 4px;
+    line-height: 1.4;
+}
+
+.calendar-cell--selected .calendar-event-chip-overflow { color: var(--color-text-dark); }
 
 /* ── Event detail full page ── */
 .event-detail-page {

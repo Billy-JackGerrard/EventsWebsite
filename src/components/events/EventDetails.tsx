@@ -75,28 +75,26 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         )}
       </div>
 
-      {event.event_type && (
+      {(event.event_type === 'in_person' || event.event_type === 'both') && (
         <div className="event-detail-row">
-          <span className="event-detail-icon">
-            {event.event_type === 'both' ? '📍💻' : event.event_type === 'online' ? '💻' : '📍'}
-          </span>
+          <span className="event-detail-icon">📍</span>
           <span className="event-detail-text">
-            {event.event_type === 'both' ? 'In person & online' : event.event_type === 'online' ? 'Online event' : 'In-person event'}
+            {[event.location, event.postcode].filter(Boolean).join(", ")}
           </span>
         </div>
       )}
 
-      {event.location && (
+      {(event.event_type === 'online' || event.event_type === 'both') && (
         <div className="event-detail-row">
-          <span className="event-detail-icon">🏠</span>
-          <span className="event-detail-text">{event.location}{event.postcode ? `, ${event.postcode}` : ''}</span>
+          <span className="event-detail-icon">💻</span>
+          <span className="event-detail-text">Online event</span>
         </div>
       )}
 
-      {!event.location && event.postcode && (
+      {event.accessibility && event.accessibility.length > 0 && (
         <div className="event-detail-row">
-          <span className="event-detail-icon">🏠</span>
-          <span className="event-detail-text">{event.postcode}</span>
+          <span className="event-detail-icon">🤟</span>
+          <span className="event-detail-text">{event.accessibility.join(" · ")}</span>
         </div>
       )}
 

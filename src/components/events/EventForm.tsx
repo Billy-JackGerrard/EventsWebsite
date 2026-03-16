@@ -23,6 +23,7 @@ export type EventFormRow = {
   url: string | null;
   price: string | null;
   booking_info: string | null;
+  accessibility: string[];
   recurrence: RecurrenceRule | null;
 };
 
@@ -77,6 +78,14 @@ export default function EventForm({
   const categoryRef = useRef<HTMLDivElement>(null);
   const [internalError, setInternalError] = useState<string | null>(null);
 
+  const [accessibility, setAccessibility] = useState<string[]>(initialValues?.accessibility ?? []);
+
+  const toggleAccessibility = (option: string) => {
+    setAccessibility(prev =>
+      prev.includes(option) ? prev.filter(o => o !== option) : [...prev, option]
+    );
+  };
+
   const [recurrenceEnabled, setRecurrenceEnabled] = useState(false);
   const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>(DEFAULT_RULE);
 
@@ -114,6 +123,7 @@ export default function EventForm({
       setPrice(initialValues.price ?? "");
       setBookingInfo(initialValues.booking_info ?? "");
       setCategory(initialValues.category ?? "");
+      setAccessibility(initialValues.accessibility ?? []);
       setRecurrenceEnabled(false);
       setRecurrenceRule(DEFAULT_RULE);
       setInternalError(null);
@@ -157,6 +167,10 @@ export default function EventForm({
       setInternalError("Please select at least one event type.");
       return;
     }
+    if (isInPerson && !location) {
+      setInternalError("Please enter a location for this in-person event.");
+      return;
+    }
     if (isInPerson && !postcode) {
       setInternalError("Please enter a postcode for this in-person event.");
       return;
@@ -196,6 +210,7 @@ export default function EventForm({
       url: url || null,
       price: price || null,
       booking_info: bookingInfo || null,
+      accessibility,
       recurrence,
     }));
 
@@ -288,7 +303,7 @@ export default function EventForm({
       {isInPerson && (
         <>
           <div className="addevent-field">
-            <label className="addevent-label">Location</label>
+            <label className="addevent-label">Location *</label>
             <input
               className="addevent-input"
               type="text"
@@ -392,6 +407,22 @@ export default function EventForm({
           value={contactEmail}
           onChange={e => setContactEmail(e.target.value)}
         />
+      </div>
+
+      <div className="addevent-field">
+        <label className="addevent-label">Accessibility</label>
+        <div className="event-type-toggle">
+          {["Delivered in BSL", "BSL/English Interpreter", "Captions"].map(option => (
+            <button
+              key={option}
+              type="button"
+              className={`event-type-btn${accessibility.includes(option) ? ' event-type-btn--active' : ''}`}
+              onClick={() => toggleAccessibility(option)}
+            >
+              {option}
+            </button>
+          ))}
+        </div>
       </div>
 
       {showRecurrence && (

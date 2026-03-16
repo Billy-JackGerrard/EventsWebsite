@@ -17,6 +17,7 @@ export type Event = {
   contact_name?: string;
   contact_email?: string;
   url?: string;
+  accessibility?: string[];
   /** Unified recurrence field. Present and non-null when this event is part
    *  of a recurring series; the `id` field within links all occurrences. */
   recurrence?: RecurrenceRule;

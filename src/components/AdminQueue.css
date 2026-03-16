@@ -28,7 +28,7 @@
 }
 
 .queue-title {
-  color: var(--color-text-dark);
+  color: var(--color-text-primary);
   font-family: Georgia, serif;
   font-size: 1.4rem;
   text-transform: uppercase;

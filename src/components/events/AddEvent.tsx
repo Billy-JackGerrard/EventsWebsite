@@ -53,6 +53,13 @@ export default function AddEvent({ prefillDate }: Props) {
       body: JSON.stringify({ turnstileToken }),
     });
 
+    if (!verifyRes.ok) {
+      setError("Captcha verification failed. Please try again.");
+      resetTurnstile();
+      setLoading(false);
+      return;
+    }
+
     const verifyData = await verifyRes.json();
 
     if (!verifyData.success) {

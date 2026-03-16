@@ -77,14 +77,11 @@ rn set for only edinburgh (block non EH postcodes) but they can request to add t
 
 add admin view; can see who are the other admins and for which region are they in charge of
 
-delivered in which language (or bsl only)
 
-interpreter, bsl led or optional terp - name
 ai summariser of info from website url (move it to the top)
 
 add info abt the whastapp to the contact info page
 
-add to my own calendar option (outlook, google or apple)
 
 once domain is sorted, i need to add the domain to these places:
 - cloudflare turnstile allowed urls

@@ -22,6 +22,7 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
   const [events,   setEvents]   = useState<Event[]>([]);
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [loading,  setLoading]  = useState(true);
+  const [error,    setError]    = useState<string | null>(null);
 
   // Stable cache keys so the effect only re-fires when the window actually changes
   const fromKey = `${windowStart.year}-${windowStart.month}`;
@@ -35,15 +36,19 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
       const fromDate = new Date(windowStart.year, windowStart.month, 1, 0, 0, 0, 0);
       const toDate   = new Date(windowEnd.year, windowEnd.month + 1, 0, 23, 59, 59, 999);
 
-      const { data, error } = await approvedEvents()
+      const { data, error: fetchError } = await approvedEvents()
         .or(
           `and(starts_at.gte.${fromDate.toISOString()},starts_at.lte.${toDate.toISOString()}),` +
           `and(starts_at.lt.${fromDate.toISOString()},finishes_at.gte.${fromDate.toISOString()})`
         );
 
       if (!isCurrent) return;
-      if (error) console.error("Error fetching events:", error);
-      else setEvents(data || []);
+      if (fetchError) {
+        setError(fetchError.message);
+      } else {
+        setError(null);
+        setEvents(data || []);
+      }
       setLoading(false);
     };
 
@@ -88,5 +93,5 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
     return map;
   }, [events]);
 
-  return { eventsByDate, allEvents, loading };
+  return { eventsByDate, allEvents, loading, error };
 }

@@ -30,8 +30,8 @@ export type RecurrenceRule = {
 /** Shared default used by EventForm and EditEvent. */
 export const DEFAULT_RULE: RecurrenceRule = {
   frequency: "weekly",
-  intervalWeeks: 2,
-  intervalMonths: 2,
+  intervalWeeks: 2, // biweekly is a common use case and shows more of the UI, so it's a good default for demonstration purposes, esp we already have weekly as an option
+  intervalMonths: 2, // same here
   useWeekday: false,
 };
 

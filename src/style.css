@@ -146,3 +146,93 @@ button:focus-visible {
   animation: skeleton-shimmer 1.5s ease-in-out infinite;
   border-radius: 4px;
 }
+
+/* =====================================================
+   SHARED FORM & CARD UTILITIES
+   ===================================================== */
+
+/* Card surface shared by forms and page panels */
+.page-card {
+  background: var(--color-bg-card);
+  border-radius: 2px;
+  box-shadow: 12px 12px 0 var(--color-shadow);
+  padding: 2rem;
+  max-width: 100%;
+}
+
+/* Form field wrapper */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+
+/* Uppercase monospace label above form inputs */
+.form-label {
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  font-family: monospace;
+  margin-bottom: 0.4rem;
+}
+
+/* Standard text / select / textarea input */
+.form-input {
+  background: var(--color-bg-inset);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  color: var(--color-text-primary);
+  padding: 0.6rem 0.8rem;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.15s;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  border-color: var(--color-accent);
+}
+
+/* Inline per-field validation message */
+.form-field-error {
+  color: var(--color-text-error);
+  font-size: 0.8rem;
+  margin-top: 0.3rem;
+}
+
+/* Inline validation / submission error banner */
+.form-error {
+  background: var(--color-bg-error);
+  color: var(--color-text-error);
+  font-size: 0.85rem;
+  padding: 0.5rem 0.8rem;
+  border-radius: 2px;
+  margin-bottom: 1rem;
+}
+
+/* Full-width accent submit button */
+.btn-primary {
+  width: 100%;
+  background: var(--color-accent);
+  color: var(--color-text-dark);
+  border: none;
+  border-radius: 2px;
+  padding: 0.75rem;
+  font-size: 1rem;
+  font-weight: bold;
+  font-family: Georgia, serif;
+  cursor: pointer;
+  margin-top: 0.5rem;
+  transition: opacity 0.15s;
+}
+
+.btn-primary:hover {
+  opacity: 0.9;
+  border-color: transparent;
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

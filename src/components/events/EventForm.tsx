@@ -244,12 +244,12 @@ export default function EventForm({
 
   return (
     <div className="eventform-root">
-      {displayError && <div className="addevent-error">{displayError}</div>}
+      {displayError && <div className="form-error">{displayError}</div>}
 
-      <div className="addevent-field">
-        <label className="addevent-label">Title *</label>
+      <div className="form-field">
+        <label className="form-label">Title *</label>
         <input
-          className="addevent-input"
+          className="form-input"
           type="text"
           placeholder="e.g. BSL Social Evening"
           value={title}
@@ -257,12 +257,12 @@ export default function EventForm({
         />
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">Category *</label>
+      <div className="form-field">
+        <label className="form-label">Category *</label>
         <div className="category-select" ref={categoryRef}>
           <button
             type="button"
-            className="addevent-input category-select-trigger"
+            className="form-input category-select-trigger"
             onClick={() => setCategoryOpen(o => !o)}
           >
             {category ? (
@@ -293,18 +293,29 @@ export default function EventForm({
         </div>
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">Description</label>
+      <div className="form-field">
+        <label className="form-label">Description</label>
         <textarea
-          className="addevent-input addevent-textarea"
+          className="form-input addevent-textarea"
           placeholder="A short description of the event..."
           value={description}
           onChange={e => setDescription(e.target.value)}
         />
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">Event Type *</label>
+      <div className="form-field">
+        <label className="form-label">Link</label>
+        <input
+          className="form-input"
+          type="url"
+          placeholder="e.g. https://eventbrite.com/..."
+          value={url}
+          onChange={e => setUrl(e.target.value)}
+        />
+      </div>
+
+      <div className="form-field">
+        <label className="form-label">Event Type *</label>
         <div className="event-type-toggle">
           <button
             type="button"
@@ -325,10 +336,10 @@ export default function EventForm({
 
       {isInPerson && (
         <>
-          <div className="addevent-field">
-            <label className="addevent-label">Location *</label>
+          <div className="form-field">
+            <label className="form-label">Location *</label>
             <input
-              className="addevent-input"
+              className="form-input"
               type="text"
               placeholder="e.g. Blackwood Bar"
               value={location}
@@ -336,10 +347,10 @@ export default function EventForm({
             />
           </div>
 
-          <div className="addevent-field">
-            <label className="addevent-label">Postcode *</label>
+          <div className="form-field">
+            <label className="form-label">Postcode *</label>
             <input
-              className="addevent-input"
+              className="form-input"
               type="text"
               placeholder="e.g. EH1 1AA"
               value={postcode}
@@ -349,10 +360,10 @@ export default function EventForm({
         </>
       )}
 
-      <div className="addevent-field">
-        <label className="addevent-label">Start Time *</label>
+      <div className="form-field">
+        <label className="form-label">Start Time *</label>
         <input
-          className="addevent-input"
+          className="form-input"
           type="datetime-local"
           min={minDateTime}
           value={startsAt}
@@ -360,24 +371,24 @@ export default function EventForm({
         />
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">End Time</label>
+      <div className="form-field">
+        <label className="form-label">End Time</label>
         <input
-          className="addevent-input"
+          className="form-input"
           type="datetime-local"
           min={startsAt || minDateTime}
           value={finishesAt}
           onChange={e => setFinishesAt(e.target.value)}
         />
         {finishesAt && startsAt && finishesAt <= startsAt && (
-          <span className="addevent-field-error">End time must be after the start time.</span>
+          <span className="form-field-error">End time must be after the start time.</span>
         )}
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">Price</label>
+      <div className="form-field">
+        <label className="form-label">Price</label>
         <input
-          className="addevent-input"
+          className="form-input"
           type="text"
           placeholder="e.g. Free / £5 / £10–£15"
           value={price}
@@ -385,10 +396,10 @@ export default function EventForm({
         />
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">How to Book</label>
+      <div className="form-field">
+        <label className="form-label">How to Book</label>
         <select
-          className="addevent-input addevent-select"
+          className="form-input addevent-select"
           value={bookingInfo}
           onChange={e => setBookingInfo(e.target.value)}
         >
@@ -399,21 +410,10 @@ export default function EventForm({
         </select>
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">Link</label>
+      <div className="form-field">
+        <label className="form-label">Contact Name</label>
         <input
-          className="addevent-input"
-          type="url"
-          placeholder="e.g. https://eventbrite.com/..."
-          value={url}
-          onChange={e => setUrl(e.target.value)}
-        />
-      </div>
-
-      <div className="addevent-field">
-        <label className="addevent-label">Contact Name</label>
-        <input
-          className="addevent-input"
+          className="form-input"
           type="text"
           placeholder="e.g. Jane Smith"
           value={contactName}
@@ -421,10 +421,10 @@ export default function EventForm({
         />
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">Contact Email</label>
+      <div className="form-field">
+        <label className="form-label">Contact Email</label>
         <input
-          className="addevent-input"
+          className="form-input"
           type="email"
           placeholder="e.g. hello@example.com"
           value={contactEmail}
@@ -432,8 +432,8 @@ export default function EventForm({
         />
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">Accessibility</label>
+      <div className="form-field">
+        <label className="form-label">Accessibility</label>
         <div className="event-type-toggle">
           {["Delivered in BSL", "BSL/English Interpreter", "Captions"].map(option => (
             <button
@@ -476,7 +476,7 @@ export default function EventForm({
             <div className="accessibility-group">
               <span className="accessibility-group-label">Other</span>
               <input
-                className="addevent-input"
+                className="form-input"
                 type="text"
                 placeholder="e.g. SubPac devices available"
                 value={accessibilityOther}
@@ -487,8 +487,8 @@ export default function EventForm({
         )}
       </div>
 
-      <div className="addevent-field">
-        <label className="addevent-label">Age Rating</label>
+      <div className="form-field">
+        <label className="form-label">Age Rating</label>
         <div className="event-type-toggle">
           {AGE_RATINGS.map(rating => (
             <button
@@ -518,7 +518,7 @@ export default function EventForm({
       <div className="eventform-actions">
         {onCancel && (
           <button
-            className="addevent-btn eventform-btn--cancel"
+            className="btn-primary eventform-btn--cancel"
             onClick={onCancel}
             disabled={submitting}
             type="button"
@@ -527,7 +527,7 @@ export default function EventForm({
           </button>
         )}
         <button
-          className="addevent-btn"
+          className="btn-primary"
           onClick={handleSubmit}
           disabled={submitting || submitDisabled || !!(finishesAt && startsAt && finishesAt <= startsAt)}
           type="button"

@@ -11,7 +11,7 @@
   width: 100%;
 }
 
-.eventform-actions .addevent-btn {
+.eventform-actions .btn-primary {
   flex: 1;
   min-width: 0;
 }

@@ -234,7 +234,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
 
   return (
     <div className="addevent-page">
-      <div className="addevent-card">
+      <div className="page-card addevent-card">
         <h2 className="addevent-title">Edit Event</h2>
 
         <EventForm

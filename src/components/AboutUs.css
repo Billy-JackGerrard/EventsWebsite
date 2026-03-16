@@ -8,12 +8,7 @@
 }
 
 .about-card {
-  background: var(--color-bg-card);
-  border-radius: 2px;
-  box-shadow: 12px 12px 0 var(--color-shadow);
-  padding: 2rem;
   width: 600px;
-  max-width: 100%;
 }
 
 .about-title {

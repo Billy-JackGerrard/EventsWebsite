@@ -73,16 +73,16 @@ export default function Login({ onLogin }: Props) {
   if (screen === "forgot") {
     return (
       <div className="login-page">
-        <div className="login-card">
+        <div className="page-card login-card">
           <h2 className="login-title">Reset Password</h2>
           <p style={{ color: "var(--color-text-muted)", fontSize: "0.82rem", textAlign: "center", marginBottom: "1.25rem", fontStyle: "italic" }}>
             Enter your email and we'll send you a reset link.
           </p>
-          {error && <div className="login-error">{error}</div>}
-          <div className="login-field">
-            <label className="login-label">Email</label>
+          {error && <div className="form-error">{error}</div>}
+          <div className="form-field">
+            <label className="form-label">Email</label>
             <input
-              className="login-input"
+              className="form-input"
               type="email"
               placeholder="e.g. admin@example.com"
               value={email}
@@ -91,7 +91,7 @@ export default function Login({ onLogin }: Props) {
               autoFocus
             />
           </div>
-          <button className="login-btn" onClick={handleSendReset} disabled={loading}>
+          <button className="btn-primary" onClick={handleSendReset} disabled={loading}>
             {loading ? "Sending…" : "Send Reset Link"}
           </button>
           <button className="login-back-btn" onClick={() => { clearError(); setScreen("login"); }}>
@@ -105,7 +105,7 @@ export default function Login({ onLogin }: Props) {
   if (screen === "forgot-sent") {
     return (
       <div className="login-page">
-        <div className="login-card">
+        <div className="page-card login-card">
           <div style={{ textAlign: "center", padding: "0.5rem 0 1rem" }}>
             <div className="login-success-icon">✉</div>
             <h2 className="login-title">Check Your Email</h2>
@@ -114,7 +114,7 @@ export default function Login({ onLogin }: Props) {
               <strong style={{ color: "var(--color-accent)" }}>{email}</strong>,
               a reset link has been sent. Check your inbox.
             </p>
-            <button className="login-btn" onClick={() => { clearError(); setScreen("login"); }}>
+            <button className="btn-primary" onClick={() => { clearError(); setScreen("login"); }}>
               Back to Login
             </button>
           </div>
@@ -126,16 +126,16 @@ export default function Login({ onLogin }: Props) {
   if (screen === "reset") {
     return (
       <div className="login-page">
-        <div className="login-card">
+        <div className="page-card login-card">
           <h2 className="login-title">New Password</h2>
           <p style={{ color: "var(--color-text-muted)", fontSize: "0.82rem", textAlign: "center", marginBottom: "1.25rem", fontStyle: "italic" }}>
             Choose a new password for your account.
           </p>
-          {error && <div className="login-error">{error}</div>}
-          <div className="login-field">
-            <label className="login-label">New Password</label>
+          {error && <div className="form-error">{error}</div>}
+          <div className="form-field">
+            <label className="form-label">New Password</label>
             <input
-              className="login-input"
+              className="form-input"
               type="password"
               placeholder="At least 8 characters"
               value={newPassword}
@@ -143,10 +143,10 @@ export default function Login({ onLogin }: Props) {
               autoFocus
             />
           </div>
-          <div className="login-field">
-            <label className="login-label">Confirm Password</label>
+          <div className="form-field">
+            <label className="form-label">Confirm Password</label>
             <input
-              className="login-input"
+              className="form-input"
               type="password"
               placeholder="Repeat your new password"
               value={confirmPassword}
@@ -154,7 +154,7 @@ export default function Login({ onLogin }: Props) {
               onKeyDown={e => e.key === "Enter" && handleSavePassword()}
             />
           </div>
-          <button className="login-btn" onClick={handleSavePassword} disabled={loading}>
+          <button className="btn-primary" onClick={handleSavePassword} disabled={loading}>
             {loading ? "Saving…" : "Save New Password"}
           </button>
         </div>
@@ -165,14 +165,14 @@ export default function Login({ onLogin }: Props) {
   if (screen === "reset-done") {
     return (
       <div className="login-page">
-        <div className="login-card">
+        <div className="page-card login-card">
           <div style={{ textAlign: "center", padding: "0.5rem 0 1rem" }}>
             <div className="login-success-icon">✓</div>
             <h2 className="login-title">Password Updated</h2>
             <p style={{ color: "var(--color-text-primary)", fontSize: "0.9rem", lineHeight: 1.6, marginBottom: "1.5rem", opacity: 0.8 }}>
               Your password has been changed successfully.
             </p>
-            <button className="login-btn" onClick={onLogin}>
+            <button className="btn-primary" onClick={onLogin}>
               Continue
             </button>
           </div>
@@ -185,29 +185,29 @@ export default function Login({ onLogin }: Props) {
 
   return (
     <div className="login-page">
-      <div className="login-card">
+      <div className="page-card login-card">
         <h2 className="login-title">Admin Login</h2>
-        {error && <div className="login-error">{error}</div>}
-        <div className="login-field">
-          <label className="login-label">Email</label>
+        {error && <div className="form-error">{error}</div>}
+        <div className="form-field">
+          <label className="form-label">Email</label>
           <input
-            className="login-input"
+            className="form-input"
             type="email"
             value={email}
             onChange={e => setEmail(e.target.value)}
           />
         </div>
-        <div className="login-field">
-          <label className="login-label">Password</label>
+        <div className="form-field">
+          <label className="form-label">Password</label>
           <input
-            className="login-input"
+            className="form-input"
             type="password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             onKeyDown={e => e.key === "Enter" && handleLogin()}
           />
         </div>
-        <button className="login-btn" onClick={handleLogin} disabled={loading}>
+        <button className="btn-primary" onClick={handleLogin} disabled={loading}>
           {loading ? "Logging in…" : "Log in"}
         </button>
         <button className="login-back-btn" onClick={() => { clearError(); setScreen("forgot"); }}>

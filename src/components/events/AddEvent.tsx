@@ -107,7 +107,7 @@ export default function AddEvent({ prefillDate }: Props) {
     const isRecurring = submittedCount > 1;
     return (
       <div className="addevent-page">
-        <div className="addevent-card">
+        <div className="page-card addevent-card">
           <div className="addevent-success">
             <div className="addevent-success-icon">✓</div>
             <h2 className="addevent-title">
@@ -124,7 +124,7 @@ export default function AddEvent({ prefillDate }: Props) {
                   : "Thank you! Your event has been submitted and is awaiting approval from an admin."
               )}
             </p>
-            <button className="addevent-btn" onClick={resetForm}>
+            <button className="btn-primary" onClick={resetForm}>
               Add Another Event
             </button>
           </div>
@@ -135,7 +135,7 @@ export default function AddEvent({ prefillDate }: Props) {
 
   return (
     <div className="addevent-page">
-      <div className="addevent-card">
+      <div className="page-card addevent-card">
         <h2 className="addevent-title">Add an Event</h2>
 
         {!isAdmin && (

@@ -56,7 +56,7 @@ export default function Contact() {
   if (submitted) {
     return (
       <div className="contact-page">
-        <div className="contact-card">
+        <div className="page-card contact-card">
           <div className="contact-success">
             <div className="contact-success-icon">✉</div>
             <h2 className="contact-title">Thanks!</h2>
@@ -67,7 +67,7 @@ export default function Contact() {
                 {CONTACT_EMAIL}
               </a>.
             </p>
-            <button className="contact-btn contact-btn--primary" onClick={reset}>
+            <button className="btn-primary contact-btn--primary" onClick={reset}>
               Send Another Message
             </button>
           </div>
@@ -78,17 +78,17 @@ export default function Contact() {
 
   return (
     <div className="contact-page">
-      <div className="contact-card">
+      <div className="page-card contact-card">
         <h2 className="contact-title">Get in Touch</h2>
         <p className="contact-subtitle">
           Questions, bug reports, or ideas — we'd love to hear from you.
         </p>
 
-        {error && <div className="contact-error">{error}</div>}
+        {error && <div className="form-error">{error}</div>}
 
         {/* Type selector */}
-        <div className="contact-field">
-          <label className="contact-label">I'm sending a…</label>
+        <div className="form-field">
+          <label className="form-label">I'm sending a…</label>
           <div className="contact-type-tabs">
             {(["general", "bug", "suggestion"] as ContactType[]).map(t => (
               <button
@@ -106,12 +106,12 @@ export default function Contact() {
         </div>
 
         {/* Name */}
-        <div className="contact-field">
-          <label className="contact-label">
+        <div className="form-field">
+          <label className="form-label">
             Your Name <span className="contact-optional">(optional)</span>
           </label>
           <input
-            className="contact-input"
+            className="form-input"
             type="text"
             placeholder="e.g. Jane Smith"
             value={name}
@@ -120,10 +120,10 @@ export default function Contact() {
         </div>
 
         {/* Message */}
-        <div className="contact-field">
-          <label className="contact-label">Message *</label>
+        <div className="form-field">
+          <label className="form-label">Message *</label>
           <textarea
-            className="contact-input contact-textarea"
+            className="form-input contact-textarea"
             placeholder={TYPE_PLACEHOLDERS[type]}
             value={message}
             onChange={e => setMessage(e.target.value)}
@@ -135,7 +135,7 @@ export default function Contact() {
         </p>
 
         <button
-          className="contact-btn contact-btn--primary"
+          className="btn-primary contact-btn--primary"
           onClick={handleSend}
           disabled={!message.trim()}
         >

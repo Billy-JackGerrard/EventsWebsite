@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { supabase } from "../supabaseClient";
 import { formatDateTimeRange } from "../utils/dates";
 import { deduplicateByRecurrence } from "../utils/recurrence";
@@ -95,7 +95,7 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
       onPendingCountChange(deduplicateByRecurrence(updated).length);
       return updated;
     });
-    if (detailEvent?.id === ev.id) setDetailEvent(null);
+    if (detailEvent?.id === ev.id || (rid && detailEvent?.recurrence?.id === rid)) setDetailEvent(null);
     setActingOn(null);
   };
 
@@ -151,7 +151,7 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
 
   // ── Render ────────────────────────────────────────────────────────────────────
 
-  const displayEvents = deduplicateByRecurrence(events);
+  const displayEvents = useMemo(() => deduplicateByRecurrence(events), [events]);
 
   return (
     <div className="queue-page">
@@ -159,7 +159,7 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
         <div className="queue-container">
           <h2 className="queue-title">Pending Events</h2>
 
-          {error && <div className="queue-error">{error}</div>}
+          {error && <div className="form-error">{error}</div>}
 
           {loading ? (
             <div className="queue-list">

@@ -37,15 +37,6 @@
   text-align: center;
 }
 
-.queue-error {
-  background: var(--color-bg-error);
-  color: var(--color-text-error);
-  font-size: 0.85rem;
-  padding: 0.5rem 0.8rem;
-  border-radius: 2px;
-  margin-bottom: 1rem;
-}
-
 .queue-empty {
   color: var(--color-text-muted);
   font-style: italic;

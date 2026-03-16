@@ -1,5 +1,6 @@
 import { atcb_action } from "add-to-calendar-button";
 import type { Event } from "../../utils/types";
+import { CATEGORY_COLOURS } from "../../utils/types";
 import { formatDateTimeRange } from "../../utils/dates";
 import { humaniseRule } from "../../utils/recurrence";
 import "./EventDetails.css";
@@ -21,9 +22,10 @@ type Props = {
   onEdit: (event: Event) => void;
   onDelete?: (event: Event) => void;
   actions?: React.ReactNode;
+  showAddToCalendar?: boolean;
 };
 
-export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, actions }: Props) {
+export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, onDelete, actions, showAddToCalendar = true }: Props) {
   const hasContact =
     event.contact_name || event.contact_email || event.url;
 
@@ -63,7 +65,12 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
 
       <div className="event-detail-header">
         <h3 className="event-detail-title">{event.title}</h3>
-        <span className="event-detail-category">{event.category}</span>
+        <span
+          className="event-detail-category"
+          style={{ background: CATEGORY_COLOURS[event.category], borderColor: CATEGORY_COLOURS[event.category] }}
+        >
+          {event.category}
+        </span>
         <div className="event-detail-datetime">
           {formatDateTimeRange(event.starts_at, event.finishes_at)}
         </div>
@@ -154,28 +161,30 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         </div>
       )}
 
-      <div className="event-detail-cal-row">
-        <button
-          className="event-detail-cal-btn"
-          onClick={e => atcb_action({
-            name: event.title,
-            startDate: toLocalDate(event.starts_at),
-            startTime: toLocalTime(event.starts_at),
-            ...(event.finishes_at && {
-              endDate: toLocalDate(event.finishes_at),
-              endTime: toLocalTime(event.finishes_at),
-            }),
-            timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-            location: event.location ?? undefined,
-            description: event.description ?? undefined,
-            options: ["Apple", "Google", "iCal", "Microsoft365", "Outlook.com", "Yahoo"],
-            listStyle: "modal",
-            hideBranding: true,
-          }, e.currentTarget)}
-        >
-          + Add to Calendar
-        </button>
-      </div>
+      {showAddToCalendar && (
+        <div className="event-detail-cal-row">
+          <button
+            className="event-detail-cal-btn"
+            onClick={e => atcb_action({
+              name: event.title,
+              startDate: toLocalDate(event.starts_at),
+              startTime: toLocalTime(event.starts_at),
+              ...(event.finishes_at && {
+                endDate: toLocalDate(event.finishes_at),
+                endTime: toLocalTime(event.finishes_at),
+              }),
+              timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+              location: event.location ?? undefined,
+              description: event.description ?? undefined,
+              options: ["Apple", "Google", "iCal", "Microsoft365", "Outlook.com", "Yahoo"],
+              listStyle: "modal",
+              hideBranding: true,
+            }, e.currentTarget)}
+          >
+            + Add to Calendar
+          </button>
+        </div>
+      )}
 
       {actions && (
         <div className="event-detail-actions">

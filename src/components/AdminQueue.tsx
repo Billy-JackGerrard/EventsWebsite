@@ -215,6 +215,7 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
               onClose={() => setDetailEvent(null)}
               onEdit={onEditEvent}
               actions={detailActions}
+              showAddToCalendar={false}
             />
           </div>
         )}

@@ -55,7 +55,7 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
     const rid = ev.recurrence?.id;
 
     const query = rid
-      ? supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("recurrence->id", rid)
+      ? supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("recurrence->>id", rid)
       : supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("id", ev.id);
 
     const { error } = await query;
@@ -82,7 +82,7 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
     const rid = ev.recurrence?.id;
 
     const query = rid
-      ? supabase.from("events").delete().eq("recurrence->id", rid)
+      ? supabase.from("events").delete().eq("recurrence->>id", rid)
       : supabase.from("events").delete().eq("id", ev.id);
 
     const { error } = await query;

@@ -101,6 +101,9 @@ function App() {
             event={editingEvent}
             onSaved={handleEditSaved}
             onCancel={handleEditCancel}
+            // When editing from the admin queue, always apply changes to all
+            // future occurrences without prompting — the event isn't live yet.
+            defaultRecurringScope={postEditReturn === "admin-queue" ? "all-future" : undefined}
           />
         )}
         {view === "admin-queue" && isLoggedIn && (

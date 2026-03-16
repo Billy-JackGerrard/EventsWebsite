@@ -16,16 +16,14 @@ type Props = {
   event: Event;
   onSaved: (updated: Event) => void;
   onCancel: () => void;
+  /** When set, skips the scope prompt and applies this scope automatically.
+   *  Pass "all-future" when editing from the admin queue. */
+  defaultRecurringScope?: RecurringScope;
 };
 
-export default function EditEvent({ event, onSaved, onCancel }: Props) {
+export default function EditEvent({ event, onSaved, onCancel, defaultRecurringScope }: Props) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const [adminId, setAdminId] = useState<string | undefined>(undefined);
-  useEffect(() => {
-    supabase.auth.getUser().then(({ data: { user } }) => setAdminId(user?.id));
-  }, []);
 
   const [liveStartsAt, setLiveStartsAt] = useState<string>(() => isoToLocal(event.starts_at));
 
@@ -40,6 +38,13 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
 
   const [pendingRow, setPendingRow] = useState<EventFormRow | null>(null);
 
+  // ── Resolve admin id at save time to avoid race on mount ─────────────────
+
+  const getAdminId = async (): Promise<string | undefined> => {
+    const { data: { user } } = await supabase.auth.getUser();
+    return user?.id;
+  };
+
   // ── Step 1: EventForm submits ─────────────────────────────────────────────
 
   const handleFormSubmit = (rows: EventFormRow[]) => {
@@ -48,7 +53,12 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     if (recurrenceChanged && event.recurrence) {
       applyRecurrenceChange(row);
     } else if (event.recurrence) {
-      setPendingRow(row);
+      if (defaultRecurringScope) {
+        // Skip the scope prompt — caller has already decided (e.g. admin queue).
+        applyFieldEdit(row, defaultRecurringScope);
+      } else {
+        setPendingRow(row);
+      }
     } else {
       applyFieldEdit(row, "single");
     }
@@ -56,7 +66,7 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
 
   // ── Field-only edit ───────────────────────────────────────────────────────
 
-  const buildPatch = (row: EventFormRow) => ({
+  const buildPatch = async (row: EventFormRow) => ({
     title:         row.title,
     description:   row.description,
     location:      row.location,
@@ -68,13 +78,13 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     whatsapp_url:  row.whatsapp_url,
     price:         row.price,
     booking_info:  row.booking_info,
-    admin_id:      adminId,
+    admin_id:      await getAdminId(),
   });
 
   const applyFieldEdit = async (row: EventFormRow, scope: RecurringScope) => {
     setSaving(true);
     setError(null);
-    const patch = buildPatch(row);
+    const patch = await buildPatch(row);
 
     if (scope === "single") {
       const { data, error: err } = await supabase
@@ -94,7 +104,7 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
       const { data: futures, error: fetchErr } = await supabase
         .from("events")
         .select("id, starts_at")
-        .eq("recurrence->id", event.recurrence!.id)
+        .eq("recurrence->>id", event.recurrence!.id)
         .gte("starts_at", event.starts_at);
 
       if (fetchErr) { setError(fetchErr.message); setSaving(false); return; }
@@ -143,13 +153,15 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     setSaving(true);
     setError(null);
 
+    const adminId = await getAdminId();
+
     // Delete all future occurrences using the original starts_at. This must
     // use event.starts_at (not row.starts_at) so the delete range is correct
     // even if the user changed the time as part of this edit.
     const { error: deleteErr } = await supabase
       .from("events")
       .delete()
-      .eq("recurrence->id", event.recurrence.id)
+      .eq("recurrence->>id", event.recurrence.id)
       .gte("starts_at", event.starts_at);
 
     if (deleteErr) { setError(deleteErr.message); setSaving(false); return; }

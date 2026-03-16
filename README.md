@@ -8,14 +8,23 @@ Mobile navbar — it'll break on small screens with all those buttons in a row
 
 IDEAS:
 
+make it so today button also selects today
+
 in the log in page, if people arent admins/etc maybe they could request to be an admin (providing an email and password)
 also clarify that only admins can log in so peeps arent wondering why there isnt a sign up button
 
-final bug checker
+need to do another bug check
+
+file refactoring? files are a bit messy right now, could do with some more folders
+
+make it so admins see a delete button next to the edit button when viewing events. right now can't even delete events lol.
 
 email announcements?
 
 integrate with socials!!
+
+add a page only visible to admins,
+and on this page people can put comments on it, or suggestions or report bugs etc. next to each entry is a resolved tick button which deletes the entry.
 
 when adding events:
 - when their event is approved, they receive an email if they've put one in
@@ -25,10 +34,14 @@ event queue for admins:
 - when an event is approved, also publish that event to socials? or email announcements?
 - different types of admin requests - "New recurring event request", "Cancel Event Request", "Event edit Request"
 
+add boolean - BSL delivered or BSL interpreted
+
+in the event details view; change the in person / online to just show the location if its in person, or just "online"
 
 add predetermined events eg easter sunday, christmas day
 
-
+for category colours,
+ensure that the light colours have black text and vice versa
 
 when you filter you can filter by event by range, region, etc
 

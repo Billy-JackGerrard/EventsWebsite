@@ -4,6 +4,7 @@ import type { RecurrenceRule } from "./recurrence";
 export type Event = {
   id: string;
   title: string;
+  category: Category;
   description?: string;
   location?: string;
   price?: string;
@@ -26,4 +27,38 @@ export type Event = {
 export type AdminEvent = Event & {
   approved: boolean;
   admin_id?: string;
+};
+
+
+
+export const CATEGORIES = [
+  "Children & Families",
+  "Theatre",
+  "Sports",
+  "Games",
+  "Arts & Crafts",
+  "Exhibition",
+  "Tours",
+  "Party",
+  "Screening",
+  "Religion",
+  "Meet and Chat",
+  "Other",
+] as const;
+
+export type Category = typeof CATEGORIES[number];
+
+export const CATEGORY_COLOURS: Record<Category, string> = {
+  "Children & Families": "#f97316",
+  "Theatre":             "#a855f7",
+  "Sports":              "#22c55e",
+  "Games":               "#3b82f6",
+  "Arts & Crafts":       "#ec4899",
+  "Exhibition":          "#14b8a6",
+  "Tours":               "#f59e0b",
+  "Party":               "#f43f5e",
+  "Screening":           "#6366f1",
+  "Religion":            "#64748b",
+  "Meet and Chat":       "#06b6d4",
+  "Other":               "#94a3b8",
 };

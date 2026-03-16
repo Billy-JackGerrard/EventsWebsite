@@ -42,21 +42,6 @@ make it impossible to select before the starting time if the start and end day a
 add predetermined events eg easter sunday, christmas day
 
 
-CATEGORIES:
-
-- Children & Families
-- Theatre
-- Sports
-- Crafts related
-- Games
-- Arts & Crafts
-- Exhibition 
-- Tours
-- Party!
-- Screening
-- Religion
-
-
 
 when you filter you can filter by event by range, region, etc
 

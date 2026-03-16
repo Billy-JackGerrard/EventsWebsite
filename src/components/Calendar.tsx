@@ -1,6 +1,7 @@
-import { useState, useEffect, useMemo, useRef, useCallback, forwardRef, useImperativeHandle } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
+import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import EventDetails from "./events/EventDetails";
 import "./Calendar.css";
@@ -21,11 +22,6 @@ function addMonths(base: MonthKey, delta: number): MonthKey {
   while (m < 0)  { m += 12; y--; }
   return { month: m, year: y };
 }
-
-export type CalendarHandle = {
-  scrollToToday: () => void;
-  toggleSearch: () => void;
-};
 
 type Props = {
   isLoggedIn: boolean;
@@ -108,10 +104,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-const Calendar = forwardRef<CalendarHandle, Props>(function Calendar(
-  { isLoggedIn, onEditEvent, onAddEvent },
-  ref
-) {
+export default function Calendar({ isLoggedIn, onEditEvent, onAddEvent }: Props) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -199,11 +192,6 @@ const Calendar = forwardRef<CalendarHandle, Props>(function Calendar(
     else { setSearchOpen(true); setTimeout(() => searchInputRef.current?.focus(), 50); }
   }, [searchOpen]);
 
-  // Expose handles to parent (Navbar via main.tsx)
-  useImperativeHandle(ref, () => ({
-    scrollToToday,
-    toggleSearch: handleSearchToggle,
-  }), [scrollToToday, handleSearchToggle]);
 
   const matchesSearch = useCallback((event: Event, q: string) => {
     const haystack = [event.title, event.description ?? "", event.location ?? ""].join(" ").toLowerCase();
@@ -317,6 +305,23 @@ const Calendar = forwardRef<CalendarHandle, Props>(function Calendar(
 
       {/* ── Right: event panel ── */}
       <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""}`}>
+
+        {/* Always-visible top: controls + legend */}
+        <div className="calendar-panel-top">
+          <div className="calendar-panel-controls">
+            <button className="calendar-panel-ctrl-btn" onClick={scrollToToday}>Today</button>
+            <button className="calendar-panel-ctrl-btn" onClick={handleSearchToggle} title="Search events">⌕</button>
+          </div>
+          <div className="calendar-panel-legend">
+            {CATEGORIES.map(c => (
+              <div key={c} className="calendar-panel-legend-item">
+                <span className="calendar-panel-legend-dot" style={{ background: CATEGORY_COLOURS[c] }} />
+                <span className="calendar-panel-legend-label">{c}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+
         {!selected ? (
           <div className="calendar-panel-empty">
             <span className="calendar-panel-empty-icon">◎</span>
@@ -367,7 +372,10 @@ const Calendar = forwardRef<CalendarHandle, Props>(function Calendar(
                           className="calendar-panel-event"
                           onClick={() => handleToggleEvent(ev)}
                         >
-                          <span className="calendar-panel-event-title">{ev.title}</span>
+                          <span className="calendar-panel-event-title">
+                            <span className="calendar-panel-event-category-dot" style={{ background: CATEGORY_COLOURS[ev.category] }} />
+                            {ev.title}
+                          </span>
                           <span className="calendar-panel-event-time">
                             {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
                             {ev.finishes_at && ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
@@ -387,6 +395,4 @@ const Calendar = forwardRef<CalendarHandle, Props>(function Calendar(
 
     </div>
   );
-});
-
-export default Calendar;
+}

@@ -84,6 +84,20 @@
     line-height: 1.3;
 }
 
+.event-detail-category {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-family: monospace;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    border-radius: 3px;
+    padding: 0.1rem 0.45rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.85;
+}
+
 .event-detail-datetime {
     color: var(--color-text-primary);
     font-family: monospace;

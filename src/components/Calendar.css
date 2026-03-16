@@ -25,6 +25,63 @@
 }
 
 /* ── Right panel: event list for the selected day ── */
+.calendar-panel-top {
+    padding: 0.75rem 1rem 0;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+}
+
+.calendar-panel-controls {
+    display: flex;
+    gap: 0.4rem;
+    margin-bottom: 0.75rem;
+}
+
+.calendar-panel-ctrl-btn {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-primary);
+    cursor: pointer;
+    height: 28px;
+    padding: 0 0.65rem;
+    font-size: 0.75rem;
+    font-family: monospace;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.calendar-panel-ctrl-btn:hover {
+    background: var(--color-bg-inset);
+    border-color: var(--color-accent);
+}
+
+.calendar-panel-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.3rem 0.65rem;
+    padding-bottom: 0.75rem;
+}
+
+.calendar-panel-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+
+.calendar-panel-legend-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+
+.calendar-panel-legend-label {
+    font-size: 0.7rem;
+    color: var(--color-text-muted);
+}
+
 .calendar-panel {
     width: 320px;
     flex-shrink: 0;
@@ -152,6 +209,18 @@
 
 .calendar-panel-event:hover {
     background: var(--color-bg-inset);
+}
+
+.calendar-panel-event-category-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    margin-right: 0.4rem;
+    vertical-align: middle;
+    position: relative;
+    top: -1px;
 }
 
 .calendar-panel-event-title {

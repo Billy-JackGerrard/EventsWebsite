@@ -2,7 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
 import { isoToLocal, getSoftMinDateTime } from "../../utils/dates";
-import type { Event } from "../../utils/types";
+import type { Event, Category } from "../../utils/types";
+import { CATEGORIES, CATEGORY_COLOURS } from "../../utils/types";
 import RecurrencePicker from "./RecurrencePicker";
 import "./EventForm.css";
 
@@ -10,6 +11,7 @@ export type { RecurrenceRule };
 
 export type EventFormRow = {
   title: string;
+  category: Category;
   description: string | null;
   location: string | null;
   starts_at: string;
@@ -63,6 +65,9 @@ export default function EventForm({
   const [url, setUrl] = useState(initialValues?.url ?? "");
   const [price, setPrice] = useState(initialValues?.price ?? "");
   const [bookingInfo, setBookingInfo] = useState(initialValues?.booking_info ?? "");
+  const [category, setCategory] = useState<string>(initialValues?.category ?? "");
+  const [categoryOpen, setCategoryOpen] = useState(false);
+  const categoryRef = useRef<HTMLDivElement>(null);
   const [internalError, setInternalError] = useState<string | null>(null);
 
   const [recurrenceEnabled, setRecurrenceEnabled] = useState(false);
@@ -73,6 +78,16 @@ export default function EventForm({
     const id = setInterval(() => setMinDateTime(getSoftMinDateTime()), 60_000);
     return () => clearInterval(id);
   }, []);
+
+  useEffect(() => {
+    if (!categoryOpen) return;
+    const handler = (e: MouseEvent) => {
+      if (categoryRef.current && !categoryRef.current.contains(e.target as Node))
+        setCategoryOpen(false);
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [categoryOpen]);
 
   const prevInitialRef = useRef<Event | undefined>(initialValues);
   useEffect(() => {
@@ -88,6 +103,7 @@ export default function EventForm({
       setUrl(initialValues.url ?? "");
       setPrice(initialValues.price ?? "");
       setBookingInfo(initialValues.booking_info ?? "");
+      setCategory(initialValues.category ?? "");
       setRecurrenceEnabled(false);
       setRecurrenceRule(DEFAULT_RULE);
       setInternalError(null);
@@ -105,6 +121,10 @@ export default function EventForm({
 
     if (!title || !startsAt) {
       setInternalError("Please fill in at least a title and start time.");
+      return;
+    }
+    if (!category) {
+      setInternalError("Please select a category.");
       return;
     }
     if (finishesAt && new Date(finishesAt) <= new Date(startsAt)) {
@@ -134,6 +154,7 @@ export default function EventForm({
 
     const rows: EventFormRow[] = occurrences.map(({ start, finish }) => ({
       title,
+      category: category as Category,
       description: description || null,
       location: location || null,
       starts_at: start.toISOString(),
@@ -164,6 +185,42 @@ export default function EventForm({
           value={title}
           onChange={e => setTitle(e.target.value)}
         />
+      </div>
+
+      <div className="addevent-field">
+        <label className="addevent-label">Category *</label>
+        <div className="category-select" ref={categoryRef}>
+          <button
+            type="button"
+            className="addevent-input category-select-trigger"
+            onClick={() => setCategoryOpen(o => !o)}
+          >
+            {category ? (
+              <>
+                <span className="category-dot" style={{ background: CATEGORY_COLOURS[category as Category] }} />
+                {category}
+              </>
+            ) : (
+              <span className="category-select-placeholder">Select a category…</span>
+            )}
+            <span className="category-select-arrow">▾</span>
+          </button>
+          {categoryOpen && (
+            <div className="category-select-dropdown">
+              {CATEGORIES.map(c => (
+                <button
+                  key={c}
+                  type="button"
+                  className={`category-select-option${c === category ? " category-select-option--active" : ""}`}
+                  onClick={() => { setCategory(c); setCategoryOpen(false); }}
+                >
+                  <span className="category-dot" style={{ background: CATEGORY_COLOURS[c] }} />
+                  {c}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="addevent-field">

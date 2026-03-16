@@ -44,6 +44,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
 
       <div className="event-detail-header">
         <h3 className="event-detail-title">{event.title}</h3>
+        <span className="event-detail-category">{event.category}</span>
         <div className="event-detail-datetime">
           {formatDateTimeRange(event.starts_at, event.finishes_at)}
         </div>

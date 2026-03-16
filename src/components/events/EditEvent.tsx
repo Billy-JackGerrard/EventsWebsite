@@ -68,6 +68,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
 
   const buildPatch = async (row: EventFormRow) => ({
     title:         row.title,
+    category:      row.category,
     description:   row.description,
     location:      row.location,
     starts_at:     row.starts_at,
@@ -182,6 +183,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
 
     const newRows = occurrences.map(({ start, finish }) => ({
       title:          row.title,
+      category:       row.category,
       description:    row.description,
       location:       row.location,
       starts_at:      start.toISOString(),

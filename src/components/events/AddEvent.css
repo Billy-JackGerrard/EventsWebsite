@@ -95,6 +95,71 @@
   border-color: var(--color-accent);
 }
 
+/* ── Category custom dropdown ── */
+.category-select {
+  position: relative;
+}
+
+.category-select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.category-select-placeholder {
+  color: var(--color-text-muted);
+  flex: 1;
+}
+
+.category-select-arrow {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.category-select-dropdown {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  right: 0;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  z-index: 100;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.category-select-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.category-select-option:hover,
+.category-select-option--active {
+  background: var(--color-bg-inset);
+}
+
+.category-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
 .addevent-textarea {
   resize: vertical;
   min-height: 80px;

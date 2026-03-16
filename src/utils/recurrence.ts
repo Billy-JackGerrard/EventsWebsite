@@ -8,6 +8,7 @@ export type RecurrenceFrequency =
   | "none"
   | "daily"
   | "weekly"
+  | "custom-weekly"
   | "monthly-date"
   | "monthly-weekday"
   | "custom-monthly";
@@ -15,14 +16,21 @@ export type RecurrenceFrequency =
 export type WeekdayOrdinal = "1st" | "2nd" | "3rd" | "4th" | "last";
 
 export type RecurrenceRule = {
+  /** Shared UUID linking all occurrences in the same series. */
+  id?: string;
   frequency: RecurrenceFrequency;
+  /** For "custom-weekly": how many weeks between occurrences */
+  intervalWeeks?: number;
+  /** For "custom-monthly": how many months between occurrences */
   intervalMonths?: number;
+  /** For "custom-monthly": whether to repeat by weekday position or by date */
   useWeekday?: boolean;
 };
 
 /** Shared default used by EventForm and EditEvent. */
 export const DEFAULT_RULE: RecurrenceRule = {
   frequency: "weekly",
+  intervalWeeks: 2,
   intervalMonths: 2,
   useWeekday: false,
 };
@@ -49,9 +57,7 @@ export function getOrdinalOfWeekdayInMonth(date: Date): WeekdayOrdinal {
 
   const next = new Date(date);
   next.setDate(date.getDate() + 7);
-  if (next.getMonth() !== date.getMonth()) {
-    return "last";
-  }
+  if (next.getMonth() !== date.getMonth()) return "last";
 
   const ordinals: WeekdayOrdinal[] = ["1st", "2nd", "3rd", "4th"];
   return ordinals[count - 1] ?? "last";
@@ -59,12 +65,7 @@ export function getOrdinalOfWeekdayInMonth(date: Date): WeekdayOrdinal {
 
 /**
  * Produces a human-readable description of a recurrence rule anchored to a
- * specific start date. Exported so EventDetails can display a summary.
- *
- * Examples:
- *   "Every Tuesday"
- *   "Every month on the 2nd Tuesday"
- *   "Every 3 months on the 15th"
+ * specific start date.
  */
 export function humaniseRule(rule: RecurrenceRule, firstStart: Date): string {
   const weekdayName = WEEKDAY_NAMES[firstStart.getDay()];
@@ -75,6 +76,10 @@ export function humaniseRule(rule: RecurrenceRule, firstStart: Date): string {
       return "Every day";
     case "weekly":
       return `Every ${weekdayName}`;
+    case "custom-weekly": {
+      const n = rule.intervalWeeks ?? 2;
+      return `Every ${n} weeks on ${weekdayName}s`;
+    }
     case "monthly-date":
       return `Every month on the ${ordinalSuffix(firstStart.getDate())}`;
     case "monthly-weekday":
@@ -82,9 +87,7 @@ export function humaniseRule(rule: RecurrenceRule, firstStart: Date): string {
     case "custom-monthly": {
       const n = rule.intervalMonths ?? 2;
       const every = n === 1 ? "every month" : `every ${n} months`;
-      if (rule.useWeekday) {
-        return `The ${ordinal} ${weekdayName}, ${every}`;
-      }
+      if (rule.useWeekday) return `The ${ordinal} ${weekdayName}, ${every}`;
       return `The ${ordinalSuffix(firstStart.getDate())}, ${every}`;
     }
     default:
@@ -146,25 +149,25 @@ export function expandRecurrences(
     return out;
   };
 
+  const push = (s: Date) =>
+    results.push({ start: s, finish: duration !== null ? new Date(s.getTime() + duration) : null });
+
   if (rule.frequency === "daily") {
     const cur = new Date(firstStart);
-    while (cur <= horizon) {
-      const s = new Date(cur);
-      const f = duration !== null ? new Date(s.getTime() + duration) : null;
-      results.push({ start: s, finish: f });
-      cur.setDate(cur.getDate() + 1);
-    }
+    while (cur <= horizon) { push(new Date(cur)); cur.setDate(cur.getDate() + 1); }
     return results;
   }
 
   if (rule.frequency === "weekly") {
     const cur = new Date(firstStart);
-    while (cur <= horizon) {
-      const s = new Date(cur);
-      const f = duration !== null ? new Date(s.getTime() + duration) : null;
-      results.push({ start: s, finish: f });
-      cur.setDate(cur.getDate() + 7);
-    }
+    while (cur <= horizon) { push(new Date(cur)); cur.setDate(cur.getDate() + 7); }
+    return results;
+  }
+
+  if (rule.frequency === "custom-weekly") {
+    const step = (rule.intervalWeeks ?? 2) * 7;
+    const cur = new Date(firstStart);
+    while (cur <= horizon) { push(new Date(cur)); cur.setDate(cur.getDate() + step); }
     return results;
   }
 
@@ -172,18 +175,12 @@ export function expandRecurrences(
     const dayOfMonth = firstStart.getDate();
     let year = firstStart.getFullYear();
     let month = firstStart.getMonth();
-
     while (true) {
       const daysInMonth = new Date(year, month + 1, 0).getDate();
-      const day = Math.min(dayOfMonth, daysInMonth);
-      const s = withTime(new Date(year, month, day));
+      const s = withTime(new Date(year, month, Math.min(dayOfMonth, daysInMonth)));
       if (s > horizon) break;
-      if (s >= firstStart) {
-        const f = duration !== null ? new Date(s.getTime() + duration) : null;
-        results.push({ start: s, finish: f });
-      }
-      month++;
-      if (month > 11) { month = 0; year++; }
+      if (s >= firstStart) push(s);
+      month++; if (month > 11) { month = 0; year++; }
     }
     return results;
   }
@@ -191,19 +188,14 @@ export function expandRecurrences(
   if (rule.frequency === "monthly-weekday") {
     let year = firstStart.getFullYear();
     let month = firstStart.getMonth();
-
     while (true) {
       const candidate = nthWeekdayInMonth(year, month, weekday, ordinal);
       if (candidate) {
         const s = withTime(candidate);
         if (s > horizon) break;
-        if (s >= firstStart) {
-          const f = duration !== null ? new Date(s.getTime() + duration) : null;
-          results.push({ start: s, finish: f });
-        }
+        if (s >= firstStart) push(s);
       }
-      month++;
-      if (month > 11) { month = 0; year++; }
+      month++; if (month > 11) { month = 0; year++; }
     }
     return results;
   }
@@ -212,27 +204,19 @@ export function expandRecurrences(
     const { intervalMonths = 2, useWeekday = false } = rule;
     let year = firstStart.getFullYear();
     let month = firstStart.getMonth();
-
     while (true) {
       let s: Date | null = null;
-
       if (useWeekday) {
         const candidate = nthWeekdayInMonth(year, month, weekday, ordinal);
         if (candidate) s = withTime(candidate);
       } else {
-        const dayOfMonth = firstStart.getDate();
         const daysInMonth = new Date(year, month + 1, 0).getDate();
-        s = withTime(new Date(year, month, Math.min(dayOfMonth, daysInMonth)));
+        s = withTime(new Date(year, month, Math.min(firstStart.getDate(), daysInMonth)));
       }
-
       if (s) {
         if (s > horizon) break;
-        if (s >= firstStart) {
-          const f = duration !== null ? new Date(s.getTime() + duration) : null;
-          results.push({ start: s, finish: f });
-        }
+        if (s >= firstStart) push(s);
       }
-
       month += intervalMonths;
       while (month > 11) { month -= 12; year++; }
     }

@@ -15,8 +15,9 @@ export type Event = {
   contact_email?: string;
   url?: string;
   whatsapp_url?: string;
-  recurrence_id?: string;
-  recurrence_rule?: RecurrenceRule;
+  /** Unified recurrence field. Present and non-null when this event is part
+   *  of a recurring series; the `id` field within links all occurrences. */
+  recurrence?: RecurrenceRule;
 };
 
 /**

@@ -18,13 +18,30 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
+  const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
 
   const fetchPendingCount = useCallback(async () => {
-    const { count } = await supabase
+    // Fetch pending event ids + recurrence field so we can deduplicate by
+    // recurrence.id client-side — matching the same logic AdminQueue uses.
+    // A raw COUNT would overcount recurring series.
+    const { data } = await supabase
       .from("events")
-      .select("id", { count: "exact", head: true })
+      .select("id, recurrence")
       .eq("approved", false);
-    setPendingCount(count ?? 0);
+
+    if (!data) return;
+
+    const seen = new Set<string>();
+    let count = 0;
+    for (const ev of data) {
+      const rid = ev.recurrence?.id;
+      if (rid) {
+        if (seen.has(rid)) continue;
+        seen.add(rid);
+      }
+      count++;
+    }
+    setPendingCount(count);
   }, []);
 
   useEffect(() => {
@@ -48,7 +65,6 @@ function App() {
   useEffect(() => {
     if (view === "admin-queue" && !isLoggedIn) setView("login");
     if (view === "edit-event" && !isLoggedIn) setView("calendar");
-    // Refresh count whenever the admin navigates to the queue
     if (view === "admin-queue" && isLoggedIn) fetchPendingCount();
   }, [view, isLoggedIn, fetchPendingCount]);
 
@@ -60,18 +76,19 @@ function App() {
     setView("calendar");
   };
 
-  const handleEditEvent = (event: Event) => {
+  const handleEditEvent = (event: Event, returnTo: View = "calendar") => {
     setEditingEvent(event);
+    setPostEditReturn(returnTo);
     setView("edit-event");
   };
 
   const handleEditSaved = (updated: Event) => {
     setEditingEvent(updated);
-    setView("calendar");
+    setView(postEditReturn);
   };
 
   const handleEditCancel = () => {
-    setView("calendar");
+    setView(postEditReturn);
   };
 
   return (
@@ -85,7 +102,7 @@ function App() {
       />
       <div style={{ paddingTop: "60px" }}>
         {view === "calendar" && (
-          <Calendar isLoggedIn={isLoggedIn} onEditEvent={handleEditEvent} />
+          <Calendar isLoggedIn={isLoggedIn} onEditEvent={ev => handleEditEvent(ev, "calendar")} />
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}
         {view === "add-event"  && <AddEvent />}
@@ -97,9 +114,12 @@ function App() {
           />
         )}
         {view === "admin-queue" && isLoggedIn && (
-          <AdminQueue onPendingCountChange={setPendingCount} />
+          <AdminQueue
+            onPendingCountChange={setPendingCount}
+            onEditEvent={ev => handleEditEvent(ev, "admin-queue")}
+          />
         )}
-        {view === "contact"    && <Contact />}
+        {view === "contact" && <Contact />}
       </div>
     </>
   );

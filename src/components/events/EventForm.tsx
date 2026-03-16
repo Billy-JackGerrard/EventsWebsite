@@ -20,8 +20,7 @@ export type EventFormRow = {
   whatsapp_url: string | null;
   price: string | null;
   booking_info: string | null;
-  recurrence_id: string | null;
-  recurrence_rule: RecurrenceRule | null;
+  recurrence: RecurrenceRule | null;
 };
 
 type Props = {
@@ -126,11 +125,13 @@ export default function EventForm({
       : { frequency: "none" };
 
     const occurrences = expandRecurrences(activeRule, firstStart, firstFinish);
-
     const isRecurring = showRecurrence && recurrenceEnabled && occurrences.length > 1;
-    const recurrenceId: string | null = isRecurring ? crypto.randomUUID() : null;
-    // Store the rule on every row so EventDetails can display a summary.
-    const storedRule: RecurrenceRule | null = isRecurring ? activeRule : null;
+
+    // Embed the series id directly in the rule so there's a single unified
+    // field rather than separate recurrence_id + recurrence_rule columns.
+    const recurrence: RecurrenceRule | null = isRecurring
+      ? { ...activeRule, id: crypto.randomUUID() }
+      : null;
 
     const rows: EventFormRow[] = occurrences.map(({ start, finish }) => ({
       title,
@@ -144,8 +145,7 @@ export default function EventForm({
       whatsapp_url: whatsappUrl || null,
       price: price || null,
       booking_info: bookingInfo || null,
-      recurrence_id: recurrenceId,
-      recurrence_rule: storedRule,
+      recurrence,
     }));
 
     onSubmit(rows);

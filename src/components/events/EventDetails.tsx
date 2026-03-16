@@ -8,7 +8,6 @@ type Props = {
   isLoggedIn: boolean;
   onClose: () => void;
   onEdit: (event: Event) => void;
-  /** Optional slot rendered below the contact section (e.g. admin actions) */
   actions?: React.ReactNode;
 };
 
@@ -26,18 +25,15 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
       const u = new URL(normUrl);
       const path = u.pathname.length > 1 ? u.pathname.slice(0, 18) + (u.pathname.length > 18 ? "…" : "") : "";
       return u.hostname + path;
-    } catch {
-      return normUrl;
-    }
+    } catch { return normUrl; }
   })() : null;
 
   const normWhatsapp = event.whatsapp_url
     ? (event.whatsapp_url.startsWith("http") ? event.whatsapp_url : `https://${event.whatsapp_url}`)
     : null;
 
-  // Derive the human-readable recurrence summary if the rule is stored on the event.
-  const recurrenceSummary = event.recurrence_id && event.recurrence_rule
-    ? humaniseRule(event.recurrence_rule, new Date(event.starts_at))
+  const recurrenceSummary = event.recurrence
+    ? humaniseRule(event.recurrence, new Date(event.starts_at))
     : null;
 
   return (
@@ -45,11 +41,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
       <div className="event-detail-close-row">
         <button className="event-detail-close" onClick={onClose} aria-label="Close">✕</button>
         {isLoggedIn && (
-          <button
-            className="event-detail-edit-btn"
-            onClick={() => onEdit(event)}
-            aria-label="Edit event"
-          >
+          <button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event">
             ✎ Edit
           </button>
         )}

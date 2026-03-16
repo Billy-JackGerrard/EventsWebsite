@@ -8,24 +8,21 @@ import "./AdminQueue.css";
 
 type Props = {
   onPendingCountChange: (count: number) => void;
+  onEditEvent: (event: Event) => void;
 };
 
-/**
- * Deduplicate a list of pending events by recurrence_id.
- * For a recurring series, only the earliest occurrence is shown in the queue
- * as the representative — approving/rejecting it applies to the whole series.
- */
 function deduplicateByRecurrence(events: AdminEvent[]): AdminEvent[] {
   const seen = new Set<string>();
   return events.filter(ev => {
-    if (!ev.recurrence_id) return true;
-    if (seen.has(ev.recurrence_id)) return false;
-    seen.add(ev.recurrence_id);
+    const rid = ev.recurrence?.id;
+    if (!rid) return true;
+    if (seen.has(rid)) return false;
+    seen.add(rid);
     return true;
   });
 }
 
-export default function AdminQueue({ onPendingCountChange }: Props) {
+export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props) {
   const [events, setEvents] = useState<AdminEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -48,7 +45,6 @@ export default function AdminQueue({ onPendingCountChange }: Props) {
     } else {
       const pending = data || [];
       setEvents(pending);
-      // Badge count reflects unique items in the queue (deduplicated series)
       onPendingCountChange(deduplicateByRecurrence(pending).length);
     }
 
@@ -66,18 +62,18 @@ export default function AdminQueue({ onPendingCountChange }: Props) {
     setActingOn(ev.id);
 
     const { data: { user } } = await supabase.auth.getUser();
+    const rid = ev.recurrence?.id;
 
-    const query = ev.recurrence_id
-      // Approve every occurrence in the series at once
-      ? supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("recurrence_id", ev.recurrence_id)
+    const query = rid
+      ? supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("recurrence->id", rid)
       : supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("id", ev.id);
 
     const { error } = await query;
     if (error) { setError(error.message); setActingOn(null); return; }
 
     setEvents(prev => {
-      const updated = ev.recurrence_id
-        ? prev.filter(e => e.recurrence_id !== ev.recurrence_id)
+      const updated = rid
+        ? prev.filter(e => e.recurrence?.id !== rid)
         : prev.filter(e => e.id !== ev.id);
       onPendingCountChange(deduplicateByRecurrence(updated).length);
       return updated;
@@ -93,17 +89,18 @@ export default function AdminQueue({ onPendingCountChange }: Props) {
     setActingOn(ev.id);
     setConfirmReject(null);
 
-    const query = ev.recurrence_id
-      // Delete every occurrence in the series
-      ? supabase.from("events").delete().eq("recurrence_id", ev.recurrence_id)
+    const rid = ev.recurrence?.id;
+
+    const query = rid
+      ? supabase.from("events").delete().eq("recurrence->id", rid)
       : supabase.from("events").delete().eq("id", ev.id);
 
     const { error } = await query;
     if (error) { setError(error.message); setActingOn(null); return; }
 
     setEvents(prev => {
-      const updated = ev.recurrence_id
-        ? prev.filter(e => e.recurrence_id !== ev.recurrence_id)
+      const updated = rid
+        ? prev.filter(e => e.recurrence?.id !== rid)
         : prev.filter(e => e.id !== ev.id);
       onPendingCountChange(deduplicateByRecurrence(updated).length);
       return updated;
@@ -182,8 +179,9 @@ export default function AdminQueue({ onPendingCountChange }: Props) {
             <div className="queue-list">
               {displayEvents.map(ev => {
                 const isSelected = detailEvent?.id === ev.id;
-                const seriesCount = ev.recurrence_id
-                  ? events.filter(e => e.recurrence_id === ev.recurrence_id).length
+                const rid = ev.recurrence?.id;
+                const seriesCount = rid
+                  ? events.filter(e => e.recurrence?.id === rid).length
                   : null;
 
                 return (
@@ -221,7 +219,7 @@ export default function AdminQueue({ onPendingCountChange }: Props) {
               event={detailEvent as Event}
               isLoggedIn={true}
               onClose={() => setDetailEvent(null)}
-              onEdit={() => {}}
+              onEdit={onEditEvent}
               actions={detailActions}
             />
           </div>

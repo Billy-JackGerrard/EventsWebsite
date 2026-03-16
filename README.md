@@ -35,8 +35,6 @@ add legend for colour categories
 
 add thin, grey lines between cells, and thicker ones between months
 
-delete event box at bottom of calendar because each cell will say the events on it
-
 make it impossible to select before the starting time if the start and end day are the same day
 
 add predetermined events eg easter sunday, christmas day
@@ -64,9 +62,7 @@ tag/#
 
 rename startsAt to be "from" and finishes At to be "to"
 
-scroll to change months - endless depth and not per month view
-maybe have current month be normal colour and previous/after months be a dimmer shadw - changes automatically
-and show clearly that there's a difference between months - a gap
+have current month be normal colour and previous/after months be a dimmer shadw - changes automatically
 
 change week to start monday, weekend be slightly different colour
 

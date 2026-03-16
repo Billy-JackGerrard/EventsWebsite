@@ -1,7 +1,6 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
-import { supabase } from "../supabaseClient";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import EventDetails from "./events/EventDetails";
 import "./Calendar.css";
@@ -98,7 +97,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onViewEvent, onEditEvent, onAddEvent }: Props) {
+export default function Calendar({ isLoggedIn, onEditEvent, onAddEvent }: Props) {
 
   const [today, setToday] = useState(() => new Date());
 
@@ -347,22 +346,8 @@ export default function Calendar({ isLoggedIn, onViewEvent, onEditEvent, onAddEv
                 {selectedEvents.map(ev => {
                   const isExpanded = expandedEventId === ev.id;
                   return (
-                    <div key={ev.id} className={`calendar-panel-event-wrap ${isExpanded ? "calendar-panel-event-wrap--expanded" : ""}`}>
-                      <button
-                        className={`calendar-panel-event ${isExpanded ? "calendar-panel-event--active" : ""}`}
-                        onClick={() => handleToggleEvent(ev)}
-                        aria-expanded={isExpanded}
-                      >
-                        <span className="calendar-panel-event-title">{ev.title}</span>
-                        <span className="calendar-panel-event-time">
-                          {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
-                          {ev.finishes_at && ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
-                        </span>
-                        {ev.location && <span className="calendar-panel-event-location">📍 {ev.location}</span>}
-                        <span className="calendar-panel-event-chevron">{isExpanded ? "▲" : "▼"}</span>
-                      </button>
-
-                      {isExpanded && (
+                    <div key={ev.id} className="calendar-panel-event-wrap">
+                      {isExpanded ? (
                         <div className="calendar-panel-event-detail">
                           <EventDetails
                             event={ev}
@@ -371,6 +356,19 @@ export default function Calendar({ isLoggedIn, onViewEvent, onEditEvent, onAddEv
                             onEdit={onEditEvent}
                           />
                         </div>
+                      ) : (
+                        <button
+                          className="calendar-panel-event"
+                          onClick={() => handleToggleEvent(ev)}
+                        >
+                          <span className="calendar-panel-event-title">{ev.title}</span>
+                          <span className="calendar-panel-event-time">
+                            {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                            {ev.finishes_at && ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
+                          </span>
+                          {ev.location && <span className="calendar-panel-event-location">📍 {ev.location}</span>}
+                          <span className="calendar-panel-event-chevron">▶</span>
+                        </button>
                       )}
                     </div>
                   );

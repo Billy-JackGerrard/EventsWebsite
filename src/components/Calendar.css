@@ -483,12 +483,6 @@
         transform: translateY(0);
     }
 
-    /* Dim the calendar when panel is open on mobile */
-    .calendar-panel--open ~ .calendar-col,
-    .calendar-col:has(~ .calendar-panel--open) {
-        /* not needed but kept for future */
-    }
-
     .calendar-panel-empty { display: none; }
 
     .calendar-day-number  { font-size: 0.8rem; }
@@ -501,29 +495,20 @@
     .calendar-search-btn  { width: 30px; height: 28px; font-size: 15px; }
 }
 
-
 /* ── Inline event expansion ── */
 
-/* Wrapper around each event row + its expandable detail */
+/* Wrapper around each event row / expanded detail */
 .calendar-panel-event-wrap {
     border-radius: 2px;
     overflow: hidden;
 }
 
-/* Make the event button aware of expansion state */
+/* Small arrow hint on the summary row */
 .calendar-panel-event {
-    position: relative; /* needed for chevron positioning */
+    position: relative;
+    padding-right: 2rem;
 }
 
-.calendar-panel-event--active {
-    background: rgba(232, 197, 71, 0.08);
-    border-color: var(--color-accent);
-    border-bottom-left-radius: 0;
-    border-bottom-right-radius: 0;
-    border-bottom-color: transparent;
-}
-
-/* Chevron indicator */
 .calendar-panel-event-chevron {
     position: absolute;
     right: 0.75rem;
@@ -531,34 +516,24 @@
     transform: translateY(-50%);
     font-size: 0.55rem;
     color: var(--color-accent);
-    opacity: 0.7;
+    opacity: 0.5;
     pointer-events: none;
 }
 
-/* Give the event button a little padding-right so the title doesn't overlap the chevron */
-.calendar-panel-event {
-    padding-right: 2rem;
-}
-
-/* The expanded detail area */
+/* The expanded detail area — replaces the summary row entirely */
 .calendar-panel-event-detail {
     animation: panel-detail-in 0.18s ease;
-    border: 1px solid var(--color-accent);
-    border-top: none;
-    border-radius: 0 0 2px 2px;
-    background: var(--color-bg-card);
 }
 
-/* Override EventDetails card styles when rendered inline */
+/* Override EventDetails card styles when rendered inline in the panel */
 .calendar-panel-event-detail .event-detail-card {
     box-shadow: none;
-    border-top: none;
-    border-radius: 0;
+    border-radius: 2px;
     width: 100%;
     animation: none;
 }
 
 @keyframes panel-detail-in {
-    from { opacity: 0; transform: translateY(-6px); }
+    from { opacity: 0; transform: translateY(-4px); }
     to   { opacity: 1; transform: translateY(0); }
 }

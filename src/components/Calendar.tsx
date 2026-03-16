@@ -158,7 +158,11 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
   const { eventsByDate, allEvents, loading } = useCalendarEvents(windowStart, windowEnd);
 
-  const [selected, setSelected] = useState<{ day: number; month: number; year: number } | null>(null);
+  const [selected, setSelected] = useState<{ day: number; month: number; year: number } | null>(() => ({
+    day: new Date().getDate(),
+    month: new Date().getMonth(),
+    year: new Date().getFullYear(),
+  }));
   const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -198,7 +202,8 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
   const scrollToToday = useCallback(() => {
     todayMonthRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-  }, []);
+    setSelected({ day: today.getDate(), month: today.getMonth(), year: today.getFullYear() });
+  }, [today]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {

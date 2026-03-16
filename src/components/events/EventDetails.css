@@ -63,7 +63,7 @@
 .event-detail-edit-btn {
     background: transparent;
     border: 1px solid var(--color-border-subtle);
-    color: var(--color-accent);
+    color: orange;
     font-size: 0.72rem;
     font-family: monospace;
     letter-spacing: 0.05em;

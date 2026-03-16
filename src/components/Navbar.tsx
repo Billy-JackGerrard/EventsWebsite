@@ -7,26 +7,53 @@ type Props = {
   pendingCount: number;
   onNavigate: (view: View) => void;
   onLogout: () => void;
+  onCalendarToday?: () => void;
+  onCalendarSearch?: () => void;
 };
 
-export default function Navbar({ currentView, isLoggedIn, pendingCount, onNavigate, onLogout }: Props) {
+export default function Navbar({
+  currentView,
+  isLoggedIn,
+  pendingCount,
+  onNavigate,
+  onLogout,
+  onCalendarToday,
+  onCalendarSearch,
+}: Props) {
   return (
     <nav className="navbar">
       <div className="navbar-brand">Edinburgh BSL Community</div>
       <div className="navbar-links">
+
+        {/* Calendar controls — only visible when on the calendar view */}
+        {(onCalendarToday || onCalendarSearch) && (
+          <div className="navbar-calendar-controls">
+            {onCalendarToday && (
+              <button
+                className="navbar-calendar-today"
+                onClick={onCalendarToday}
+                title="Jump to today"
+              >
+                Today
+              </button>
+            )}
+            {onCalendarSearch && (
+              <button
+                className="navbar-calendar-search"
+                onClick={onCalendarSearch}
+                title="Search events"
+              >
+                ⌕
+              </button>
+            )}
+          </div>
+        )}
 
         <button
           className={`navbar-link ${currentView === "calendar" ? "navbar-link--active" : ""}`}
           onClick={() => onNavigate("calendar")}
         >
           Calendar
-        </button>
-
-        <button
-          className={`navbar-link ${currentView === "add-event" ? "navbar-link--active" : ""}`}
-          onClick={() => onNavigate("add-event")}
-        >
-          Add Event
         </button>
 
         <button
@@ -59,6 +86,7 @@ export default function Navbar({ currentView, isLoggedIn, pendingCount, onNaviga
             Admin Login
           </button>
         )}
+
       </div>
     </nav>
   );

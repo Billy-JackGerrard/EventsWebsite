@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useRef, useCallback } from "react";
+import { useState, useEffect, useMemo, useRef, useCallback, forwardRef, useImperativeHandle } from "react";
 import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
@@ -21,6 +21,11 @@ function addMonths(base: MonthKey, delta: number): MonthKey {
   while (m < 0)  { m += 12; y--; }
   return { month: m, year: y };
 }
+
+export type CalendarHandle = {
+  scrollToToday: () => void;
+  toggleSearch: () => void;
+};
 
 type Props = {
   isLoggedIn: boolean;
@@ -101,8 +106,10 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onEditEvent, onAddEvent }: Props) {
-
+const Calendar = forwardRef<CalendarHandle, Props>(function Calendar(
+  { isLoggedIn, onEditEvent, onAddEvent },
+  ref
+) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -185,6 +192,17 @@ export default function Calendar({ isLoggedIn, onEditEvent, onAddEvent }: Props)
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  const handleSearchToggle = useCallback(() => {
+    if (searchOpen) { setSearchOpen(false); setSearchQuery(""); }
+    else { setSearchOpen(true); setTimeout(() => searchInputRef.current?.focus(), 50); }
+  }, [searchOpen]);
+
+  // Expose handles to parent (Navbar via main.tsx)
+  useImperativeHandle(ref, () => ({
+    scrollToToday,
+    toggleSearch: handleSearchToggle,
+  }), [scrollToToday, handleSearchToggle]);
+
   const matchesSearch = useCallback((event: Event, q: string) => {
     const haystack = [event.title, event.description ?? "", event.location ?? ""].join(" ").toLowerCase();
     return q.split(/\s+/).filter(Boolean).every(word => haystack.includes(word));
@@ -214,17 +232,12 @@ export default function Calendar({ isLoggedIn, onEditEvent, onAddEvent }: Props)
     }, 50);
   };
 
-  const handleSearchToggle = () => {
-    if (searchOpen) { setSearchOpen(false); setSearchQuery(""); }
-    else { setSearchOpen(true); setTimeout(() => searchInputRef.current?.focus(), 50); }
-  };
-
   const handleSelectDay = (day: number, month: number, year: number) => {
     if (selected?.day === day && selected?.month === month && selected?.year === year) {
       setSelected(null);
     } else {
       setSelected({ day, month, year });
-      setExpandedEventId(null); // collapse any expanded event when switching days
+      setExpandedEventId(null);
     }
   };
 
@@ -244,50 +257,37 @@ export default function Calendar({ isLoggedIn, onEditEvent, onAddEvent }: Props)
 
       {/* ── Left: scrollable calendar ── */}
       <div className="calendar-col">
-        <div className="calendar-header">
-          <div className="calendar-header-center">
-            {searchOpen ? (
-              <div className="calendar-search-wrap" ref={dropdownRef}>
-                <div className="calendar-search-bar">
-                  <span className="calendar-search-icon">⌕</span>
-                  <input
-                    ref={searchInputRef}
-                    className="calendar-search-input"
-                    type="text"
-                    placeholder="Search events…"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    onKeyDown={e => e.key === "Escape" && handleSearchToggle()}
-                  />
-                </div>
-                {searchQuery.trim().length > 0 && (
-                  <div className="calendar-search-dropdown">
-                    {searchResults.length === 0 ? (
-                      <div className="calendar-search-dropdown-empty">No matching events</div>
-                    ) : searchResults.map(ev => (
-                      <button key={ev.id} className="calendar-search-result" onClick={() => handleResultClick(ev)}>
-                        <span className="calendar-search-result-title">{ev.title}</span>
-                        <span className="calendar-search-result-date">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
-                      </button>
-                    ))}
-                  </div>
-                )}
+
+        {/* Search bar — shown at top of column when open */}
+        {searchOpen && (
+          <div className="calendar-search-wrap" ref={dropdownRef}>
+            <div className="calendar-search-bar">
+              <span className="calendar-search-icon">⌕</span>
+              <input
+                ref={searchInputRef}
+                className="calendar-search-input"
+                type="text"
+                placeholder="Search events…"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+                onKeyDown={e => e.key === "Escape" && handleSearchToggle()}
+              />
+              <button className="calendar-search-close" onClick={handleSearchToggle} title="Close search">✕</button>
+            </div>
+            {searchQuery.trim().length > 0 && (
+              <div className="calendar-search-dropdown">
+                {searchResults.length === 0 ? (
+                  <div className="calendar-search-dropdown-empty">No matching events</div>
+                ) : searchResults.map(ev => (
+                  <button key={ev.id} className="calendar-search-result" onClick={() => handleResultClick(ev)}>
+                    <span className="calendar-search-result-title">{ev.title}</span>
+                    <span className="calendar-search-result-date">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
+                  </button>
+                ))}
               </div>
-            ) : (
-              <div className="calendar-header-title">Calendar</div>
             )}
           </div>
-          <div className="calendar-header-actions">
-            <button className="calendar-today-btn" onClick={scrollToToday} title="Jump to today">Today</button>
-            <button
-              className={`calendar-search-btn ${searchOpen ? "calendar-search-btn--active" : ""}`}
-              onClick={handleSearchToggle}
-              title={searchOpen ? "Close search" : "Search events"}
-            >
-              {searchOpen ? "✕" : "⌕"}
-            </button>
-          </div>
-        </div>
+        )}
 
         <div className="calendar-scroll-container" ref={scrollContainerRef}>
           {monthKeys.map(mk => {
@@ -385,4 +385,6 @@ export default function Calendar({ isLoggedIn, onEditEvent, onAddEvent }: Props)
 
     </div>
   );
-}
+});
+
+export default Calendar;

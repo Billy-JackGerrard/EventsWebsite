@@ -93,3 +93,55 @@
     padding: 0 3px;
     pointer-events: none;
 }
+
+/* ── Calendar controls (Today + Search) ── */
+.navbar-calendar-controls {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-right: 0.5rem;
+    padding-right: 0.75rem;
+    border-right: 1px solid var(--color-border);
+}
+
+.navbar-calendar-today {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    height: 32px;
+    padding: 0 0.75rem;
+    font-size: 0.75rem;
+    font-weight: bold;
+    font-family: monospace;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    border-radius: 999px;
+    color: var(--color-accent);
+    transition: background 0.15s, border-color 0.15s;
+}
+
+.navbar-calendar-today:hover {
+    background: var(--color-border);
+    border-color: var(--color-accent);
+}
+
+.navbar-calendar-search {
+    background: transparent;
+    border: 1px solid var(--color-border);
+    cursor: pointer;
+    width: 36px;
+    height: 32px;
+    font-size: 18px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-accent);
+    transition: background 0.15s, border-color 0.15s;
+    padding: 0;
+}
+
+.navbar-calendar-search:hover {
+    background: var(--color-border);
+    border-color: var(--color-accent);
+}

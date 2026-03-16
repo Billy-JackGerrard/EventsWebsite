@@ -79,8 +79,6 @@ black: #202020
 
 accessibility section with drop downs
 
-jump back to today (only show when today if off the screen)
-
 event age min and max optional
 maybe click on toddlers, children, youth, adult, family, etc
 
@@ -95,7 +93,7 @@ add zoom option?
 
 for how to book - make it a dropbox (if says through website, you must have a booking url)
 
-rn set for only edinburgh (block not EH postcodes) but they can request to add their region (and be an admin - admins should be per region not for whole website)
+rn set for only edinburgh (block non EH postcodes) but they can request to add their region (and be an admin - admins should be per region not for whole website)
 
 
 interpreter, bsl led or optional terp - name

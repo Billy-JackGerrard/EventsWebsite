@@ -1,10 +1,11 @@
 import './style.css'
 
-import { StrictMode, useState, useEffect, useCallback } from "react";
+import { StrictMode, useState, useEffect, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import { supabase } from "./supabaseClient";
 import { deduplicateByRecurrence } from "./utils/recurrence";
 import Calendar from "./components/Calendar.tsx";
+import type { CalendarHandle } from "./components/Calendar.tsx";
 import Login from "./components/Login.tsx";
 import Navbar from "./components/Navbar.tsx";
 import AddEvent from "./components/events/AddEvent.tsx";
@@ -23,6 +24,8 @@ function App() {
   const [pendingCount, setPendingCount] = useState(0);
   const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
   const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
+
+  const calendarRef = useRef<CalendarHandle>(null);
 
   const fetchPendingCount = useCallback(async () => {
     const { data } = await supabase
@@ -66,7 +69,6 @@ function App() {
     setView("calendar");
   };
 
-  // Clear the prefill date whenever navigating away from add-event via the navbar
   const handleNavigate = (v: View) => {
     if (v !== "add-event") setAddEventDate(undefined);
     setView(v);
@@ -99,6 +101,8 @@ function App() {
     setView("add-event");
   };
 
+  const isCalendarView = view === "calendar";
+
   return (
     <>
       <Navbar
@@ -107,10 +111,13 @@ function App() {
         pendingCount={pendingCount}
         onNavigate={handleNavigate}
         onLogout={handleLogout}
+        onCalendarToday={isCalendarView ? () => calendarRef.current?.scrollToToday() : undefined}
+        onCalendarSearch={isCalendarView ? () => calendarRef.current?.toggleSearch() : undefined}
       />
       <div style={{ paddingTop: "60px" }}>
         {view === "calendar" && (
           <Calendar
+            ref={calendarRef}
             isLoggedIn={isLoggedIn}
             onViewEvent={handleViewEvent}
             onEditEvent={ev => handleEditEvent(ev, "calendar")}

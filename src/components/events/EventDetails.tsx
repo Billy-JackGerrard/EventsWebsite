@@ -216,21 +216,22 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         <div className="event-detail-cal-row">
           <button
             className="event-detail-cal-btn"
-            onClick={() => atcb_action({
+            onClick={(e) => {
+              const endIso = event.finishes_at
+                ?? new Date(new Date(event.starts_at).getTime() + 60 * 60 * 1000).toISOString();
+              return atcb_action({
               name: event.title,
               startDate: toLocalDate(event.starts_at),
               startTime: toLocalTime(event.starts_at),
-              ...(event.finishes_at && {
-                endDate: toLocalDate(event.finishes_at),
-                endTime: toLocalTime(event.finishes_at),
-              }),
+              endDate: toLocalDate(endIso),
+              endTime: toLocalTime(endIso),
               timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
               location: event.location ?? undefined,
               description: event.description ?? undefined,
               options: ["Apple", "Google", "iCal", "Microsoft365", "Outlook.com", "Yahoo"],
               listStyle: "modal",
               hideBranding: true,
-            })}
+            }, e.currentTarget); }}
           >
             + Add to Calendar
           </button>

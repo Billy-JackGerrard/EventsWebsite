@@ -13,12 +13,11 @@
   
   .contact-title {
     color: var(--color-accent);
-    font-family: Georgia, serif;
     text-align: center;
     margin: 0 0 0.5rem;
     font-size: 1.4rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    font-weight: 700;
+    letter-spacing: -0.01em;
   }
   
   .contact-subtitle {
@@ -75,15 +74,6 @@
     min-height: 130px;
   }
   
-  /* ── Note ── */
-  .contact-note {
-    color: var(--color-text-muted);
-    font-size: 0.78rem;
-    font-family: monospace;
-    font-style: italic;
-    margin: 0.25rem 0 0.75rem;
-  }
-  
   /* ── Button ── */
   /* Override btn-primary's margin-top for the contact page layout */
   .contact-btn--primary {
@@ -94,27 +84,20 @@
   .contact-success {
     text-align: center;
     padding: 1rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
   }
-  
+
   .contact-success-icon {
-    font-size: 3rem;
-    color: var(--color-accent);
-    margin-bottom: 1rem;
+    flex-shrink: 0;
   }
-  
+
   .contact-success-msg {
-    color: var(--color-text-primary);
-    font-size: 0.95rem;
-    margin-bottom: 1.5rem;
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+    margin: 0;
     line-height: 1.6;
-  }
-  
-  .contact-email-link {
-    color: var(--color-text-link);
-    text-decoration: none;
-  }
-  
-  .contact-email-link:hover {
-    color: var(--color-accent);
-    text-decoration: underline;
+    max-width: 340px;
   }

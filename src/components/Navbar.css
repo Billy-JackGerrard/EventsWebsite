@@ -116,6 +116,13 @@
     pointer-events: none;
 }
 
+/* ── Center controls (calendar + pending events) ── */
+.navbar-center-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
 /* ── Calendar controls (Today + Search) ── */
 .navbar-calendar-controls {
     display: flex;

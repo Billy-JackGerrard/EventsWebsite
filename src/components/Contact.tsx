@@ -1,9 +1,8 @@
 import { useState } from "react";
+import { supabase } from "../supabaseClient";
 import "./Contact.css";
 
 type ContactType = "general" | "bug" | "suggestion";
-
-const CONTACT_EMAIL = "billyjackgerrard@hotmail.com";
 
 const TYPE_LABELS: Record<ContactType, string> = {
   general: "General Enquiry",
@@ -21,27 +20,30 @@ export default function Contact() {
   const [type, setType] = useState<ContactType>("general");
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
 
-  const handleSend = () => {
+  const handleSend = async () => {
     if (!message.trim()) {
       setError("Please enter a message before sending.");
       return;
     }
 
     setError(null);
+    setLoading(true);
 
-    const subject = encodeURIComponent(
-      `[Edinburgh BSL Community Website] ${TYPE_LABELS[type]}${name ? ` — ${name}` : ""}`
-    );
-    const body = encodeURIComponent(
-      `Type: ${TYPE_LABELS[type]}\n` +
-      (name ? `From: ${name}\n` : "") +
-      `\n${message}`
-    );
+    const { error: dbError } = await supabase
+      .from("contact_messages")
+      .insert({ type, name: name.trim() || null, message: message.trim() });
 
-    window.location.href = `mailto:${CONTACT_EMAIL}?subject=${subject}&body=${body}`;
+    setLoading(false);
+
+    if (dbError) {
+      setError("Something went wrong sending your message. Please try again.");
+      return;
+    }
+
     setSubmitted(true);
   };
 
@@ -58,14 +60,13 @@ export default function Contact() {
       <div className="contact-page">
         <div className="page-card contact-card">
           <div className="contact-success">
-            <div className="contact-success-icon">✉</div>
-            <h2 className="contact-title">Thanks!</h2>
+            <svg className="contact-success-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="9" />
+              <polyline points="9 12 11 14 15 10" />
+            </svg>
+            <h2 className="contact-title">Message sent</h2>
             <p className="contact-success-msg">
-              Your email application should have opened with your message pre-filled.
-              If it didn't, you can email us directly at{" "}
-              <a className="contact-email-link" href={`mailto:${CONTACT_EMAIL}`}>
-                {CONTACT_EMAIL}
-              </a>.
+              Thanks for getting in touch — we'll take a look and get back to you if needed.
             </p>
             <button className="btn-primary contact-btn--primary" onClick={reset}>
               Send Another Message
@@ -130,16 +131,12 @@ export default function Contact() {
           />
         </div>
 
-        <p className="contact-note">
-          Clicking the button below will open your email application with your message pre-filled.
-        </p>
-
         <button
           className="btn-primary contact-btn--primary"
           onClick={handleSend}
-          disabled={!message.trim()}
+          disabled={!message.trim() || loading}
         >
-          Open Mail App →
+          {loading ? "Sending…" : "Send Message →"}
         </button>
       </div>
     </div>

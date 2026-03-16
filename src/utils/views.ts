@@ -1,2 +1,2 @@
 /** All top-level views the app can route to. */
-export type View = "calendar" | "login" | "add-event" | "edit-event" | "delete-event" | "admin-queue" | "contact" | "event-detail" | "about";
+export type View = "calendar" | "login" | "add-event" | "edit-event" | "delete-event" | "admin-queue" | "contact" | "event-detail" | "about" | "privacy";

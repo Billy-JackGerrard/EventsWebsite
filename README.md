@@ -31,6 +31,8 @@ if more than 2 events then maybe show "+4" etc then when hover over it it shows 
 
 colour coded categories - pick from drop down, eg childrens, arts, sports
 
+in the event overview, show a small icon that shows the category colour
+
 add legend for colour categories
 
 add thin, grey lines between cells, and thicker ones between months

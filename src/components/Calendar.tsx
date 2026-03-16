@@ -50,10 +50,12 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
   const rawFirstDay = new Date(year, month, 1).getDay(); // 0=Sun…6=Sat
   const firstDay    = (rawFirstDay + 6) % 7;             // 0=Mon…6=Sun
   const daysInMonth = new Date(year, month + 1, 0).getDate();
-  const cells = [
+  const rawCells = [
     ...Array(firstDay).fill(null),
     ...Array.from({ length: daysInMonth }, (_, i) => i + 1),
   ];
+  const trailingNulls = (7 - (rawCells.length % 7)) % 7;
+  const cells = [...rawCells, ...Array(trailingNulls).fill(null)];
 
   const isToday = (day: number) =>
     day === today.getDate() && month === today.getMonth() && year === today.getFullYear();

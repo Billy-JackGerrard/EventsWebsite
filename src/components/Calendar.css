@@ -1,6 +1,6 @@
 /* ── Page: fixed below navbar, two columns ── */
 .calendar-page {
-    font-family: 'Georgia', serif;
+    font-family: Calibri, 'Trebuchet MS', Arial, sans-serif;
     position: fixed;
     top: 60px;
     left: 0;
@@ -156,7 +156,7 @@
 
 .calendar-panel-event-title {
     color: var(--color-accent);
-    font-family: Georgia, serif;
+    font-family: Calibri, 'Trebuchet MS', Arial, sans-serif;
     font-size: 1rem;
     font-weight: bold;
     line-height: 1.3;
@@ -266,7 +266,7 @@
 
 .calendar-search-result:last-child { border-bottom: none; }
 .calendar-search-result:hover { background: var(--color-border); }
-.calendar-search-result-title { color: var(--color-text-primary); font-family: Georgia, serif; font-size: 0.95rem; font-weight: bold; }
+.calendar-search-result-title { color: var(--color-text-primary); font-family: Calibri, 'Trebuchet MS', Arial, sans-serif; font-size: 0.95rem; font-weight: bold; }
 .calendar-search-result-date  { color: var(--color-text-muted); font-family: monospace; font-size: 0.75rem; }
 
 /* ── Scrollable months ── */
@@ -303,7 +303,7 @@
     color: var(--color-accent);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    font-family: 'Georgia', serif;
+    font-family: Calibri, 'Trebuchet MS', Arial, sans-serif;
 }
 
 .calendar-month-label-year { font-size: 0.78rem; color: var(--color-text-muted); font-family: monospace; }

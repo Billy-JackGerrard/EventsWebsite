@@ -2,29 +2,22 @@
  * Recurrence utilities
  * Generates a list of start/finish Date pairs for a recurring event,
  * up to 1 year from the initial start date.
- *
- * weekday and ordinal are now always derived from firstStart — they are
- * no longer stored in RecurrenceRule, removing the redundant picker UI.
  */
 
 export type RecurrenceFrequency =
   | "none"
   | "daily"
   | "weekly"
-  | "monthly-date"       // e.g. every 15th
-  | "monthly-weekday"    // e.g. last Thursday, 2nd Monday — derived from firstStart
-  | "custom-monthly";    // every N months on Nth weekday or date — derived from firstStart
+  | "monthly-date"
+  | "monthly-weekday"
+  | "custom-monthly";
 
 export type WeekdayOrdinal = "1st" | "2nd" | "3rd" | "4th" | "last";
 
 export type RecurrenceRule = {
   frequency: RecurrenceFrequency;
-  // For "custom-monthly": how many months between occurrences
   intervalMonths?: number;
-  // For "custom-monthly": whether to repeat by weekday position or by date
   useWeekday?: boolean;
-  // NOTE: weekday and ordinal are intentionally removed from the rule —
-  // they are always derived from the firstStart date at expansion time.
 };
 
 /** Shared default used by EventForm and EditEvent. */
@@ -34,12 +27,19 @@ export const DEFAULT_RULE: RecurrenceRule = {
   useWeekday: false,
 };
 
+const WEEKDAY_NAMES = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+function ordinalSuffix(n: number): string {
+  const s = ["th", "st", "nd", "rd"];
+  const v = n % 100;
+  return n + (s[(v - 20) % 10] ?? s[v] ?? s[0]);
+}
+
 /** Returns which ordinal occurrence of a weekday a date falls on within its month. */
 export function getOrdinalOfWeekdayInMonth(date: Date): WeekdayOrdinal {
   const weekday = date.getDay();
   const dayOfMonth = date.getDate();
 
-  // Count how many times this weekday has appeared so far this month
   let count = 0;
   const d = new Date(date.getFullYear(), date.getMonth(), 1);
   while (d.getDate() <= dayOfMonth) {
@@ -47,7 +47,6 @@ export function getOrdinalOfWeekdayInMonth(date: Date): WeekdayOrdinal {
     d.setDate(d.getDate() + 1);
   }
 
-  // Check if this is also the LAST occurrence of that weekday in the month
   const next = new Date(date);
   next.setDate(date.getDate() + 7);
   if (next.getMonth() !== date.getMonth()) {
@@ -56,6 +55,41 @@ export function getOrdinalOfWeekdayInMonth(date: Date): WeekdayOrdinal {
 
   const ordinals: WeekdayOrdinal[] = ["1st", "2nd", "3rd", "4th"];
   return ordinals[count - 1] ?? "last";
+}
+
+/**
+ * Produces a human-readable description of a recurrence rule anchored to a
+ * specific start date. Exported so EventDetails can display a summary.
+ *
+ * Examples:
+ *   "Every Tuesday"
+ *   "Every month on the 2nd Tuesday"
+ *   "Every 3 months on the 15th"
+ */
+export function humaniseRule(rule: RecurrenceRule, firstStart: Date): string {
+  const weekdayName = WEEKDAY_NAMES[firstStart.getDay()];
+  const ordinal = getOrdinalOfWeekdayInMonth(firstStart);
+
+  switch (rule.frequency) {
+    case "daily":
+      return "Every day";
+    case "weekly":
+      return `Every ${weekdayName}`;
+    case "monthly-date":
+      return `Every month on the ${ordinalSuffix(firstStart.getDate())}`;
+    case "monthly-weekday":
+      return `Every month on the ${ordinal} ${weekdayName}`;
+    case "custom-monthly": {
+      const n = rule.intervalMonths ?? 2;
+      const every = n === 1 ? "every month" : `every ${n} months`;
+      if (rule.useWeekday) {
+        return `The ${ordinal} ${weekdayName}, ${every}`;
+      }
+      return `The ${ordinalSuffix(firstStart.getDate())}, ${every}`;
+    }
+    default:
+      return "Recurring event";
+  }
 }
 
 /** Returns the Nth weekday (or last) in a given year/month. */
@@ -87,8 +121,6 @@ function nthWeekdayInMonth(
 /**
  * Given a rule and the first start/finish datetime, produce all occurrences
  * within one year of the start date.
- *
- * weekday and ordinal are always derived from firstStart.
  */
 export function expandRecurrences(
   rule: RecurrenceRule,
@@ -105,7 +137,6 @@ export function expandRecurrences(
   const duration = firstFinish ? firstFinish.getTime() - firstStart.getTime() : null;
   const results: Array<{ start: Date; finish: Date | null }> = [];
 
-  // Derive weekday and ordinal from the anchor date
   const weekday = firstStart.getDay();
   const ordinal = getOrdinalOfWeekdayInMonth(firstStart);
 

@@ -6,18 +6,32 @@ import type { Event } from "../utils/types";
 import EventDetails from "./events/EventDetails";
 import "./AdminQueue.css";
 
-type ApproveScope = "single" | "all-series";
+type Props = {
+  onPendingCountChange: (count: number) => void;
+};
 
-export default function AdminQueue() {
+/**
+ * Deduplicate a list of pending events by recurrence_id.
+ * For a recurring series, only the earliest occurrence is shown in the queue
+ * as the representative — approving/rejecting it applies to the whole series.
+ */
+function deduplicateByRecurrence(events: AdminEvent[]): AdminEvent[] {
+  const seen = new Set<string>();
+  return events.filter(ev => {
+    if (!ev.recurrence_id) return true;
+    if (seen.has(ev.recurrence_id)) return false;
+    seen.add(ev.recurrence_id);
+    return true;
+  });
+}
+
+export default function AdminQueue({ onPendingCountChange }: Props) {
   const [events, setEvents] = useState<AdminEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [actingOn, setActingOn] = useState<string | null>(null);
   const [confirmReject, setConfirmReject] = useState<string | null>(null);
   const [detailEvent, setDetailEvent] = useState<AdminEvent | null>(null);
-
-  // Recurrence scope prompt state
-  const [awaitingApproveScope, setAwaitingApproveScope] = useState(false);
 
   const fetchPending = async () => {
     setLoading(true);
@@ -29,8 +43,14 @@ export default function AdminQueue() {
       .eq("approved", false)
       .order("starts_at", { ascending: true });
 
-    if (error) setError(error.message);
-    else setEvents(data || []);
+    if (error) {
+      setError(error.message);
+    } else {
+      const pending = data || [];
+      setEvents(pending);
+      // Badge count reflects unique items in the queue (deduplicated series)
+      onPendingCountChange(deduplicateByRecurrence(pending).length);
+    }
 
     setLoading(false);
   };
@@ -39,163 +59,112 @@ export default function AdminQueue() {
     fetchPending();
   }, []);
 
-  // ── Approve ─────────────────────────────────────────────────────────────────
+  // ── Approve ──────────────────────────────────────────────────────────────────
 
-  const handleApproveClick = () => {
-    if (!detailEvent) return;
-    if (detailEvent.recurrence_id) {
-      setAwaitingApproveScope(true);
-    } else {
-      approveEvent(detailEvent.id, "single");
-    }
-  };
-
-  const approveEvent = async (id: string, scope: ApproveScope) => {
+  const approve = async (ev: AdminEvent) => {
     setError(null);
-    setActingOn(id);
-    setAwaitingApproveScope(false);
+    setActingOn(ev.id);
 
     const { data: { user } } = await supabase.auth.getUser();
 
-    if (scope === "all-series" && detailEvent?.recurrence_id) {
-      // Approve every unapproved occurrence in the recurrence group
-      const { error } = await supabase
-        .from("events")
-        .update({ approved: true, admin_id: user?.id })
-        .eq("recurrence_id", detailEvent.recurrence_id)
-        .eq("approved", false);
+    const query = ev.recurrence_id
+      // Approve every occurrence in the series at once
+      ? supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("recurrence_id", ev.recurrence_id)
+      : supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("id", ev.id);
 
-      if (error) { setError(error.message); setActingOn(null); return; }
+    const { error } = await query;
+    if (error) { setError(error.message); setActingOn(null); return; }
 
-      // Remove all occurrences from the queue display
-      setEvents(prev => prev.filter(e => e.recurrence_id !== detailEvent.recurrence_id));
-    } else {
-      const { error } = await supabase
-        .from("events")
-        .update({ approved: true, admin_id: user?.id })
-        .eq("id", id);
-
-      if (error) { setError(error.message); setActingOn(null); return; }
-      setEvents(prev => prev.filter(e => e.id !== id));
-    }
-
+    setEvents(prev => {
+      const updated = ev.recurrence_id
+        ? prev.filter(e => e.recurrence_id !== ev.recurrence_id)
+        : prev.filter(e => e.id !== ev.id);
+      onPendingCountChange(deduplicateByRecurrence(updated).length);
+      return updated;
+    });
     setDetailEvent(null);
     setActingOn(null);
   };
 
-  // ── Reject ──────────────────────────────────────────────────────────────────
+  // ── Reject ───────────────────────────────────────────────────────────────────
 
-  const reject = async (id: string) => {
+  const reject = async (ev: AdminEvent) => {
     setError(null);
-    setActingOn(id);
+    setActingOn(ev.id);
     setConfirmReject(null);
 
-    const { error } = await supabase
-      .from("events")
-      .delete()
-      .eq("id", id);
+    const query = ev.recurrence_id
+      // Delete every occurrence in the series
+      ? supabase.from("events").delete().eq("recurrence_id", ev.recurrence_id)
+      : supabase.from("events").delete().eq("id", ev.id);
 
+    const { error } = await query;
     if (error) { setError(error.message); setActingOn(null); return; }
 
-    setEvents(prev => prev.filter(e => e.id !== id));
-    if (detailEvent?.id === id) setDetailEvent(null);
+    setEvents(prev => {
+      const updated = ev.recurrence_id
+        ? prev.filter(e => e.recurrence_id !== ev.recurrence_id)
+        : prev.filter(e => e.id !== ev.id);
+      onPendingCountChange(deduplicateByRecurrence(updated).length);
+      return updated;
+    });
+    if (detailEvent?.id === ev.id) setDetailEvent(null);
     setActingOn(null);
   };
 
   const handleCardClick = (ev: AdminEvent) => {
     if (detailEvent?.id === ev.id) {
       setDetailEvent(null);
-      setAwaitingApproveScope(false);
     } else {
       setDetailEvent(ev);
       setConfirmReject(null);
-      setAwaitingApproveScope(false);
     }
   };
 
-  // ── Approve scope prompt ─────────────────────────────────────────────────────
-
-  const ApproveScopePrompt = () => {
-    if (!detailEvent) return null;
-    const seriesCount = events.filter(e => e.recurrence_id === detailEvent.recurrence_id).length;
-    return (
-      <div className="queue-scope-prompt">
-        <div className="queue-scope-question">
-          This event is part of a recurring series ({seriesCount} pending occurrence{seriesCount !== 1 ? "s" : ""}). Approve which?
-        </div>
-        <div className="queue-scope-actions">
-          <button
-            className="queue-btn queue-btn--approve"
-            onClick={() => approveEvent(detailEvent.id, "single")}
-            disabled={!!actingOn}
-          >
-            {actingOn ? "Approving…" : "Just this one"}
-          </button>
-          <button
-            className="queue-btn queue-btn--approve-all"
-            onClick={() => approveEvent(detailEvent.id, "all-series")}
-            disabled={!!actingOn}
-          >
-            {actingOn ? "Approving…" : `All ${seriesCount} in series`}
-          </button>
-        </div>
-        <button
-          className="queue-scope-cancel"
-          onClick={() => setAwaitingApproveScope(false)}
-          disabled={!!actingOn}
-        >
-          ← Cancel
-        </button>
-      </div>
-    );
-  };
-
-  // ── Detail panel actions ─────────────────────────────────────────────────────
+  // ── Detail panel actions ──────────────────────────────────────────────────────
 
   const detailActions = detailEvent ? (
-    awaitingApproveScope ? (
-      <ApproveScopePrompt />
-    ) : (
-      <div className="queue-detail-actions">
-        <button
-          className="queue-btn queue-btn--approve"
-          onClick={handleApproveClick}
-          disabled={!!actingOn}
-        >
-          {actingOn === detailEvent.id ? "Approving…" : "✓ Approve"}
-        </button>
+    <div className="queue-detail-actions">
+      <button
+        className="queue-btn queue-btn--approve"
+        onClick={() => approve(detailEvent)}
+        disabled={!!actingOn}
+      >
+        {actingOn === detailEvent.id ? "Approving…" : "✓ Approve"}
+      </button>
 
-        {confirmReject === detailEvent.id ? (
-          <>
-            <button
-              className="queue-btn queue-btn--reject"
-              onClick={() => reject(detailEvent.id)}
-              disabled={!!actingOn}
-            >
-              {actingOn === detailEvent.id ? "Rejecting…" : "Confirm Reject"}
-            </button>
-            <button
-              className="queue-btn queue-btn--cancel"
-              onClick={() => setConfirmReject(null)}
-              disabled={!!actingOn}
-            >
-              Cancel
-            </button>
-          </>
-        ) : (
+      {confirmReject === detailEvent.id ? (
+        <>
           <button
             className="queue-btn queue-btn--reject"
-            onClick={() => setConfirmReject(detailEvent.id)}
+            onClick={() => reject(detailEvent)}
             disabled={!!actingOn}
           >
-            ✕ Reject
+            {actingOn === detailEvent.id ? "Rejecting…" : "Confirm Reject"}
           </button>
-        )}
-      </div>
-    )
+          <button
+            className="queue-btn queue-btn--cancel"
+            onClick={() => setConfirmReject(null)}
+            disabled={!!actingOn}
+          >
+            Cancel
+          </button>
+        </>
+      ) : (
+        <button
+          className="queue-btn queue-btn--reject"
+          onClick={() => setConfirmReject(detailEvent.id)}
+          disabled={!!actingOn}
+        >
+          ✕ Reject
+        </button>
+      )}
+    </div>
   ) : null;
 
-  // ── Render ──────────────────────────────────────────────────────────────────
+  // ── Render ────────────────────────────────────────────────────────────────────
+
+  const displayEvents = deduplicateByRecurrence(events);
 
   return (
     <div className="queue-page">
@@ -207,12 +176,15 @@ export default function AdminQueue() {
 
           {loading ? (
             <div className="queue-empty">Loading…</div>
-          ) : events.length === 0 ? (
+          ) : displayEvents.length === 0 ? (
             <div className="queue-empty">No pending events — you're all caught up!</div>
           ) : (
             <div className="queue-list">
-              {events.map(ev => {
+              {displayEvents.map(ev => {
                 const isSelected = detailEvent?.id === ev.id;
+                const seriesCount = ev.recurrence_id
+                  ? events.filter(e => e.recurrence_id === ev.recurrence_id).length
+                  : null;
 
                 return (
                   <div
@@ -231,12 +203,10 @@ export default function AdminQueue() {
                       <div className="queue-event-meta">📍 {ev.location}</div>
                     )}
 
-                    {ev.description && (
-                      <div className="queue-event-description">{ev.description}</div>
-                    )}
-
-                    {ev.recurrence_id && (
-                      <div className="queue-event-recurrence-badge">↻ Recurring</div>
+                    {seriesCount && (
+                      <div className="queue-event-recurrence-badge">
+                        ↻ Recurring series · {seriesCount} occurrence{seriesCount !== 1 ? "s" : ""}
+                      </div>
                     )}
                   </div>
                 );
@@ -250,7 +220,7 @@ export default function AdminQueue() {
             <EventDetails
               event={detailEvent as Event}
               isLoggedIn={true}
-              onClose={() => { setDetailEvent(null); setAwaitingApproveScope(false); }}
+              onClose={() => setDetailEvent(null)}
               onEdit={() => {}}
               actions={detailActions}
             />

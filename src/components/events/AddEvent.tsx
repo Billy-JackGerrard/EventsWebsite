@@ -9,10 +9,6 @@ import "./AddEvent.css";
 export default function AddEvent() {
   const [submitted, setSubmitted] = useState(false);
   const [submittedCount, setSubmittedCount] = useState(1);
-  // Fix #7: isAdmin is used only for the subtitle — derive it from the auth
-  // subscription rather than duplicating it via a separate getSession call.
-  // The submit handler re-fetches the session itself (see comment there) so
-  // this state is never trusted for security decisions.
   const [isAdmin, setIsAdmin] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -22,7 +18,6 @@ export default function AddEvent() {
     useTurnstile(import.meta.env.VITE_TURNSTILE_SITE_KEY, formKey);
 
   useEffect(() => {
-    // Seed the initial value, then keep it live via the auth subscription.
     supabase.auth.getSession().then(({ data: { session } }: { data: { session: Session | null } }) => {
       setIsAdmin(!!session);
     });
@@ -45,7 +40,6 @@ export default function AddEvent() {
     setLoading(true);
     setError(null);
 
-    // Verify the Turnstile token via the Edge Function
     const verifyRes = await fetch(import.meta.env.VITE_TURNSTILE_ENDPOINT_URL, {
       method: "POST",
       headers: {
@@ -64,13 +58,14 @@ export default function AddEvent() {
       return;
     }
 
-    // Re-fetch the session here rather than relying on the isAdmin state value.
-    // isAdmin is set asynchronously and is only used for the subtitle UI;
-    // we always re-verify server-side here before writing approved / admin_id.
     const { data: { session } }: { data: { session: Session | null } } =
       await supabase.auth.getSession();
     const admin = !!session?.user;
 
+    // All occurrences are inserted upfront. For non-admins they are all
+    // unapproved — the queue deduplicates by recurrence_id so only the first
+    // shows up for review, and approval sets the whole series to approved in
+    // one query.
     const rowsWithMeta = rows.map(row => ({
       ...row,
       approved: admin,
@@ -94,7 +89,7 @@ export default function AddEvent() {
     setSubmitted(false);
     setSubmittedCount(1);
     setError(null);
-    setFormKey(k => k + 1); // remounts EventForm and re-renders Turnstile via formKey
+    setFormKey(k => k + 1);
   };
 
   if (submitted) {
@@ -105,7 +100,7 @@ export default function AddEvent() {
           <div className="addevent-success">
             <div className="addevent-success-icon">✓</div>
             <h2 className="addevent-title">
-              {isRecurring ? "Recurring Event Added!" : "Event Added!"}
+              {isRecurring ? "Recurring Event Submitted!" : "Event Added!"}
             </h2>
             <p className="addevent-success-msg">
               {isAdmin ? (
@@ -114,7 +109,7 @@ export default function AddEvent() {
                   : "Your event has been published directly to the calendar."
               ) : (
                 isRecurring
-                  ? `Thank you! ${submittedCount} occurrences have been submitted and are awaiting approval from an admin.`
+                  ? `Thank you! Your recurring event has been submitted for review. Once approved, all ${submittedCount} dates will appear on the calendar.`
                   : "Thank you! Your event has been submitted and is awaiting approval from an admin."
               )}
             </p>
@@ -147,7 +142,6 @@ export default function AddEvent() {
           submitting={loading || !turnstileToken}
           onSubmit={handleSubmit}
         >
-          {/* Turnstile widget container — managed by useTurnstile */}
           <div ref={turnstileRef} style={{ margin: "1rem 0" }} />
         </EventForm>
       </div>

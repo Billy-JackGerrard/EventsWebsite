@@ -12,7 +12,7 @@
     left: 0;
     z-index: 100;
 }
-  
+
 .navbar-brand {
     color: var(--color-accent);
     font-family: Georgia, serif;
@@ -21,17 +21,17 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
 }
-  
+
 .navbar-links {
     display: flex;
     gap: 0.5rem;
     align-items: center;
 }
-  
+
 .navbar-link {
     background: transparent;
     border: 1px solid transparent;
-    color: var( --color-text-primary);
+    color: var(--color-text-primary);
     font-family: monospace;
     font-size: 0.8rem;
     letter-spacing: 0.1em;
@@ -41,28 +41,28 @@
     cursor: pointer;
     transition: all 0.15s;
 }
-  
+
 .navbar-link:hover {
     border-color: var(--color-accent);
     color: var(--color-accent);
 }
-  
+
 .navbar-link--active {
     background: var(--color-accent);
     color: var(--color-text-dark);
     font-weight: bold;
 }
-  
+
 .navbar-link--active:hover {
     background: var(--color-accent);
     color: var(--color-text-dark);
     border-color: var(--color-accent);
 }
-  
+
 .navbar-link--logout {
     color: var(--color-text-error);
 }
-  
+
 .navbar-link--logout:hover {
     border-color: var(--color-text-error);
     color: var(--color-text-error);
@@ -71,9 +71,35 @@
 .navbar-link--whatsapp {
     color: #4ade80;
     text-decoration: none;
-  }
-  
-  .navbar-link--whatsapp:hover {
+}
+
+.navbar-link--whatsapp:hover {
     border-color: #4ade80;
     color: #4ade80;
-  }
+}
+
+/* ── Queue button — relative so the badge can anchor to it ── */
+.navbar-link--queue {
+    position: relative;
+}
+
+/* ── Pending badge ── */
+.navbar-pending-badge {
+    position: absolute;
+    top: -5px;
+    right: -5px;
+    background: var(--color-text-error);
+    color: #fff;
+    font-family: monospace;
+    font-size: 0.65rem;
+    font-weight: bold;
+    line-height: 1;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 3px;
+    pointer-events: none;
+}

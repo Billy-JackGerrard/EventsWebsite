@@ -6,7 +6,6 @@ import type { Event } from "../../utils/types";
 import RecurrencePicker from "./RecurrencePicker";
 import "./EventForm.css";
 
-// Re-export so AddEvent/EditEvent don't need to import recurrence directly
 export type { RecurrenceRule };
 
 export type EventFormRow = {
@@ -22,31 +21,19 @@ export type EventFormRow = {
   price: string | null;
   booking_info: string | null;
   recurrence_id: string | null;
+  recurrence_rule: RecurrenceRule | null;
 };
 
 type Props = {
-  /** Pre-fill from an existing event (edit mode). Leave undefined for add mode. */
   initialValues?: Event;
-  /** Whether to show the recurrence picker (hide in edit mode). */
   showRecurrence?: boolean;
-  /** Label shown on the submit button */
   submitLabel: string;
-  /** Label shown while submitting */
   submittingLabel: string;
-  /** External error to display (e.g. from Supabase) */
   externalError?: string | null;
-  /** Whether form is submitting (controls button disabled state alongside internal validation) */
   submitting?: boolean;
-  /**
-   * Called with the expanded rows when the form passes validation.
-   * The caller is responsible for the actual Supabase call.
-   */
   onSubmit: (rows: EventFormRow[]) => void;
-  /** Optional cancel button — shown when provided */
   onCancel?: () => void;
-  /** Called whenever the starts_at field changes — lets parents (e.g. EditEvent) track the live value */
   onStartsAtChange?: (value: string) => void;
-  /** Extra content rendered below the fields but above the submit button (e.g. Turnstile) */
   children?: React.ReactNode;
 };
 
@@ -78,16 +65,12 @@ export default function EventForm({
   const [recurrenceEnabled, setRecurrenceEnabled] = useState(false);
   const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>(DEFAULT_RULE);
 
-  // Fix #3: keep minDateTime fresh — recompute every minute so the `min`
-  // attribute on the datetime-local inputs never goes stale if the form sits
-  // open for an extended period.
   const [minDateTime, setMinDateTime] = useState(getSoftMinDateTime);
   useEffect(() => {
     const id = setInterval(() => setMinDateTime(getSoftMinDateTime()), 60_000);
     return () => clearInterval(id);
   }, []);
 
-  // Track whether initialValues changed (e.g. switching which event is being edited)
   const prevInitialRef = useRef<Event | undefined>(initialValues);
   useEffect(() => {
     if (initialValues && initialValues !== prevInitialRef.current) {
@@ -144,10 +127,10 @@ export default function EventForm({
 
     const occurrences = expandRecurrences(activeRule, firstStart, firstFinish);
 
-    const recurrenceId: string | null =
-      showRecurrence && recurrenceEnabled && occurrences.length > 1
-        ? crypto.randomUUID()
-        : null;
+    const isRecurring = showRecurrence && recurrenceEnabled && occurrences.length > 1;
+    const recurrenceId: string | null = isRecurring ? crypto.randomUUID() : null;
+    // Store the rule on every row so EventDetails can display a summary.
+    const storedRule: RecurrenceRule | null = isRecurring ? activeRule : null;
 
     const rows: EventFormRow[] = occurrences.map(({ start, finish }) => ({
       title,
@@ -162,6 +145,7 @@ export default function EventForm({
       price: price || null,
       booking_info: bookingInfo || null,
       recurrence_id: recurrenceId,
+      recurrence_rule: storedRule,
     }));
 
     onSubmit(rows);
@@ -310,7 +294,6 @@ export default function EventForm({
         />
       </div>
 
-      {/* Slot for Turnstile or other caller-provided content */}
       {children}
 
       <div className="eventform-actions">

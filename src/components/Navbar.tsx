@@ -4,11 +4,12 @@ import "./Navbar.css";
 type Props = {
   currentView: View;
   isLoggedIn: boolean;
+  pendingCount: number;
   onNavigate: (view: View) => void;
   onLogout: () => void;
 };
 
-export default function Navbar({ currentView, isLoggedIn, onNavigate, onLogout }: Props) {
+export default function Navbar({ currentView, isLoggedIn, pendingCount, onNavigate, onLogout }: Props) {
   return (
     <nav className="navbar">
       <div className="navbar-brand">Edinburgh BSL Community</div>
@@ -47,10 +48,13 @@ export default function Navbar({ currentView, isLoggedIn, onNavigate, onLogout }
         {isLoggedIn ? (
           <>
             <button
-              className={`navbar-link ${currentView === "admin-queue" ? "navbar-link--active" : ""}`}
+              className={`navbar-link navbar-link--queue ${currentView === "admin-queue" ? "navbar-link--active" : ""}`}
               onClick={() => onNavigate("admin-queue")}
             >
               Pending Events
+              {pendingCount > 0 && (
+                <span className="navbar-pending-badge">{pendingCount}</span>
+              )}
             </button>
             <button className="navbar-link navbar-link--logout" onClick={onLogout}>
               Log out

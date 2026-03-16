@@ -1,3 +1,5 @@
+import type { RecurrenceRule } from "./recurrence";
+
 /** Core event shape — returned by all approved-event queries. */
 export type Event = {
   id: string;
@@ -14,6 +16,7 @@ export type Event = {
   url?: string;
   whatsapp_url?: string;
   recurrence_id?: string;
+  recurrence_rule?: RecurrenceRule;
 };
 
 /**

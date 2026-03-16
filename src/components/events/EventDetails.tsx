@@ -1,5 +1,6 @@
 import type { Event } from "../../utils/types";
 import { formatDateTimeRange } from "../../utils/dates";
+import { humaniseRule } from "../../utils/recurrence";
 import "./EventDetails.css";
 
 type Props = {
@@ -7,7 +8,7 @@ type Props = {
   isLoggedIn: boolean;
   onClose: () => void;
   onEdit: (event: Event) => void;
-  /** Optional slot rendered below the description / contact section */
+  /** Optional slot rendered below the contact section (e.g. admin actions) */
   actions?: React.ReactNode;
 };
 
@@ -34,6 +35,11 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
     ? (event.whatsapp_url.startsWith("http") ? event.whatsapp_url : `https://${event.whatsapp_url}`)
     : null;
 
+  // Derive the human-readable recurrence summary if the rule is stored on the event.
+  const recurrenceSummary = event.recurrence_id && event.recurrence_rule
+    ? humaniseRule(event.recurrence_rule, new Date(event.starts_at))
+    : null;
+
   return (
     <div className="event-detail-card">
       <div className="event-detail-close-row">
@@ -54,6 +60,12 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, ac
         <div className="event-detail-datetime">
           {formatDateTimeRange(event.starts_at, event.finishes_at)}
         </div>
+        {recurrenceSummary && (
+          <div className="event-detail-recurrence">
+            <span className="event-detail-recurrence-icon">↻</span>
+            {recurrenceSummary}
+          </div>
+        )}
       </div>
 
       {event.location && (

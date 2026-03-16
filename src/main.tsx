@@ -113,6 +113,7 @@ function App() {
           <Calendar
             isLoggedIn={isLoggedIn}
             onViewEvent={handleViewEvent}
+            onEditEvent={ev => handleEditEvent(ev, "calendar")}
             onAddEvent={handleAddEventFromCalendar}
           />
         )}

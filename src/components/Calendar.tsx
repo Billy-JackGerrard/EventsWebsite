@@ -3,6 +3,7 @@ import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
 import { supabase } from "../supabaseClient";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
+import EventDetails from "./events/EventDetails";
 import "./Calendar.css";
 
 const DAYS = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
@@ -25,6 +26,7 @@ function addMonths(base: MonthKey, delta: number): MonthKey {
 type Props = {
   isLoggedIn: boolean;
   onViewEvent: (event: Event) => void;
+  onEditEvent: (event: Event) => void;
   onAddEvent: (date: { day: number; month: number; year: number }) => void;
 };
 
@@ -96,7 +98,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onViewEvent, onAddEvent }: Props) {
+export default function Calendar({ isLoggedIn, onViewEvent, onEditEvent, onAddEvent }: Props) {
 
   const [today, setToday] = useState(() => new Date());
 
@@ -124,66 +126,63 @@ export default function Calendar({ isLoggedIn, onViewEvent, onAddEvent }: Props)
     const keys: MonthKey[] = [];
     for (let i = -monthsBefore; i <= monthsAfter; i++) keys.push(addMonths(todayKey, i));
     return keys;
-  }, [monthsBefore, monthsAfter, today]);
+  }, [monthsBefore, monthsAfter, todayKey.month, todayKey.year]);
 
   const windowStart = monthKeys[0];
   const windowEnd   = monthKeys[monthKeys.length - 1];
+
   const { eventsByDate, allEvents, loading } = useCalendarEvents(windowStart, windowEnd);
 
-  const [selected, setSelected] = useState<{ month: number; year: number; day: number } | null>(null);
+  const [selected, setSelected] = useState<{ day: number; month: number; year: number } | null>(null);
+  const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const monthRefs = useRef<Map<string, HTMLDivElement>>(new Map());
+  const todayMonthRef = useRef<HTMLDivElement | null>(null);
+
   const [searchOpen,  setSearchOpen]  = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
-  const searchInputRef     = useRef<HTMLInputElement>(null);
-  const dropdownRef        = useRef<HTMLDivElement>(null);
-  const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const monthRefs          = useRef<Map<string, HTMLDivElement>>(new Map());
-  const todayMonthRef      = useRef<HTMLDivElement | null>(null);
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const dropdownRef    = useRef<HTMLDivElement>(null);
 
   // Close search dropdown on outside click
   useEffect(() => {
     const handler = (e: MouseEvent) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node))
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
         setSearchQuery("");
+      }
     };
     document.addEventListener("mousedown", handler);
     return () => document.removeEventListener("mousedown", handler);
   }, []);
 
-  // Scroll to today on first load
+  // Infinite scroll – load more months when near top/bottom
   useEffect(() => {
-    setTimeout(() => todayMonthRef.current?.scrollIntoView({ behavior: "instant", block: "start" }), 50);
-  }, []);
-
-  // Auto-delete events older than 1 year when admin logs in
-  useEffect(() => {
-    if (!isLoggedIn) return;
-    const cutoff = new Date();
-    cutoff.setFullYear(cutoff.getFullYear() - 1);
-    supabase.from("events").delete().or(
-      `finishes_at.lt.${cutoff.toISOString()},` +
-      `and(finishes_at.is.null,starts_at.lt.${cutoff.toISOString()})`
-    );
-  }, [isLoggedIn]);
-
-  // Infinite scroll — load more months
-  useEffect(() => {
-    const container = scrollContainerRef.current;
-    if (!container) return;
-    const handler = () => {
-      const { scrollTop, scrollHeight, clientHeight } = container;
-      if (scrollTop < 300)                               setMonthsBefore(b => Math.min(b + 3, MONTHS_BEFORE_MAX));
-      if (scrollHeight - scrollTop - clientHeight < 400) setMonthsAfter(a => Math.min(a + 3, MONTHS_AFTER_MAX));
+    const el = scrollContainerRef.current;
+    if (!el) return;
+    const onScroll = () => {
+      if (el.scrollTop < 200 && monthsBefore < MONTHS_BEFORE_MAX)
+        setMonthsBefore(p => Math.min(p + 2, MONTHS_BEFORE_MAX));
+      if (el.scrollHeight - el.scrollTop - el.clientHeight < 400 && monthsAfter < MONTHS_AFTER_MAX)
+        setMonthsAfter(p => Math.min(p + 2, MONTHS_AFTER_MAX));
     };
-    container.addEventListener("scroll", handler, { passive: true });
-    return () => container.removeEventListener("scroll", handler);
+    el.addEventListener("scroll", onScroll, { passive: true });
+    return () => el.removeEventListener("scroll", onScroll);
+  }, [monthsBefore, monthsAfter]);
+
+  const scrollToToday = useCallback(() => {
+    todayMonthRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
   }, []);
 
-  const scrollToToday = () => todayMonthRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  useEffect(() => {
+    const frame = requestAnimationFrame(() => {
+      todayMonthRef.current?.scrollIntoView({ block: "start" });
+    });
+    return () => cancelAnimationFrame(frame);
+  }, []);
 
-  // Search
-  const matchesSearch = useCallback((event: Event, query: string): boolean => {
-    if (!query.trim()) return false;
-    const q = query.toLowerCase();
+  const matchesSearch = useCallback((event: Event, q: string) => {
     const haystack = [event.title, event.description ?? "", event.location ?? ""].join(" ").toLowerCase();
     return q.split(/\s+/).filter(Boolean).every(word => haystack.includes(word));
   }, []);
@@ -218,10 +217,16 @@ export default function Calendar({ isLoggedIn, onViewEvent, onAddEvent }: Props)
   };
 
   const handleSelectDay = (day: number, month: number, year: number) => {
-    if (selected?.day === day && selected?.month === month && selected?.year === year)
+    if (selected?.day === day && selected?.month === month && selected?.year === year) {
       setSelected(null);
-    else
+    } else {
       setSelected({ day, month, year });
+      setExpandedEventId(null); // collapse any expanded event when switching days
+    }
+  };
+
+  const handleToggleEvent = (ev: Event) => {
+    setExpandedEventId(prev => prev === ev.id ? null : ev.id);
   };
 
   const selectedEvents: Event[] = useMemo(() => {
@@ -339,16 +344,37 @@ export default function Calendar({ isLoggedIn, onViewEvent, onAddEvent }: Props)
               </div>
             ) : (
               <div className="calendar-panel-list">
-                {selectedEvents.map(ev => (
-                  <button key={ev.id} className="calendar-panel-event" onClick={() => onViewEvent(ev)}>
-                    <span className="calendar-panel-event-title">{ev.title}</span>
-                    <span className="calendar-panel-event-time">
-                      {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
-                      {ev.finishes_at && ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
-                    </span>
-                    {ev.location && <span className="calendar-panel-event-location">📍 {ev.location}</span>}
-                  </button>
-                ))}
+                {selectedEvents.map(ev => {
+                  const isExpanded = expandedEventId === ev.id;
+                  return (
+                    <div key={ev.id} className={`calendar-panel-event-wrap ${isExpanded ? "calendar-panel-event-wrap--expanded" : ""}`}>
+                      <button
+                        className={`calendar-panel-event ${isExpanded ? "calendar-panel-event--active" : ""}`}
+                        onClick={() => handleToggleEvent(ev)}
+                        aria-expanded={isExpanded}
+                      >
+                        <span className="calendar-panel-event-title">{ev.title}</span>
+                        <span className="calendar-panel-event-time">
+                          {new Date(ev.starts_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}
+                          {ev.finishes_at && ` – ${new Date(ev.finishes_at).toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}`}
+                        </span>
+                        {ev.location && <span className="calendar-panel-event-location">📍 {ev.location}</span>}
+                        <span className="calendar-panel-event-chevron">{isExpanded ? "▲" : "▼"}</span>
+                      </button>
+
+                      {isExpanded && (
+                        <div className="calendar-panel-event-detail">
+                          <EventDetails
+                            event={ev}
+                            isLoggedIn={isLoggedIn}
+                            onClose={() => setExpandedEventId(null)}
+                            onEdit={onEditEvent}
+                          />
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </>

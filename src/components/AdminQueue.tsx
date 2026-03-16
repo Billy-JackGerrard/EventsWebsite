@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import { formatDateTimeRange } from "../utils/dates";
+import { deduplicateByRecurrence } from "../utils/recurrence";
 import type { AdminEvent } from "../utils/types";
 import type { Event } from "../utils/types";
 import EventDetails from "./events/EventDetails";
@@ -10,17 +11,6 @@ type Props = {
   onPendingCountChange: (count: number) => void;
   onEditEvent: (event: Event) => void;
 };
-
-function deduplicateByRecurrence(events: AdminEvent[]): AdminEvent[] {
-  const seen = new Set<string>();
-  return events.filter(ev => {
-    const rid = ev.recurrence?.id;
-    if (!rid) return true;
-    if (seen.has(rid)) return false;
-    seen.add(rid);
-    return true;
-  });
-}
 
 export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props) {
   const [events, setEvents] = useState<AdminEvent[]>([]);

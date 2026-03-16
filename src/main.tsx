@@ -3,6 +3,7 @@ import './style.css'
 import { StrictMode, useState, useEffect, useCallback } from "react";
 import { createRoot } from "react-dom/client";
 import { supabase } from "./supabaseClient";
+import { deduplicateByRecurrence } from "./utils/recurrence";
 import Calendar from "./components/Calendar.tsx";
 import Login from "./components/Login.tsx";
 import Navbar from "./components/Navbar.tsx";
@@ -30,18 +31,7 @@ function App() {
       .eq("approved", false);
 
     if (!data) return;
-
-    const seen = new Set<string>();
-    let count = 0;
-    for (const ev of data) {
-      const rid = ev.recurrence?.id;
-      if (rid) {
-        if (seen.has(rid)) continue;
-        seen.add(rid);
-      }
-      count++;
-    }
-    setPendingCount(count);
+    setPendingCount(deduplicateByRecurrence(data).length);
   }, []);
 
   useEffect(() => {

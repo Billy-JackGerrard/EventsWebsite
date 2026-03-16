@@ -223,5 +223,27 @@ export function expandRecurrences(
     return results;
   }
 
+  // All named frequencies are handled above. This point is unreachable at
+  // runtime but satisfies the TypeScript return-type checker.
   return [{ start: firstStart, finish: firstFinish }];
+}
+
+/**
+ * Deduplicates an array of events that may include multiple occurrences from
+ * the same recurring series, keeping only the first occurrence of each series.
+ * Non-recurring events are always kept.
+ *
+ * Used by both AdminQueue and main.tsx to get an accurate pending count.
+ */
+export function deduplicateByRecurrence<T extends { id: string; recurrence?: RecurrenceRule | null }>(
+  events: T[]
+): T[] {
+  const seen = new Set<string>();
+  return events.filter(ev => {
+    const rid = ev.recurrence?.id;
+    if (!rid) return true;
+    if (seen.has(rid)) return false;
+    seen.add(rid);
+    return true;
+  });
 }

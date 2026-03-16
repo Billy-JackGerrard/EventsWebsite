@@ -22,9 +22,12 @@ function ordinalSuffix(n: number): string {
 export default function RecurrencePicker({ enabled, rule, startsAt, onToggle, onRuleChange }: Props) {
   const firstStart: Date | null = startsAt ? new Date(startsAt) : null;
 
+  // firstStart is derived from startsAt — derive it inside the memo too so the
+  // closure is self-contained and the deps accurately reflect what's used.
   const occurrenceCount = useMemo(() => {
-    if (!enabled || !firstStart || rule.frequency === "none") return 0;
-    return expandRecurrences(rule, firstStart, null).length;
+    const start = startsAt ? new Date(startsAt) : null;
+    if (!enabled || !start || rule.frequency === "none") return 0;
+    return expandRecurrences(rule, start, null).length;
   }, [enabled, rule, startsAt]);
 
   const summary = enabled && firstStart ? humaniseRule(rule, firstStart) : null;

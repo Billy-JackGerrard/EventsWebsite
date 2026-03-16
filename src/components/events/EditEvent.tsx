@@ -31,8 +31,12 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
 
   const [recurrenceOpen, setRecurrenceOpen] = useState(false);
   const [recurrenceChanged, setRecurrenceChanged] = useState(false);
-  const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>(DEFAULT_RULE);
-  const [recurrenceEnabled, setRecurrenceEnabled] = useState(true);
+
+  // Initialise from the event's existing rule so the picker is pre-populated
+  // when the user opens "Change recurrence…" rather than starting from DEFAULT_RULE.
+  const existingRule: RecurrenceRule = event.recurrence ?? DEFAULT_RULE;
+  const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>(existingRule);
+  const [recurrenceEnabled, setRecurrenceEnabled] = useState(!!event.recurrence);
 
   const [pendingRow, setPendingRow] = useState<EventFormRow | null>(null);
 
@@ -84,6 +88,9 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
       onSaved(data as Event);
 
     } else {
+      // Fetch all future occurrences using the original starts_at so we
+      // correctly identify which rows to update regardless of any time shift
+      // the user may have applied.
       const { data: futures, error: fetchErr } = await supabase
         .from("events")
         .select("id, starts_at")
@@ -136,7 +143,9 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     setSaving(true);
     setError(null);
 
-    // Delete all future occurrences in this series
+    // Delete all future occurrences using the original starts_at. This must
+    // use event.starts_at (not row.starts_at) so the delete range is correct
+    // even if the user changed the time as part of this edit.
     const { error: deleteErr } = await supabase
       .from("events")
       .delete()
@@ -153,7 +162,7 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
     const firstFinish = row.finishes_at ? new Date(row.finishes_at) : null;
     const occurrences = expandRecurrences(activeRule, firstStart, firstFinish);
 
-    // Keep the same series id if still recurring, otherwise null out recurrence
+    // Keep the same series id if still recurring, otherwise null out recurrence.
     const newRecurrence: RecurrenceRule | null = occurrences.length > 1
       ? { ...activeRule, id: event.recurrence.id }
       : null;
@@ -262,8 +271,9 @@ export default function EditEvent({ event, onSaved, onCancel }: Props) {
                     onClick={() => {
                       setRecurrenceOpen(false);
                       setRecurrenceChanged(false);
-                      setRecurrenceRule(DEFAULT_RULE);
-                      setRecurrenceEnabled(true);
+                      // Reset back to the event's actual existing rule, not DEFAULT_RULE.
+                      setRecurrenceRule(existingRule);
+                      setRecurrenceEnabled(!!event.recurrence);
                     }}
                   >
                     ← Cancel recurrence change

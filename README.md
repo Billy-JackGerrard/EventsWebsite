@@ -1,10 +1,3 @@
-TODO ASAP:
-finish convo with claude about approving recurring events, then copy those updated files
-1. why are you approving all the events other than the first one? they havent been approved yet by the admin, what if they're spam?
-2. do you think we should put the recurrence_id in the new db column - recurrence_summary json
-3. remove the description from events in the main queue box - i only want to see the description when i click on the event
-4. the edit button doesn't seem to be doing anything?
-
 Gaps:
 
 No way for event submitters to edit or follow up on their submission (eg what if there's a time or room change?)
@@ -13,8 +6,6 @@ No way for admins to edit an event before approving it (e.g. fix a typo)
 
 No email notifications — admins won't know when something is pending approval unless they log in and check
 Mobile navbar — it'll break on small screens with all those buttons in a row
-
-Biweekly is not an option when adding recurring events.
 
 IDEAS:
 
@@ -32,7 +23,6 @@ when adding events:
 - optionally add an image 
 
 event queue for admins:
-- add a "notification" mark when there are unapproved events in the queue
 - when an event is approved, also publish that event to socials? or email announcements?
 - different types of admin requests - "New recurring event request", "Cancel Event Request", "Event edit Request"
 

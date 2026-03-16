@@ -105,6 +105,13 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         </div>
       )}
 
+      {event.age_rating && (
+        <div className="event-detail-row">
+          <span className="event-detail-icon">🔞</span>
+          <span className="event-detail-text">{event.age_rating}</span>
+        </div>
+      )}
+
       {event.price && (
         <div className="event-detail-row">
           <span className="event-detail-icon">🎟</span>

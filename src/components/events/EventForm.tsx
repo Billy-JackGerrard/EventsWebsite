@@ -2,8 +2,8 @@ import { useState, useEffect, useRef } from "react";
 import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
 import { isoToLocal, getSoftMinDateTime } from "../../utils/dates";
-import type { Event, Category } from "../../utils/types";
-import { CATEGORIES, CATEGORY_COLOURS } from "../../utils/types";
+import type { Event, Category, AgeRating } from "../../utils/types";
+import { CATEGORIES, CATEGORY_COLOURS, AGE_RATINGS } from "../../utils/types";
 import RecurrencePicker from "./RecurrencePicker";
 import "./EventForm.css";
 
@@ -24,6 +24,7 @@ export type EventFormRow = {
   price: string | null;
   booking_info: string | null;
   accessibility: string[];
+  age_rating: AgeRating | null;
   recurrence: RecurrenceRule | null;
 };
 
@@ -73,6 +74,7 @@ export default function EventForm({
   const [url, setUrl] = useState(initialValues?.url ?? "");
   const [price, setPrice] = useState(initialValues?.price ?? "");
   const [bookingInfo, setBookingInfo] = useState(initialValues?.booking_info ?? "");
+  const [ageRating, setAgeRating] = useState<AgeRating | null>(initialValues?.age_rating ?? null);
   const [category, setCategory] = useState<string>(initialValues?.category ?? "");
   const [categoryOpen, setCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
@@ -141,6 +143,7 @@ export default function EventForm({
       setAccessibility((initialValues.accessibility ?? []).filter(o => !o.startsWith("Other: ")));
       setAccessibilityOther(initialValues.accessibility?.find(o => o.startsWith("Other: "))?.replace("Other: ", "") ?? "");
       setShowMoreAccessibility((initialValues.accessibility ?? []).some(o => ALL_ADVANCED_OPTIONS.includes(o) || o.startsWith("Other: ")));
+      setAgeRating(initialValues.age_rating ?? null);
       setRecurrenceEnabled(false);
       setRecurrenceRule(DEFAULT_RULE);
       setInternalError(null);
@@ -230,6 +233,7 @@ export default function EventForm({
       accessibility: accessibilityOther.trim()
         ? [...accessibility, `Other: ${accessibilityOther.trim()}`]
         : accessibility,
+      age_rating: ageRating,
       recurrence,
     }));
 
@@ -481,6 +485,22 @@ export default function EventForm({
             </div>
           </div>
         )}
+      </div>
+
+      <div className="addevent-field">
+        <label className="addevent-label">Age Rating</label>
+        <div className="event-type-toggle">
+          {AGE_RATINGS.map(rating => (
+            <button
+              key={rating}
+              type="button"
+              className={`event-type-btn${ageRating === rating ? ' event-type-btn--active' : ''}`}
+              onClick={() => setAgeRating(prev => prev === rating ? null : rating)}
+            >
+              {rating}
+            </button>
+          ))}
+        </div>
       </div>
 
       {showRecurrence && (

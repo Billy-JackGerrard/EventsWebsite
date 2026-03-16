@@ -61,12 +61,6 @@ grey: #ececec
 COLOUR : dark MODE
 black: #202020
 
-
-accessibility section with drop downs
-
-event age min and max optional
-maybe click on toddlers, children, youth, adult, family, etc
-
 have different ways of viewing calendar
 
 make it phone-screen friendly! 

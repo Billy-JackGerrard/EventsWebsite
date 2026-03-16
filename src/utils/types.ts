@@ -18,6 +18,7 @@ export type Event = {
   contact_email?: string;
   url?: string;
   accessibility?: string[];
+  age_rating?: AgeRating;
   /** Unified recurrence field. Present and non-null when this event is part
    *  of a recurring series; the `id` field within links all occurrences. */
   recurrence?: RecurrenceRule;
@@ -34,34 +35,42 @@ export type AdminEvent = Event & {
 
 
 
+export const AGE_RATINGS = [
+  "Toddlers",
+  "Children",
+  "Family",
+  "PG",
+  "12+",
+  "15+",
+  "18+",
+] as const;
+
+export type AgeRating = typeof AGE_RATINGS[number];
+
 export const CATEGORIES = [
-  "Children & Families",
-  "Theatre",
-  "Sports",
-  "Games",
+  "Kids Activities",
+  "Performance & Film",
+  "Sports & Fitness",
+  "Social & Games",
   "Arts & Crafts",
-  "Exhibition",
-  "Tours",
+  "Tours & Exhibitions",
+  "Talks & Workshops",
   "Party",
-  "Screening",
   "Religion",
-  "Meet and Chat",
   "Other",
 ] as const;
 
 export type Category = typeof CATEGORIES[number];
 
 export const CATEGORY_COLOURS: Record<Category, string> = {
-  "Children & Families": "#f97316",
-  "Theatre":             "#a855f7",
-  "Sports":              "#22c55e",
-  "Games":               "#3b82f6",
+  "Kids Activities":     "#f97316",
+  "Performance & Film":  "#a855f7",
+  "Sports & Fitness":    "#22c55e",
+  "Social & Games":      "#3b82f6",
   "Arts & Crafts":       "#ec4899",
-  "Exhibition":          "#14b8a6",
-  "Tours":               "#f59e0b",
+  "Tours & Exhibitions": "#14b8a6",
+  "Talks & Workshops":   "#f59e0b",
   "Party":               "#f43f5e",
-  "Screening":           "#6366f1",
   "Religion":            "#64748b",
-  "Meet and Chat":       "#06b6d4",
   "Other":               "#94a3b8",
 };

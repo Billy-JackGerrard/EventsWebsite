@@ -26,7 +26,7 @@
     --color-shadow:           #c9b99a;   /* tan — offset box shadows */
   
     /* ── Typography & base ──────────────────────────────── */
-    font-family: system-ui, Calibri ,Arial, sans-serif;
+    font-family: system-ui, Calibri, Arial, sans-serif;
     line-height: 1.5;
     font-weight: 400;
   
@@ -50,19 +50,21 @@
     color: var(--color-accent);
   }
   
+  /* Body and #app take full viewport — no centering, no padding */
   body {
     margin: 0;
-    display: flex;
-    place-items: center;
     min-width: 320px;
     min-height: 100vh;
   }
   
   #app {
-    max-width: 1280px;
-    margin: 0 auto;
-    padding: 2rem;
-    text-align: center;
+    width: 100%;
+    min-height: 100vh;
+  }
+
+  /* The padded wrapper in main.tsx only applies to non-calendar views */
+  #app > div {
+    padding-top: 60px; /* matches navbar height */
   }
   
   button {

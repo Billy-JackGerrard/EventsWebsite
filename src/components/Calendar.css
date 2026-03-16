@@ -1,12 +1,16 @@
 /* ── Calendar Page — fills the full viewport below the navbar ── */
 .calendar-page {
     font-family: 'Georgia', serif;
-    height: calc(100vh - 60px);
+    position: fixed;
+    top: 60px;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: var(--color-bg-page);
     display: flex;
     flex-direction: column;
     overflow: hidden;
-    position: relative;
+    z-index: 1;
 }
 
 /* ── Card — fills the full page ── */

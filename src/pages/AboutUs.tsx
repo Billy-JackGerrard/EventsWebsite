@@ -1,55 +1,72 @@
+import { useState, useEffect } from "react";
+import { supabase } from "../supabaseClient";
 import "./AboutUs.css";
 
-export default function AboutUs() {
+type Section = {
+  title: string;
+  paragraphs: string[];
+};
+
+type AboutContent = {
+  sections: Section[];
+};
+
+function renderParagraph(text: string) {
+  const parts = text.split(/\*\*(.+?)\*\*/g);
+  return parts.map((part, i) =>
+    i % 2 === 1 ? <strong key={i}>{part}</strong> : part
+  );
+}
+
+type Props = {
+  isLoggedIn: boolean;
+  onEdit: () => void;
+};
+
+export default function AboutUs({ isLoggedIn, onEdit }: Props) {
+  const [content, setContent] = useState<AboutContent | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    supabase
+      .from("site_content")
+      .select("content")
+      .eq("key", "about_us")
+      .single()
+      .then(({ data }) => {
+        setContent(data ? (data.content as AboutContent) : null);
+        setLoading(false);
+      })
+      .catch(() => setLoading(false));
+  }, []);
+
   return (
     <div className="about-page">
       <div className="page-card about-card">
 
-        <h2 className="about-title">About Us</h2>
+        <div className="about-header">
+          <h2 className="about-title">About Us</h2>
+          {isLoggedIn && (
+            <button className="about-edit-btn" onClick={onEdit}>Edit</button>
+          )}
+        </div>
 
-        <section className="about-section">
-          <h3 className="about-section-title">Who Are We?</h3>
-          <p className="about-body">
-            Edinburgh BSL Community Events is an independent community platform — not affiliated with
-            any organisation, charity, or governing body. It was created by a Deaf person to make it
-            easier for the BSL and Deaf community in Edinburgh to find and share events in one place.
-          </p>
-          <p className="about-body">
-            We're a small, volunteer-run group with no formal structure. We're just people who wanted
-            a simple, community-owned space to raise awareness of local events — BSL classes, social
-            meetups, Deaf-led performances, interpreting workshops, and anything else the community
-            might find useful.
-          </p>
-        </section>
-
-        <section className="about-section">
-          <h3 className="about-section-title">What We're Here For</h3>
-          <p className="about-body">
-            This site exists so that events can be shared with the wider BSL and Deaf community in
-            Edinburgh, and so that community members can discover what's going on around them. Anyone
-            can submit an event for consideration — we just review submissions before they go live to
-            keep things relevant and appropriate.
-          </p>
-        </section>
-
-        <section className="about-section">
-          <h3 className="about-section-title">Disclaimer</h3>
-          <p className="about-body">
-            We are a platform, not a publisher. The events listed on this site are submitted by
-            organisers and community members, and we do not independently verify the accuracy of
-            event details such as dates, times, locations, prices, or descriptions.
-          </p>
-          <p className="about-body">
-            <strong>Responsibility for the accuracy and content of any event listing lies solely
-            with the person or organisation who submitted it.</strong> We are not liable for any
-            misinformation, changes, cancellations, or issues arising from events listed here.
-            Always check directly with the event organiser before attending.
-          </p>
-          <p className="about-body">
-            If you spot an error or have a concern about a listing, please use the{" "}
-            <span className="about-inline-link">Contact</span> page to let us know.
-          </p>
-        </section>
+        {loading ? (
+          <p className="about-body">Loading…</p>
+        ) : !content || content.sections.length === 0 ? (
+          <p className="about-body about-empty">No content yet.</p>
+        ) : (
+          content.sections.map((section, i) => (
+            <section key={i} className="about-section">
+              <h3 className="about-section-title">{section.title}</h3>
+              {section.paragraphs.map((para, j) => (
+                <p key={j} className="about-body">
+                  {renderParagraph(para)}
+                </p>
+              ))}
+            </section>
+          ))
+        )}
 
       </div>
     </div>

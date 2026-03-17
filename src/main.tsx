@@ -9,6 +9,7 @@ import Calendar from "./pages/Calendar.tsx";
 import Login from "./pages/Login.tsx";
 import AdminQueue from "./pages/AdminQueue.tsx";
 import AdminMessages from "./pages/AdminMessages.tsx";
+import AdminAboutUs from "./pages/AdminAboutUs.tsx";
 import Contact from "./pages/Contact.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
@@ -108,6 +109,7 @@ const fetchMessagesCount = useCallback(async () => {
   useEffect(() => {
     if (view === "admin-queue" && !isLoggedIn) setView("login");
     if (view === "admin-messages" && !isLoggedIn) setView("login");
+    if (view === "admin-about" && !isLoggedIn) setView("login");
     if (view === "edit-event" && !isLoggedIn) setView("calendar");
     if (view === "admin-queue" && isLoggedIn) fetchPendingCount();
   }, [view, isLoggedIn, fetchPendingCount]);
@@ -229,7 +231,13 @@ const fetchMessagesCount = useCallback(async () => {
         )}
         {view === "admin-messages" && isLoggedIn && <AdminMessages userEmail={userEmail} onMessagesCountChange={setMessagesCount} />}
         {view === "contact" && <Contact />}
-        {view === "about" && <AboutUs />}
+        {view === "about" && <AboutUs isLoggedIn={isLoggedIn} onEdit={() => handleNavigate("admin-about")} />}
+        {view === "admin-about" && isLoggedIn && (
+          <AdminAboutUs
+            onSaved={() => handleNavigate("about")}
+            onCancel={() => handleNavigate("about")}
+          />
+        )}
         {view === "privacy" && <PrivacyPolicy />}
       </div>
     </>

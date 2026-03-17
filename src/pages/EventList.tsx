@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
@@ -43,36 +43,8 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [dateFilter, setDateFilter] = useState<"all" | "week" | "weekend" | "month">("all");
-  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
-  const categoryDropdownRef = useRef<HTMLDivElement>(null);
-
-  function toggleCategory(cat: string) {
-    setHiddenCategories(prev => {
-      const next = new Set(prev);
-      if (next.has(cat)) next.delete(cat);
-      else next.add(cat);
-      return next;
-    });
-  }
-
-  useEffect(() => {
-    if (!categoryDropdownOpen) return;
-    function handleOutside(e: MouseEvent) {
-      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(e.target as Node))
-        setCategoryDropdownOpen(false);
-    }
-    function handleEscape(e: KeyboardEvent) {
-      if (e.key === "Escape") setCategoryDropdownOpen(false);
-    }
-    document.addEventListener("mousedown", handleOutside);
-    document.addEventListener("keydown", handleEscape);
-    return () => {
-      document.removeEventListener("mousedown", handleOutside);
-      document.removeEventListener("keydown", handleEscape);
-    };
-  }, [categoryDropdownOpen]);
 
   useEffect(() => {
     const now = new Date();
@@ -101,7 +73,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
   }
 
   const visibleEvents = events.filter(ev => {
-    if (hiddenCategories.has(ev.category)) return false;
+    if (selectedCategory && ev.category !== selectedCategory) return false;
     if (dateFilter !== "all") {
       const d = new Date(ev.starts_at);
       const now = new Date();
@@ -146,41 +118,23 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
               </button>
             ))}
           </div>
-          <div className="event-list-category-dropdown" ref={categoryDropdownRef}>
+          <div className="event-list-chips event-list-chips--wrap" aria-label="Filter by category">
             <button
-              className="event-list-category-trigger"
-              onClick={() => setCategoryDropdownOpen(prev => !prev)}
-              aria-expanded={categoryDropdownOpen}
-              aria-haspopup="listbox"
+              className={`event-list-chip${selectedCategory === null ? " event-list-chip--active" : ""}`}
+              onClick={() => setSelectedCategory(null)}
             >
-              <span>Categories</span>
-              {hiddenCategories.size > 0 && (
-                <span className="event-list-category-badge">{hiddenCategories.size}</span>
-              )}
-              <span className="event-list-category-chevron" aria-hidden="true">
-                {categoryDropdownOpen ? "▲" : "▼"}
-              </span>
+              All
             </button>
-
-            {categoryDropdownOpen && (
-              <div className="event-list-category-panel" role="listbox" aria-multiselectable="true" aria-label="Filter by category">
-                {CATEGORIES.map(cat => (
-                  <button
-                    key={cat}
-                    className={`event-list-category-option${hiddenCategories.has(cat) ? " event-list-category-option--hidden" : ""}`}
-                    onClick={() => toggleCategory(cat)}
-                    role="option"
-                    aria-selected={!hiddenCategories.has(cat)}
-                  >
-                    <span className="event-list-chip-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
-                    <span className="event-list-category-option-label">{cat}</span>
-                    <span className="event-list-category-option-check" aria-hidden="true">
-                      {hiddenCategories.has(cat) ? "" : "✓"}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                className={`event-list-chip${selectedCategory === cat ? " event-list-chip--active" : ""}`}
+                onClick={() => setSelectedCategory(prev => prev === cat ? null : cat)}
+              >
+                <span className="event-list-chip-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -197,7 +151,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
               </div>
             ) : groups.length === 0 ? (
               <div className="event-list-empty">
-                {hiddenCategories.size > 0 || dateFilter !== "all"
+                {selectedCategory !== null || dateFilter !== "all"
                   ? "No events match your current filters."
                   : "No upcoming events found."}
               </div>
@@ -268,11 +222,17 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
             </button>
           ))}
           <div className="event-list-sidebar-title event-list-sidebar-title--section">Categories</div>
+          <button
+            className={`category-filter-btn${selectedCategory === null ? " category-filter-btn--selected" : ""}`}
+            onClick={() => setSelectedCategory(null)}
+          >
+            All
+          </button>
           {CATEGORIES.map(cat => (
             <button
               key={cat}
-              className={`category-filter-btn${hiddenCategories.has(cat) ? " category-filter-btn--hidden" : ""}`}
-              onClick={() => toggleCategory(cat)}
+              className={`category-filter-btn${selectedCategory === cat ? " category-filter-btn--selected" : ""}`}
+              onClick={() => setSelectedCategory(prev => prev === cat ? null : cat)}
             >
               <span
                 className="category-filter-dot"

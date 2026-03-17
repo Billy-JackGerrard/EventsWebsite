@@ -13,7 +13,7 @@ type Props = {
 };
 
 /** Returns the column/value pair to target this event (or its whole series) in a Supabase query. */
-function eventFilter(ev: AdminEvent): [string, string] {
+function eventFilter(ev: AdminEvent): [string, string | number] {
   const rid = ev.recurrence?.id;
   return rid ? ["recurrence->>id", rid] : ["id", ev.id];
 }
@@ -30,8 +30,8 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
   const [events, setEvents] = useState<AdminEvent[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [actingOn, setActingOn] = useState<string | null>(null);
-  const [confirmReject, setConfirmReject] = useState<string | null>(null);
+  const [actingOn, setActingOn] = useState<number | null>(null);
+  const [confirmReject, setConfirmReject] = useState<number | null>(null);
   const [detailEvent, setDetailEvent] = useState<AdminEvent | null>(null);
 
   const fetchPending = async () => {

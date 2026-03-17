@@ -42,13 +42,14 @@ function App() {
 
   useEffect(() => {
     if (!initialEventId) { setInitialEventDate(undefined); return; }
-    supabase
-      .from("events")
-      .select("starts_at")
-      .eq("id", initialEventId)
-      .single()
-      .then(({ data }) => { if (data) setInitialEventDate(new Date(data.starts_at)); })
-      .catch(() => { /* event not found via URL — ignore */ });
+    void Promise.resolve(
+      supabase
+        .from("events")
+        .select("starts_at")
+        .eq("id", initialEventId)
+        .single()
+    ).then(({ data }) => { if (data) setInitialEventDate(new Date(data.starts_at)); })
+     .catch(() => { /* event not found via URL — ignore */ });
   }, [initialEventId]);
 
   const handleEventExpand = useCallback((event: Event | null) => {

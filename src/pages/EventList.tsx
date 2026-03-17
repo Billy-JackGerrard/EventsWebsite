@@ -34,7 +34,7 @@ function groupByMonth(events: Event[]): MonthGroup[] {
 export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Props) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
-  const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [expandedId, setExpandedId] = useState<number | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
 
   function toggleCategory(cat: string) {
@@ -64,7 +64,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
       });
   }, []);
 
-  function toggleExpand(id: string) {
+  function toggleExpand(id: number) {
     setExpandedId(prev => (prev === id ? null : id));
   }
 

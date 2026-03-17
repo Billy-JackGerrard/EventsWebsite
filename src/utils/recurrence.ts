@@ -235,7 +235,7 @@ export function expandRecurrences(
  *
  * Used by both AdminQueue and main.tsx to get an accurate pending count.
  */
-export function deduplicateByRecurrence<T extends { id: string; recurrence?: RecurrenceRule | null }>(
+export function deduplicateByRecurrence<T extends { id: string | number; recurrence?: RecurrenceRule | null }>(
   events: T[]
 ): T[] {
   const seen = new Set<string>();

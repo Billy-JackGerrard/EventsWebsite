@@ -251,8 +251,9 @@ export default function EventForm({
       {displayError && <div className="form-error">{displayError}</div>}
 
       <div className="form-field">
-        <label className="form-label">Title *</label>
+        <label htmlFor="ef-title" className="form-label">Title *</label>
         <input
+          id="ef-title"
           className="form-input"
           type="text"
           placeholder="e.g. BSL Social Evening"
@@ -298,8 +299,9 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label className="form-label">Description</label>
+        <label htmlFor="ef-description" className="form-label">Description</label>
         <textarea
+          id="ef-description"
           className="form-input addevent-textarea"
           placeholder="A short description of the event..."
           value={description}
@@ -308,8 +310,9 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label className="form-label">Link</label>
+        <label htmlFor="ef-link" className="form-label">Link</label>
         <input
+          id="ef-link"
           className="form-input"
           type="url"
           placeholder="e.g. https://eventbrite.com/..."
@@ -341,8 +344,9 @@ export default function EventForm({
       {isInPerson && (
         <>
           <div className="form-field">
-            <label className="form-label">Location *</label>
+            <label htmlFor="ef-location" className="form-label">Location *</label>
             <input
+              id="ef-location"
               className="form-input"
               type="text"
               placeholder="e.g. Blackwood Bar"
@@ -352,8 +356,9 @@ export default function EventForm({
           </div>
 
           <div className="form-field">
-            <label className="form-label">Postcode *</label>
+            <label htmlFor="ef-postcode" className="form-label">Postcode *</label>
             <input
+              id="ef-postcode"
               className="form-input"
               type="text"
               placeholder="e.g. EH1 1AA"
@@ -365,8 +370,9 @@ export default function EventForm({
       )}
 
       <div className="form-field">
-        <label className="form-label">Start Time *</label>
+        <label htmlFor="ef-starts-at" className="form-label">Start Time *</label>
         <input
+          id="ef-starts-at"
           className="form-input"
           type="datetime-local"
           min={minDateTime}
@@ -376,8 +382,9 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label className="form-label">End Time</label>
+        <label htmlFor="ef-ends-at" className="form-label">End Time</label>
         <input
+          id="ef-ends-at"
           className="form-input"
           type="datetime-local"
           min={startsAt || minDateTime}
@@ -390,8 +397,9 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label className="form-label">Price</label>
+        <label htmlFor="ef-price" className="form-label">Price</label>
         <input
+          id="ef-price"
           className="form-input"
           type="text"
           placeholder="e.g. Free / £5 / £10–£15"
@@ -401,8 +409,9 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label className="form-label">How to Book</label>
+        <label htmlFor="ef-booking" className="form-label">How to Book</label>
         <select
+          id="ef-booking"
           className="form-input addevent-select"
           value={bookingInfo}
           onChange={e => setBookingInfo(e.target.value)}
@@ -415,8 +424,9 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label className="form-label">Contact Name</label>
+        <label htmlFor="ef-contact-name" className="form-label">Contact Name</label>
         <input
+          id="ef-contact-name"
           className="form-input"
           type="text"
           placeholder="e.g. Jane Smith"
@@ -426,8 +436,9 @@ export default function EventForm({
       </div>
 
       <div className="form-field">
-        <label className="form-label">Contact Email</label>
+        <label htmlFor="ef-contact-email" className="form-label">Contact Email</label>
         <input
+          id="ef-contact-email"
           className="form-input"
           type="email"
           placeholder="e.g. hello@example.com"

@@ -110,10 +110,11 @@ export default function Contact() {
 
         {/* Name */}
         <div className="form-field">
-          <label className="form-label">
+          <label htmlFor="contact-name" className="form-label">
             Your Name <span className="contact-optional">(optional)</span>
           </label>
           <input
+            id="contact-name"
             className="form-input"
             type="text"
             placeholder="e.g. Jane Smith"
@@ -124,10 +125,11 @@ export default function Contact() {
 
         {/* Email */}
         <div className="form-field">
-          <label className="form-label">
+          <label htmlFor="contact-email" className="form-label">
             Your Email <span className="contact-optional">(optional)</span>
           </label>
           <input
+            id="contact-email"
             className="form-input"
             type="email"
             placeholder="e.g. jane@example.com"
@@ -138,8 +140,9 @@ export default function Contact() {
 
         {/* Message */}
         <div className="form-field">
-          <label className="form-label">Message *</label>
+          <label htmlFor="contact-message" className="form-label">Message *</label>
           <textarea
+            id="contact-message"
             className="form-input contact-textarea"
             placeholder={TYPE_PLACEHOLDERS[type]}
             value={message}

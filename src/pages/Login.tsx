@@ -80,8 +80,9 @@ export default function Login({ onLogin }: Props) {
           </p>
           {error && <div className="form-error">{error}</div>}
           <div className="form-field">
-            <label className="form-label">Email</label>
+            <label htmlFor="forgot-email" className="form-label">Email</label>
             <input
+              id="forgot-email"
               className="form-input"
               type="email"
               placeholder="e.g. admin@example.com"
@@ -133,8 +134,9 @@ export default function Login({ onLogin }: Props) {
           </p>
           {error && <div className="form-error">{error}</div>}
           <div className="form-field">
-            <label className="form-label">New Password</label>
+            <label htmlFor="reset-password" className="form-label">New Password</label>
             <input
+              id="reset-password"
               className="form-input"
               type="password"
               placeholder="At least 8 characters"
@@ -144,8 +146,9 @@ export default function Login({ onLogin }: Props) {
             />
           </div>
           <div className="form-field">
-            <label className="form-label">Confirm Password</label>
+            <label htmlFor="reset-confirm" className="form-label">Confirm Password</label>
             <input
+              id="reset-confirm"
               className="form-input"
               type="password"
               placeholder="Repeat your new password"
@@ -189,8 +192,9 @@ export default function Login({ onLogin }: Props) {
         <h2 className="login-title">Admin Login</h2>
         {error && <div className="form-error">{error}</div>}
         <div className="form-field">
-          <label className="form-label">Email</label>
+          <label htmlFor="login-email" className="form-label">Email</label>
           <input
+            id="login-email"
             className="form-input"
             type="email"
             value={email}
@@ -198,8 +202,9 @@ export default function Login({ onLogin }: Props) {
           />
         </div>
         <div className="form-field">
-          <label className="form-label">Password</label>
+          <label htmlFor="login-password" className="form-label">Password</label>
           <input
+            id="login-password"
             className="form-input"
             type="password"
             value={password}

@@ -97,7 +97,16 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
           const overflow = dayEvents.length - MAX_DOTS;
 
           return (
-            <div key={i} className={cellClass} onClick={() => { if (day) onSelectDay(day, month, year); }}>
+            <div
+              key={i}
+              className={cellClass}
+              role={day ? "button" : undefined}
+              tabIndex={day ? 0 : undefined}
+              aria-label={day ? `${day} ${MONTHS[month]} ${year}${dayEvents.length > 0 ? `, ${dayEvents.length} event${dayEvents.length > 1 ? "s" : ""}` : ""}` : undefined}
+              aria-pressed={day ? isSelected(day) : undefined}
+              onClick={() => { if (day) onSelectDay(day, month, year); }}
+              onKeyDown={e => { if (day && (e.key === "Enter" || e.key === " ")) { e.preventDefault(); onSelectDay(day, month, year); } }}
+            >
               {day && (
                 <>
                   <span className="calendar-day-number">{day}</span>

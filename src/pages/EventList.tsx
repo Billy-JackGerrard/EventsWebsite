@@ -44,6 +44,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [dateFilter, setDateFilter] = useState<DateFilter>("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [filtersCollapsed, setFiltersCollapsed] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchWrapRef = useRef<HTMLDivElement>(null);
 
@@ -132,14 +133,24 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, sear
       <div className="event-list-layout">
 
         {/* Mobile-only filter panel — hidden at 860px+ where sidebar takes over */}
-        <div className="event-list-mobile-filters">
-          <FilterPanel
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            onClearCategories={() => setSelectedCategories(new Set())}
-            dateFilter={dateFilter}
-            onSetDateFilter={setDateFilter}
-          />
+        <div className={`event-list-mobile-filters${filtersCollapsed ? " event-list-mobile-filters--collapsed" : ""}`}>
+          <button
+            className="event-list-filter-toggle"
+            onClick={() => setFiltersCollapsed(c => !c)}
+            aria-expanded={!filtersCollapsed}
+          >
+            <span className="event-list-filter-toggle-label">Filters</span>
+            <span className="event-list-filter-toggle-arrow">{filtersCollapsed ? "▲" : "▼"}</span>
+          </button>
+          {!filtersCollapsed && (
+            <FilterPanel
+              selectedCategories={selectedCategories}
+              onToggleCategory={toggleCategory}
+              onClearCategories={() => setSelectedCategories(new Set())}
+              dateFilter={dateFilter}
+              onSetDateFilter={setDateFilter}
+            />
+          )}
         </div>
 
         {/* Events column — LEFT on desktop */}

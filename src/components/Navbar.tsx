@@ -67,6 +67,14 @@ export default function Navbar({
       </button>
 
       <div className={`navbar-links${menuOpen ? " navbar-links--open" : ""}`}>
+        {showCalendarControls && (
+          <button className="navbar-link navbar-link--desktop-only" onClick={onScrollToToday}>Today</button>
+        )}
+
+        {showCalendarControls && (
+          <button className="navbar-link" onClick={onToggleSearch}>Search</button>
+        )}
+
         <button
           className={`navbar-link ${currentView === "calendar" ? "navbar-link--active" : ""}`}
           onClick={() => navigate("calendar")}
@@ -87,14 +95,6 @@ export default function Navbar({
         >
           Contact
         </button>
-
-        {showCalendarControls && (
-          <button className="navbar-link navbar-link--desktop-only" onClick={onScrollToToday}>Today</button>
-        )}
-
-        {showCalendarControls && (
-          <button className="navbar-link" onClick={onToggleSearch}>Search</button>
-        )}
 
         {isLoggedIn && (
           <button

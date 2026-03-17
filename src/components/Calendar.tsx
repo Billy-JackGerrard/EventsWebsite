@@ -171,7 +171,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
       year: new Date().getFullYear(),
     };
   });
-  const [expandedEventId, setExpandedEventId] = useState<string | null>(null);
+  const [expandedEventId, setExpandedEventId] = useState<string | null>(initialEventId ?? null);
 
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const monthRefs = useRef<Map<string, HTMLDivElement>>(new Map());
@@ -230,11 +230,9 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
     onScrollToTodayReady(scrollToToday);
   }, [scrollToToday, onScrollToTodayReady]);
 
-  // Auto-expand event when initialEventId + initialEventDate are provided (deep-link / browser back)
-  const resolvedInitialIdRef = useRef<string | null>(null);
+  // Scroll to and select the event's day when initialEventDate arrives (deep-link / browser back)
   useEffect(() => {
-    if (!initialEventId || !initialEventDate || resolvedInitialIdRef.current === initialEventId) return;
-    resolvedInitialIdRef.current = initialEventId;
+    if (!initialEventId || !initialEventDate) return;
     const day = initialEventDate.getDate();
     const month = initialEventDate.getMonth();
     const year = initialEventDate.getFullYear();

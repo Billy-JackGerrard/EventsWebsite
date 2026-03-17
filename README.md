@@ -23,6 +23,7 @@ integrate with socials!!
 
 add a page only visible to admins,
 and on this page people can put comments on it, or suggestions or report bugs etc. next to each entry is a resolved tick button which deletes the entry.
+you could also read messages from the contact us page
 
 when adding events:
 - when their event is approved, they receive an email if they've put one in

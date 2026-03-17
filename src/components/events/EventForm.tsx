@@ -79,6 +79,7 @@ export default function EventForm({
   const [categoryOpen, setCategoryOpen] = useState(false);
   const categoryRef = useRef<HTMLDivElement>(null);
   const [internalError, setInternalError] = useState<string | null>(null);
+  const errorRef = useRef<HTMLDivElement>(null);
 
   const ADVANCED_ACCESS_OPTIONS = {
     Audio: ["Hearing loop (T-loop)", "Audio description"],
@@ -293,9 +294,15 @@ export default function EventForm({
 
   const displayError = internalError || externalError;
 
+  useEffect(() => {
+    if (displayError && errorRef.current) {
+      errorRef.current.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }, [displayError]);
+
   return (
     <div className="eventform-root">
-      {displayError && <div className="form-error">{displayError}</div>}
+      {displayError && <div className="form-error" ref={errorRef}>{displayError}</div>}
 
       <div className="form-field">
         <label htmlFor="ef-title" className="form-label">Title *</label>

@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import "./AdminAboutUs.css";
 
@@ -12,11 +12,21 @@ type Props = {
   onCancel: () => void;
 };
 
+function autoResize(el: HTMLTextAreaElement) {
+  el.style.height = "auto";
+  el.style.height = el.scrollHeight + "px";
+}
+
 export default function AdminAboutUs({ onSaved, onCancel }: Props) {
   const [sections, setSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  const resizeAll = useCallback(() => {
+    containerRef.current?.querySelectorAll<HTMLTextAreaElement>("textarea").forEach(autoResize);
+  }, []);
 
   useEffect(() => {
     supabase
@@ -29,6 +39,16 @@ export default function AdminAboutUs({ onSaved, onCancel }: Props) {
         setLoading(false);
       }, () => setLoading(false));
   }, []);
+
+  // Resize all textareas once content has loaded into the DOM
+  useEffect(() => {
+    if (!loading) resizeAll();
+  }, [loading, resizeAll]);
+
+  // Resize all textareas whenever sections change (e.g. after adding/removing)
+  useEffect(() => {
+    resizeAll();
+  }, [sections, resizeAll]);
 
   const updateTitle = (i: number, value: string) => {
     setSections(prev => prev.map((s, idx) => idx === i ? { ...s, title: value } : s));
@@ -76,7 +96,7 @@ export default function AdminAboutUs({ onSaved, onCancel }: Props) {
 
   return (
     <div className="admin-about-page">
-      <div className="admin-about-container">
+      <div className="admin-about-container" ref={containerRef}>
         <h2 className="admin-about-title">Edit About Us</h2>
 
         {error && <div className="form-error">{error}</div>}
@@ -109,7 +129,10 @@ export default function AdminAboutUs({ onSaved, onCancel }: Props) {
                       className="form-input admin-about-textarea"
                       value={para}
                       placeholder="Paragraph text (use **bold** for bold)"
-                      onChange={e => updateParagraph(sIdx, pIdx, e.target.value)}
+                      onChange={e => {
+                        autoResize(e.target);
+                        updateParagraph(sIdx, pIdx, e.target.value);
+                      }}
                     />
                     <button
                       className="admin-about-remove-para-btn"

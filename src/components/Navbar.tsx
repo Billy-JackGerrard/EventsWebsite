@@ -12,6 +12,8 @@ type Props = {
   showCalendarControls?: boolean;
   onScrollToToday?: () => void;
   onToggleSearch?: () => void;
+  onToggleFilters?: () => void;
+  filtersActive?: boolean;
 };
 
 export default function Navbar({
@@ -24,6 +26,8 @@ export default function Navbar({
   showCalendarControls,
   onScrollToToday,
   onToggleSearch,
+  onToggleFilters,
+  filtersActive,
 }: Props) {
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -70,11 +74,18 @@ export default function Navbar({
 
       <div className={`navbar-links${menuOpen ? " navbar-links--open" : ""}`}>
         {showCalendarControls && (
-          <button className="navbar-link navbar-link--desktop-only" onClick={onScrollToToday}>Today</button>
-        )}
-
-        {showCalendarControls && (
-          <button className="navbar-link" onClick={onToggleSearch}>Search</button>
+          <div className="navbar-controls-group">
+            <button className="navbar-link navbar-link--desktop-only" onClick={() => { setMenuOpen(false); onScrollToToday?.(); }}>Today</button>
+            <button className="navbar-link" onClick={() => { setMenuOpen(false); onToggleSearch?.(); }}>Search</button>
+            {onToggleFilters && (
+              <button
+                className={`navbar-link${filtersActive ? " navbar-link--active" : ""}`}
+                onClick={() => { setMenuOpen(false); onToggleFilters(); }}
+              >
+                Filters
+              </button>
+            )}
+          </div>
         )}
 
         <button

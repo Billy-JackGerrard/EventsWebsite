@@ -34,6 +34,9 @@ function App() {
   const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
   const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
   const [searchOpen, setSearchOpen] = useState(false);
+  const [listSearchOpen, setListSearchOpen] = useState(false);
+  const [calendarFiltersOpen, setCalendarFiltersOpen] = useState(false);
+  const [calendarFiltersActive, setCalendarFiltersActive] = useState(false);
   const [initialEventId, setInitialEventId] = useState<string | undefined>(() => {
     const match = window.location.pathname.match(/^\/event\/([^/]+)$/);
     return match ? match[1] : undefined;
@@ -41,6 +44,8 @@ function App() {
   const [initialEventDate, setInitialEventDate] = useState<Date | undefined>(undefined);
   const scrollToTodayRef = useRef<(() => void) | null>(null);
   const handleToggleSearch = useCallback(() => setSearchOpen(o => !o), []);
+  const handleListToggleSearch = useCallback(() => setListSearchOpen(o => !o), []);
+  const handleToggleCalendarFilters = useCallback(() => setCalendarFiltersOpen(o => !o), []);
   const handleScrollToTodayReady = useCallback((fn: () => void) => { scrollToTodayRef.current = fn; }, []);
 
   useEffect(() => {
@@ -104,7 +109,7 @@ const fetchMessagesCount = useCallback(async () => {
     });
 
     return () => subscription.unsubscribe();
-  }, [fetchPendingCount]);
+  }, [fetchPendingCount, fetchMessagesCount]);
 
   useEffect(() => {
     if (view === "admin-queue" && !isLoggedIn) setView("login");
@@ -130,6 +135,8 @@ const fetchMessagesCount = useCallback(async () => {
       setInitialEventId(undefined);
       setInitialEventDate(undefined);
     }
+    if (v !== "list") setListSearchOpen(false);
+    if (v !== "calendar") setCalendarFiltersOpen(false);
     setView(v);
   };
 
@@ -180,9 +187,11 @@ const fetchMessagesCount = useCallback(async () => {
         messagesCount={messagesCount}
         onNavigate={handleNavigate}
         onLogout={handleLogout}
-        showCalendarControls={view === "calendar"}
-        onScrollToToday={() => scrollToTodayRef.current?.()}
-        onToggleSearch={handleToggleSearch}
+        showCalendarControls={view === "calendar" || view === "list"}
+        onScrollToToday={view === "list" ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : () => scrollToTodayRef.current?.()}
+        onToggleSearch={view === "list" ? handleListToggleSearch : handleToggleSearch}
+        onToggleFilters={view === "calendar" ? handleToggleCalendarFilters : undefined}
+        filtersActive={view === "calendar" ? calendarFiltersActive : undefined}
       />
       <div key={view} className="page-view" style={{ paddingTop: "60px" }}>
         {view === "calendar" && (
@@ -193,6 +202,8 @@ const fetchMessagesCount = useCallback(async () => {
             onAddEvent={handleAddEventFromCalendar}
             searchOpen={searchOpen}
             onToggleSearch={handleToggleSearch}
+            filtersOpen={calendarFiltersOpen}
+            onFiltersActiveChange={setCalendarFiltersActive}
             onScrollToTodayReady={handleScrollToTodayReady}
             initialEventId={initialEventId}
             initialEventDate={initialEventDate}
@@ -204,6 +215,8 @@ const fetchMessagesCount = useCallback(async () => {
             isLoggedIn={isLoggedIn}
             onEditEvent={ev => handleEditEvent(ev, "list")}
             onDeleteEvent={isLoggedIn ? ev => handleDeleteEvent(ev, "list") : undefined}
+            searchOpen={listSearchOpen}
+            onToggleSearch={handleListToggleSearch}
           />
         )}
         {view === "login"      && <Login onLogin={handleLogin} />}

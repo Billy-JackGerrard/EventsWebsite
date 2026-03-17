@@ -1,0 +1,64 @@
+import type { Event } from "./types";
+
+export type DateFilter = "all" | "week" | "weekend" | "month";
+
+export const DATE_FILTER_LABELS: Record<DateFilter, string> = {
+  all:     "All dates",
+  week:    "This week",
+  weekend: "This weekend",
+  month:   "This month",
+};
+
+/**
+ * Returns true if the event's start date falls within the given date filter window.
+ * Filtering is based on starts_at only.
+ */
+export function passesDateFilter(event: Event, filter: DateFilter): boolean {
+  if (filter === "all") return true;
+
+  const d = new Date(event.starts_at);
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+
+  if (filter === "week") {
+    const end = new Date(now);
+    end.setDate(now.getDate() + 7);
+    return d >= now && d < end;
+  }
+
+  if (filter === "weekend") {
+    const day = d.getDay(); // 0=Sun, 6=Sat
+    if (day !== 0 && day !== 6) return false;
+    const daysUntilSat = (6 - now.getDay() + 7) % 7;
+    const thisSat = new Date(now);
+    thisSat.setDate(now.getDate() + daysUntilSat);
+    const endSun = new Date(thisSat);
+    endSun.setDate(thisSat.getDate() + 2);
+    return d >= thisSat && d < endSun;
+  }
+
+  if (filter === "month") {
+    return (
+      d.getMonth() === now.getMonth() &&
+      d.getFullYear() === now.getFullYear() &&
+      d >= now
+    );
+  }
+
+  return true;
+}
+
+/**
+ * Returns true if the event matches all words in the search query
+ * (case-insensitive, space-separated words, searches title + description + location).
+ */
+export function matchesSearch(event: Event, query: string): boolean {
+  if (!query.trim()) return true;
+  const haystack = [event.title, event.description ?? "", event.location ?? ""]
+    .join(" ")
+    .toLowerCase();
+  return query
+    .split(/\s+/)
+    .filter(Boolean)
+    .every(word => haystack.includes(word));
+}

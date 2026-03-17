@@ -3,7 +3,10 @@ import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
+import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
+import type { DateFilter } from "../utils/eventFilters";
 import EventDetails from "../components/events/EventDetails";
+import FilterPanel from "../components/FilterPanel";
 import "./Calendar.css";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -30,6 +33,8 @@ type Props = {
   onAddEvent: (date: { day: number; month: number; year: number }) => void;
   searchOpen: boolean;
   onToggleSearch: () => void;
+  filtersOpen: boolean;
+  onFiltersActiveChange: (active: boolean) => void;
   onScrollToTodayReady: (fn: () => void) => void;
   initialEventId?: string;
   initialEventDate?: Date;
@@ -138,7 +143,7 @@ function MonthBlock({ monthKey, today, selected, onSelectDay, eventsByDate, mont
 
 // ── Main Calendar ───────────────────────────────────────────────────────────
 
-export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent, searchOpen, onToggleSearch, onScrollToTodayReady, initialEventId, initialEventDate, onEventExpand }: Props) {
+export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAddEvent, searchOpen, onToggleSearch, filtersOpen, onFiltersActiveChange, onScrollToTodayReady, initialEventId, initialEventDate, onEventExpand }: Props) {
   const [today, setToday] = useState(() => new Date());
 
   useEffect(() => {
@@ -170,7 +175,23 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   const windowStart = monthKeys[0];
   const windowEnd   = monthKeys[monthKeys.length - 1];
 
-  const { eventsByDate, allEvents, loading } = useCalendarEvents(windowStart, windowEnd);
+  const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+
+  const { eventsByDate: rawEventsByDate, allEvents, loading } = useCalendarEvents(windowStart, windowEnd);
+
+  const eventsByDate = useMemo(() => {
+    if (selectedCategories.size === 0 && dateFilter === "all") return rawEventsByDate;
+    const filtered = new Map<string, Event[]>();
+    for (const [key, evs] of rawEventsByDate) {
+      const kept = evs.filter(ev =>
+        (selectedCategories.size === 0 || selectedCategories.has(ev.category)) &&
+        passesDateFilter(ev, dateFilter)
+      );
+      if (kept.length > 0) filtered.set(key, kept);
+    }
+    return filtered;
+  }, [rawEventsByDate, selectedCategories, dateFilter]);
 
   const [selected, setSelected] = useState<{ day: number; month: number; year: number } | null>(() => {
     if (window.innerWidth <= 700) return null;
@@ -189,6 +210,20 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   const [searchQuery, setSearchQuery] = useState("");
   const searchInputRef = useRef<HTMLInputElement>(null);
   const dropdownRef    = useRef<HTMLDivElement>(null);
+
+  function toggleCategory(cat: string) {
+    setSelectedCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
+      return next;
+    });
+  }
+
+  // Notify parent when filters become active/inactive (for the navbar button indicator)
+  useEffect(() => {
+    onFiltersActiveChange(selectedCategories.size > 0 || dateFilter !== "all");
+  }, [selectedCategories, dateFilter, onFiltersActiveChange]);
 
   // Close search dropdown on outside click
   useEffect(() => {
@@ -217,10 +252,10 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
 
   const scrollToToday = useCallback(() => {
     todayMonthRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    if (window.innerWidth > 700) {
-      setSelected({ day: today.getDate(), month: today.getMonth(), year: today.getFullYear() });
-    }
-  }, [today]);
+    setSelected({ day: today.getDate(), month: today.getMonth(), year: today.getFullYear() });
+    if (expandedEventId) onEventExpand?.(null);
+    setExpandedEventId(null);
+  }, [today, expandedEventId, onEventExpand]);
 
   useEffect(() => {
     const frame = requestAnimationFrame(() => {
@@ -253,11 +288,6 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
   }, [initialEventId, initialEventDate]);
 
 
-  const matchesSearch = useCallback((event: Event, q: string) => {
-    const haystack = [event.title, event.description ?? "", event.location ?? ""].join(" ").toLowerCase();
-    return q.split(/\s+/).filter(Boolean).every(word => haystack.includes(word));
-  }, []);
-
   const searchResults = useMemo(() => {
     if (!searchQuery.trim()) return [];
     const matches: Event[] = [];
@@ -268,7 +298,7 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
       }
     }
     return matches;
-  }, [searchQuery, allEvents, matchesSearch]);
+  }, [searchQuery, allEvents]);
 
   const handleResultClick = (event: Event) => {
     const d = new Date(event.starts_at);
@@ -354,6 +384,19 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onAdd
                 ))}
               </div>
             )}
+          </div>
+        )}
+
+        {/* Filter bar — shown below search when open */}
+        {filtersOpen && (
+          <div className="calendar-filter-wrap">
+            <FilterPanel
+              selectedCategories={selectedCategories}
+              onToggleCategory={toggleCategory}
+              onClearCategories={() => setSelectedCategories(new Set())}
+              dateFilter={dateFilter}
+              onSetDateFilter={setDateFilter}
+            />
           </div>
         )}
 

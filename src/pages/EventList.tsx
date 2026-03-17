@@ -1,28 +1,26 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
+import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/eventFilters";
+import type { DateFilter } from "../utils/eventFilters";
 import EventDetailCard from "../components/events/EventDetails";
+import FilterPanel from "../components/FilterPanel";
 import "./EventList.css";
 
 type Props = {
   isLoggedIn: boolean;
   onEditEvent: (event: Event) => void;
   onDeleteEvent?: (event: Event) => void;
+  searchOpen?: boolean;
+  onToggleSearch?: () => void;
 };
 
 type MonthGroup = {
   label: string;
   events: Event[];
 };
-
-const DATE_FILTER_LABELS = {
-  all: "All dates",
-  week: "This week",
-  weekend: "This weekend",
-  month: "This month",
-} as const;
 
 function groupByMonth(events: Event[]): MonthGroup[] {
   const groups = new Map<string, Event[]>();
@@ -38,13 +36,16 @@ function groupByMonth(events: Event[]): MonthGroup[] {
   });
 }
 
-export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Props) {
+export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, searchOpen, onToggleSearch }: Props) {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
-  const [dateFilter, setDateFilter] = useState<"all" | "week" | "weekend" | "month">("all");
+  const [dateFilter, setDateFilter] = useState<DateFilter>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchWrapRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const now = new Date();
@@ -68,6 +69,23 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
       });
   }, []);
 
+  // Focus input when search opens; clear query when it closes
+  useEffect(() => {
+    if (searchOpen) setTimeout(() => searchInputRef.current?.focus(), 50);
+    else setSearchQuery("");
+  }, [searchOpen]);
+
+  // Close search on outside click
+  useEffect(() => {
+    const handler = (e: MouseEvent) => {
+      if (searchWrapRef.current && !searchWrapRef.current.contains(e.target as Node)) {
+        if (searchOpen) { onToggleSearch?.(); setSearchQuery(""); }
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    return () => document.removeEventListener("mousedown", handler);
+  }, [searchOpen, onToggleSearch]);
+
   function toggleExpand(id: number) {
     setExpandedId(prev => (prev === id ? null : id));
   }
@@ -81,71 +99,47 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
     });
   }
 
-  const visibleEvents = events.filter(ev => {
-    if (selectedCategories.size > 0 && !selectedCategories.has(ev.category)) return false;
-    if (dateFilter !== "all") {
-      const d = new Date(ev.starts_at);
-      const now = new Date();
-      now.setHours(0, 0, 0, 0);
-      if (dateFilter === "week") {
-        const end = new Date(now);
-        end.setDate(now.getDate() + 7);
-        if (d < now || d >= end) return false;
-      } else if (dateFilter === "weekend") {
-        const day = d.getDay();
-        if (day !== 0 && day !== 6) return false;
-        const daysUntilSat = (6 - now.getDay() + 7) % 7;
-        const thisSat = new Date(now);
-        thisSat.setDate(now.getDate() + daysUntilSat);
-        const endSun = new Date(thisSat);
-        endSun.setDate(thisSat.getDate() + 2);
-        if (d < thisSat || d >= endSun) return false;
-      } else if (dateFilter === "month") {
-        if (d.getMonth() !== now.getMonth() || d.getFullYear() !== now.getFullYear()) return false;
-        if (d < now) return false;
-      }
-    }
-    return true;
-  });
+  const visibleEvents = events.filter(ev =>
+    matchesSearch(ev, searchQuery) &&
+    (selectedCategories.size === 0 || selectedCategories.has(ev.category)) &&
+    passesDateFilter(ev, dateFilter)
+  );
   const groups = groupByMonth(visibleEvents);
   const expandedEvent = expandedId !== null ? events.find(e => e.id === expandedId) ?? null : null;
 
   return (
     <div className="event-list-page">
+
+      {/* Search bar — shown at top when open */}
+      {searchOpen && (
+        <div className="event-list-search-wrap" ref={searchWrapRef}>
+          <div className="event-list-search-bar">
+            <span className="event-list-search-icon">⌕</span>
+            <input
+              ref={searchInputRef}
+              className="event-list-search-input"
+              type="text"
+              placeholder="Search events…"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              onKeyDown={e => e.key === "Escape" && onToggleSearch?.()}
+            />
+            <button className="event-list-search-close" onClick={() => { onToggleSearch?.(); }} title="Close search">✕</button>
+          </div>
+        </div>
+      )}
+
       <div className="event-list-layout">
 
         {/* Mobile-only filter panel — hidden at 860px+ where sidebar takes over */}
         <div className="event-list-mobile-filters">
-          <div className="event-list-filter-controls">
-            {(["all", "week", "weekend", "month"] as const).map(f => (
-              <button
-                key={f}
-                className={`event-list-filter-ctrl-btn${dateFilter === f ? " event-list-filter-ctrl-btn--active" : ""}`}
-                onClick={() => setDateFilter(f)}
-              >
-                {DATE_FILTER_LABELS[f]}
-              </button>
-            ))}
-          </div>
-          <div className="event-list-filter-legend">
-            <button
-              className={`event-list-filter-legend-item${selectedCategories.size === 0 ? " event-list-filter-legend-item--active" : ""}`}
-              onClick={() => setSelectedCategories(new Set())}
-            >
-              <span className="event-list-filter-legend-dot" style={{ background: "var(--color-text-muted)" }} />
-              <span className="event-list-filter-legend-label">All</span>
-            </button>
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                className={`event-list-filter-legend-item${selectedCategories.has(cat) ? " event-list-filter-legend-item--active" : selectedCategories.size > 0 ? " event-list-filter-legend-item--dimmed" : ""}`}
-                onClick={() => toggleCategory(cat)}
-              >
-                <span className="event-list-filter-legend-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
-                <span className="event-list-filter-legend-label">{cat}</span>
-              </button>
-            ))}
-          </div>
+          <FilterPanel
+            selectedCategories={selectedCategories}
+            onToggleCategory={toggleCategory}
+            onClearCategories={() => setSelectedCategories(new Set())}
+            dateFilter={dateFilter}
+            onSetDateFilter={setDateFilter}
+          />
         </div>
 
         {/* Events column — LEFT on desktop */}

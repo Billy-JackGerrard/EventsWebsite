@@ -4,9 +4,90 @@
   box-sizing: border-box;
 }
 
-.event-list-container {
-  max-width: 720px;
+.event-list-layout {
+  display: flex;
+  flex-direction: column;
+  max-width: 1080px;
   margin: 0 auto;
+  gap: 2rem;
+}
+
+.event-list-container {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Sidebar ── */
+.event-list-sidebar {
+  display: none;
+}
+
+.event-list-sidebar-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 0.75rem;
+}
+
+.category-filter-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.45rem 0.6rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 6px;
+  cursor: pointer;
+  color: rgba(255,255,255,0.85);
+  font-family: inherit;
+  font-size: 0.8rem;
+  text-align: left;
+  transition: background 0.12s, border-color 0.12s, opacity 0.12s;
+  margin-bottom: 0.35rem;
+}
+
+.category-filter-btn:hover {
+  background: rgba(255,255,255,0.08);
+  border-color: rgba(255,255,255,0.14);
+}
+
+.category-filter-btn--hidden {
+  opacity: 0.35;
+}
+
+.category-filter-btn--hidden .category-filter-label {
+  text-decoration: line-through;
+}
+
+.category-filter-dot {
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.category-filter-label {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@media (min-width: 860px) {
+  .event-list-layout {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .event-list-sidebar {
+    display: block;
+    width: 170px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 2rem;
+  }
 }
 
 /* ── Month heading ── */

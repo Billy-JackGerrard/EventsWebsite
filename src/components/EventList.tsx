@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
-import { CATEGORY_COLOURS } from "../utils/types";
+import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
 import EventDetailCard from "./events/EventDetails";
 import "./EventList.css";
@@ -35,6 +35,16 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
+
+  function toggleCategory(cat: string) {
+    setHiddenCategories(prev => {
+      const next = new Set(prev);
+      if (next.has(cat)) next.delete(cat);
+      else next.add(cat);
+      return next;
+    });
+  }
 
   useEffect(() => {
     const now = new Date();
@@ -58,10 +68,28 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
     setExpandedId(prev => (prev === id ? null : id));
   }
 
-  const groups = groupByMonth(events);
+  const visibleEvents = events.filter(ev => !hiddenCategories.has(ev.category));
+  const groups = groupByMonth(visibleEvents);
 
   return (
     <div className="event-list-page">
+      <div className="event-list-layout">
+      <aside className="event-list-sidebar">
+        <div className="event-list-sidebar-title">Categories</div>
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat}
+            className={`category-filter-btn${hiddenCategories.has(cat) ? " category-filter-btn--hidden" : ""}`}
+            onClick={() => toggleCategory(cat)}
+          >
+            <span
+              className="category-filter-dot"
+              style={{ background: CATEGORY_COLOURS[cat] }}
+            />
+            <span className="category-filter-label">{cat}</span>
+          </button>
+        ))}
+      </aside>
       <div className="event-list-container">
         {loading ? (
           <div className="event-list-loading">
@@ -70,7 +98,9 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
             ))}
           </div>
         ) : groups.length === 0 ? (
-          <div className="event-list-empty">No upcoming events found.</div>
+          <div className="event-list-empty">
+            {hiddenCategories.size > 0 ? "No events match the selected categories." : "No upcoming events found."}
+          </div>
         ) : (
           groups.map(group => (
             <section key={group.label} className="event-list-month">
@@ -110,6 +140,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
             </section>
           ))
         )}
+      </div>
       </div>
     </div>
   );

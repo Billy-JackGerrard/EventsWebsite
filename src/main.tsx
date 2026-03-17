@@ -46,7 +46,8 @@ function App() {
       .select("starts_at")
       .eq("id", initialEventId)
       .single()
-      .then(({ data }) => { if (data) setInitialEventDate(new Date(data.starts_at)); });
+      .then(({ data }) => { if (data) setInitialEventDate(new Date(data.starts_at)); })
+      .catch(() => { /* event not found via URL — ignore */ });
   }, [initialEventId]);
 
   const handleEventExpand = useCallback((event: Event | null) => {
@@ -76,7 +77,7 @@ const fetchPendingCount = useCallback(async () => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
       if (session) fetchPendingCount();
-    });
+    }).catch(console.error);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);

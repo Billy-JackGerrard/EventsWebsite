@@ -29,11 +29,14 @@ type Props = {
 function ShareButton({ eventId }: { eventId: string }) {
   const [copied, setCopied] = useState(false);
   const shareUrl = `${window.location.origin}/event/${eventId}`;
-  function handleShare() {
-    navigator.clipboard.writeText(shareUrl).then(() => {
+  async function handleShare() {
+    try {
+      await navigator.clipboard.writeText(shareUrl);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
+    } catch {
+      // Clipboard blocked — nothing to do, button state stays unchanged
+    }
   }
   return (
     <button className="event-detail-share-btn" onClick={handleShare}>
@@ -45,11 +48,14 @@ function ShareButton({ eventId }: { eventId: string }) {
 function LinkButtons({ url }: { url: string }) {
   const [copied, setCopied] = useState(false);
 
-  function handleCopy() {
-    navigator.clipboard.writeText(url).then(() => {
+  async function handleCopy() {
+    try {
+      await navigator.clipboard.writeText(url);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
-    });
+    } catch {
+      // Clipboard blocked — nothing to do, button state stays unchanged
+    }
   }
 
   return (

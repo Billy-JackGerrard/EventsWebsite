@@ -33,8 +33,11 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
     setLoading(true);
 
     const fetchEvents = async () => {
-      const fromDate = new Date(windowStart.year, windowStart.month, 1, 0, 0, 0, 0);
-      const toDate   = new Date(windowEnd.year, windowEnd.month + 1, 0, 23, 59, 59, 999);
+      // Derive dates from the stable key strings so this effect only depends on fromKey/toKey
+      const [fromYear, fromMonth] = fromKey.split("-").map(Number);
+      const [toYear, toMonth]     = toKey.split("-").map(Number);
+      const fromDate = new Date(fromYear, fromMonth, 1, 0, 0, 0, 0);
+      const toDate   = new Date(toYear, toMonth + 1, 0, 23, 59, 59, 999);
 
       const { data, error: fetchError } = await approvedEvents()
         .or(
@@ -54,7 +57,6 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
 
     fetchEvents();
     return () => { isCurrent = false; };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fromKey, toKey]);
 
   // Forward-looking events for the search dropdown (up to 1 year ahead).

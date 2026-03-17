@@ -179,6 +179,10 @@ export default function EventForm({
       setInternalError("Please enter a link.");
       return;
     }
+    if (url && !/^https?:\/\//.test(url)) {
+      setInternalError("Please enter a valid URL starting with https://");
+      return;
+    }
     if (bookingInfo === "by_contacting" && !contactEmail) {
       setInternalError("Please enter a contact email.");
       return;

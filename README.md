@@ -54,7 +54,7 @@ accessibility review - send directly to their email
 
 have different ways of viewing calendar
 
-people can click I'm going onto events - maybe need to wait until after user accounts are set up
+people can click I'm going to a certain event - maybe need to wait until after user accounts are set up
 
 Set Up Multiple Views: Provide options for list, grid, or monthly views to cater to different user preferences.
 Also setup a Map View to see where events are this month, maybe with a number with each pin to show how many events are there
@@ -66,7 +66,13 @@ rn set for only edinburgh (block non EH postcodes) but they can request to add t
 add admin view; can see who are the other admins and for which region are they in charge of
 
 
-ai summariser of info from website url (move it to the top)
+ai summariser of info from website url
+
+scrape data for events.
+eg theatre websites for their bsl interpreted event info
+
+maybe in admin view, get rid of contact view, and replace it with messages view which shows admins the messages from people who have filled in the contact view - and admins can add their own message in there 
+
 
 add info abt the whastapp to the contact info page
 

@@ -12,6 +12,20 @@ type Props = {
   onEditEvent: (event: Event) => void;
 };
 
+/** Returns the column/value pair to target this event (or its whole series) in a Supabase query. */
+function eventFilter(ev: AdminEvent): [string, string] {
+  const rid = ev.recurrence?.id;
+  return rid ? ["recurrence->>id", rid] : ["id", ev.id];
+}
+
+/** Removes this event (or its whole series) from a local list. */
+function withoutEvent(list: AdminEvent[], ev: AdminEvent): AdminEvent[] {
+  const rid = ev.recurrence?.id;
+  return rid
+    ? list.filter(e => e.recurrence?.id !== rid)
+    : list.filter(e => e.id !== ev.id);
+}
+
 export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props) {
   const [events, setEvents] = useState<AdminEvent[]>([]);
   const [loading, setLoading] = useState(true);
@@ -52,19 +66,13 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
     setActingOn(ev.id);
 
     const { data: { user } } = await supabase.auth.getUser();
-    const rid = ev.recurrence?.id;
+    const [col, val] = eventFilter(ev);
 
-    const query = rid
-      ? supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("recurrence->>id", rid)
-      : supabase.from("events").update({ approved: true, admin_id: user?.id }).eq("id", ev.id);
-
-    const { error } = await query;
+    const { error } = await supabase.from("events").update({ approved: true, admin_id: user?.id }).eq(col, val);
     if (error) { setError(error.message); setActingOn(null); return; }
 
     setEvents(prev => {
-      const updated = rid
-        ? prev.filter(e => e.recurrence?.id !== rid)
-        : prev.filter(e => e.id !== ev.id);
+      const updated = withoutEvent(prev, ev);
       onPendingCountChange(deduplicateByRecurrence(updated).length);
       return updated;
     });
@@ -79,23 +87,17 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
     setActingOn(ev.id);
     setConfirmReject(null);
 
-    const rid = ev.recurrence?.id;
+    const [col, val] = eventFilter(ev);
 
-    const query = rid
-      ? supabase.from("events").delete().eq("recurrence->>id", rid)
-      : supabase.from("events").delete().eq("id", ev.id);
-
-    const { error } = await query;
+    const { error } = await supabase.from("events").delete().eq(col, val);
     if (error) { setError(error.message); setActingOn(null); return; }
 
     setEvents(prev => {
-      const updated = rid
-        ? prev.filter(e => e.recurrence?.id !== rid)
-        : prev.filter(e => e.id !== ev.id);
+      const updated = withoutEvent(prev, ev);
       onPendingCountChange(deduplicateByRecurrence(updated).length);
       return updated;
     });
-    if (detailEvent?.id === ev.id || (rid && detailEvent?.recurrence?.id === rid)) setDetailEvent(null);
+    if (detailEvent && withoutEvent([detailEvent], ev).length === 0) setDetailEvent(null);
     setActingOn(null);
   };
 

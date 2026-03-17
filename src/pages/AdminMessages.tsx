@@ -12,6 +12,7 @@ type ContactMessage = {
   message: string;
   created_at: string;
   is_admin: boolean;
+  reply_to_id: number | null;
 };
 
 const TYPE_LABELS: Record<ContactType, string> = {
@@ -43,6 +44,9 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
   const [editingId, setEditingId] = useState<number | null>(null);
   const [editText, setEditText] = useState("");
   const [savingId, setSavingId] = useState<number | null>(null);
+  const [replyingToId, setReplyingToId] = useState<number | null>(null);
+  const [replyText, setReplyText] = useState("");
+  const [replySending, setReplySending] = useState(false);
 
   const fetchMessages = async () => {
     setLoading(true);
@@ -75,7 +79,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
 
     const { data, error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type: "general", name: composeName.trim() || null, email: userEmail, message: compose.trim(), is_admin: true })
+      .insert({ type: "general", name: composeName.trim() || null, email: userEmail, message: compose.trim(), is_admin: true, reply_to_id: null })
       .select()
       .single();
 
@@ -90,10 +94,34 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
     setMessages(prev => [data, ...prev]);
   };
 
+  const handleReply = async (parentId: number) => {
+    if (!replyText.trim()) return;
+    setReplySending(true);
+    setError(null);
+
+    const { data, error: dbError } = await supabase
+      .from("contact_messages")
+      .insert({ type: "general", name: composeName.trim() || null, email: userEmail, message: replyText.trim(), is_admin: true, reply_to_id: parentId })
+      .select()
+      .single();
+
+    setReplySending(false);
+
+    if (dbError) {
+      setError("Failed to send reply. Please try again.");
+      return;
+    }
+
+    setReplyText("");
+    setReplyingToId(null);
+    setMessages(prev => [data, ...prev]);
+  };
+
   const handleEditStart = (msg: ContactMessage) => {
     setEditingId(msg.id);
     setEditText(msg.message);
     setConfirmDelete(null);
+    setReplyingToId(null);
   };
 
   const handleEditSave = async (id: number) => {
@@ -135,8 +163,114 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
       return;
     }
 
-    setMessages(prev => prev.filter(m => m.id !== id));
+    setMessages(prev => prev.filter(m => m.id !== id && m.reply_to_id !== id));
   };
+
+  const topLevel = messages.filter(m => m.reply_to_id === null);
+  const repliesFor = (parentId: number) =>
+    messages
+      .filter(m => m.reply_to_id === parentId)
+      .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());
+
+  const renderCard = (msg: ContactMessage, isReply = false) => (
+    <div key={msg.id} className={`msgs-card${msg.is_admin ? " msgs-card--admin" : ""}${isReply ? " msgs-card--reply" : ""}`}>
+      <div className="msgs-card-header">
+        <div className="msgs-meta">
+          {msg.is_admin ? (
+            <span className="msgs-badge msgs-badge--admin">Admin</span>
+          ) : (
+            <span className={`msgs-badge msgs-badge--${msg.type}`}>
+              {TYPE_LABELS[msg.type]}
+            </span>
+          )}
+          <span className="msgs-sender">
+            {msg.name || "Anonymous"}
+            {msg.email && (
+              <span className="msgs-email"> — {msg.email}</span>
+            )}
+          </span>
+        </div>
+        <span className="msgs-timestamp">{formatTimestamp(msg.created_at)}</span>
+      </div>
+
+      {editingId === msg.id ? (
+        <div className="msgs-edit">
+          <textarea
+            className="form-input msgs-compose-textarea"
+            value={editText}
+            onChange={e => setEditText(e.target.value)}
+            autoFocus
+          />
+          <div className="msgs-actions">
+            <button
+              className="msgs-action-btn"
+              onClick={() => handleEditSave(msg.id)}
+              disabled={!editText.trim() || savingId === msg.id}
+            >
+              {savingId === msg.id ? "Saving…" : "Save"}
+            </button>
+            <button
+              className="msgs-action-btn"
+              onClick={() => { setEditingId(null); setEditText(""); }}
+              disabled={savingId === msg.id}
+            >
+              Cancel
+            </button>
+          </div>
+        </div>
+      ) : (
+        <p className="msgs-body">{msg.message}</p>
+      )}
+
+      <div className="msgs-actions">
+        {confirmDelete === msg.id ? (
+          <>
+            <button
+              className="msgs-action-btn msgs-action-btn--danger"
+              onClick={() => handleDelete(msg.id)}
+              disabled={deletingId === msg.id}
+            >
+              {deletingId === msg.id ? "Deleting…" : "Confirm Delete"}
+            </button>
+            <button
+              className="msgs-action-btn"
+              onClick={() => setConfirmDelete(null)}
+            >
+              Cancel
+            </button>
+          </>
+        ) : (
+          <>
+            {!isReply && editingId !== msg.id && (
+              <button
+                className="msgs-action-btn"
+                onClick={() => { setReplyingToId(replyingToId === msg.id ? null : msg.id); setReplyText(""); setEditingId(null); }}
+                disabled={deletingId !== null || editingId !== null}
+              >
+                {replyingToId === msg.id ? "Cancel Reply" : "Reply"}
+              </button>
+            )}
+            {msg.is_admin && msg.email === userEmail && editingId !== msg.id && (
+              <button
+                className="msgs-action-btn"
+                onClick={() => handleEditStart(msg)}
+                disabled={deletingId !== null || editingId !== null}
+              >
+                Edit
+              </button>
+            )}
+            <button
+              className="msgs-action-btn msgs-action-btn--danger"
+              onClick={() => setConfirmDelete(msg.id)}
+              disabled={deletingId !== null || editingId !== null}
+            >
+              Delete
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
 
   return (
     <div className="msgs-page">
@@ -187,94 +321,36 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
           <div className="msgs-empty">No messages yet.</div>
         ) : (
           <div className="msgs-list">
-            {messages.map(msg => (
-              <div key={msg.id} className={`msgs-card${msg.is_admin ? " msgs-card--admin" : ""}`}>
-                <div className="msgs-card-header">
-                  <div className="msgs-meta">
-                    {msg.is_admin ? (
-                      <span className="msgs-badge msgs-badge--admin">Admin</span>
-                    ) : (
-                      <span className={`msgs-badge msgs-badge--${msg.type}`}>
-                        {TYPE_LABELS[msg.type]}
-                      </span>
-                    )}
-                    <span className="msgs-sender">
-                      {msg.name || "Anonymous"}
-                      {msg.email && (
-                        <span className="msgs-email"> — {msg.email}</span>
-                      )}
-                    </span>
-                  </div>
-                  <span className="msgs-timestamp">{formatTimestamp(msg.created_at)}</span>
-                </div>
+            {topLevel.map(msg => (
+              <div key={msg.id} className="msgs-thread">
+                {renderCard(msg, false)}
 
-                {editingId === msg.id ? (
-                  <div className="msgs-edit">
+                {replyingToId === msg.id && (
+                  <div className="msgs-reply-form">
                     <textarea
                       className="form-input msgs-compose-textarea"
-                      value={editText}
-                      onChange={e => setEditText(e.target.value)}
+                      placeholder="Write a reply…"
+                      value={replyText}
+                      onChange={e => setReplyText(e.target.value)}
                       autoFocus
                     />
                     <div className="msgs-actions">
                       <button
-                        className="msgs-action-btn"
-                        onClick={() => handleEditSave(msg.id)}
-                        disabled={!editText.trim() || savingId === msg.id}
+                        className="msgs-send-btn"
+                        onClick={() => handleReply(msg.id)}
+                        disabled={!replyText.trim() || replySending}
                       >
-                        {savingId === msg.id ? "Saving…" : "Save"}
-                      </button>
-                      <button
-                        className="msgs-action-btn"
-                        onClick={() => { setEditingId(null); setEditText(""); }}
-                        disabled={savingId === msg.id}
-                      >
-                        Cancel
+                        {replySending ? "Sending…" : "Send Reply →"}
                       </button>
                     </div>
                   </div>
-                ) : (
-                  <p className="msgs-body">{msg.message}</p>
                 )}
 
-                <div className="msgs-actions">
-                  {confirmDelete === msg.id ? (
-                    <>
-                      <button
-                        className="msgs-action-btn msgs-action-btn--danger"
-                        onClick={() => handleDelete(msg.id)}
-                        disabled={deletingId === msg.id}
-                      >
-                        {deletingId === msg.id ? "Deleting…" : "Confirm Delete"}
-                      </button>
-                      <button
-                        className="msgs-action-btn"
-                        onClick={() => setConfirmDelete(null)}
-                      >
-                        Cancel
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      {msg.is_admin && msg.email === userEmail && editingId !== msg.id && (
-                        <button
-                          className="msgs-action-btn"
-                          onClick={() => handleEditStart(msg)}
-                          disabled={deletingId !== null || editingId !== null}
-                        >
-                          Edit
-                        </button>
-                      )}
-                      <button
-                        className="msgs-action-btn msgs-action-btn--danger"
-                        onClick={() => setConfirmDelete(msg.id)}
-                        disabled={deletingId !== null || editingId !== null}
-                      >
-                        Delete
-                      </button>
-                    </>
-                  )}
-                </div>
+                {repliesFor(msg.id).length > 0 && (
+                  <div className="msgs-replies">
+                    {repliesFor(msg.id).map(reply => renderCard(reply, true))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

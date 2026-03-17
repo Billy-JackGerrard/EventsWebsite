@@ -216,6 +216,38 @@
   border-color: var(--color-text-error);
 }
 
+/* Thread / Reply */
+
+.msgs-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.msgs-replies {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid rgba(232, 197, 71, 0.25);
+}
+
+.msgs-card--reply {
+  border-radius: 8px;
+  box-shadow: none;
+  padding: 0.9rem 1.2rem;
+}
+
+.msgs-reply-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+  padding-left: 1.5rem;
+  border-left: 2px solid rgba(232, 197, 71, 0.25);
+}
+
 @media (max-width: 600px) {
   .msgs-page {
     padding: 1rem;
@@ -224,5 +256,10 @@
   .msgs-card-header {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .msgs-replies,
+  .msgs-reply-form {
+    padding-left: 0.75rem;
   }
 }

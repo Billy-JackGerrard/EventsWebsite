@@ -51,25 +51,9 @@ export default function Navbar({
         </span>
       </div>
 
-      <div className="navbar-center-controls">
-        {showCalendarControls && (
-          <div className="navbar-calendar-controls">
-            <button className="navbar-calendar-btn" onClick={onScrollToToday}>Today</button>
-            <button className="navbar-calendar-btn" onClick={onToggleSearch} title="Search events">⌕</button>
-          </div>
-        )}
-        {isLoggedIn && (
-          <button
-            className={`navbar-link navbar-link--queue ${currentView === "admin-queue" ? "navbar-link--active" : ""}`}
-            onClick={() => navigate("admin-queue")}
-          >
-            Pending Events
-            {pendingCount > 0 && (
-              <span className="navbar-pending-badge">{pendingCount}</span>
-            )}
-          </button>
-        )}
-      </div>
+      {showCalendarControls && (
+        <button className="navbar-calendar-btn navbar-today--mobile" onClick={onScrollToToday}>Today</button>
+      )}
 
       <button
         className={`navbar-hamburger${menuOpen ? " navbar-hamburger--open" : ""}`}
@@ -103,6 +87,26 @@ export default function Navbar({
         >
           Contact
         </button>
+
+        {showCalendarControls && (
+          <button className="navbar-link navbar-link--desktop-only" onClick={onScrollToToday}>Today</button>
+        )}
+
+        {showCalendarControls && (
+          <button className="navbar-link" onClick={onToggleSearch}>Search</button>
+        )}
+
+        {isLoggedIn && (
+          <button
+            className={`navbar-link navbar-link--queue ${currentView === "admin-queue" ? "navbar-link--active" : ""}`}
+            onClick={() => navigate("admin-queue")}
+          >
+            Pending Events
+            {pendingCount > 0 && (
+              <span className="navbar-pending-badge">{pendingCount}</span>
+            )}
+          </button>
+        )}
 
         {isLoggedIn ? (
           <>

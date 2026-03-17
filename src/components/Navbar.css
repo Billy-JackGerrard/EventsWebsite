@@ -116,18 +116,14 @@
     pointer-events: none;
 }
 
-/* ── Center controls (calendar + pending events) ── */
-.navbar-center-controls {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
+/* ── Today button: mobile-only standalone (hidden on desktop) ── */
+.navbar-today--mobile {
+    display: none;
 }
 
-/* ── Calendar controls (Today + Search) ── */
-.navbar-calendar-controls {
-    display: flex;
-    gap: 0.4rem;
-    align-items: center;
+/* ── Desktop-only links (hidden in mobile dropdown) ── */
+.navbar-link--desktop-only {
+    display: inline-flex;
 }
 
 .navbar-calendar-btn {
@@ -219,6 +215,14 @@
         padding: 0.6rem 1rem;
         border-radius: 6px;
         font-size: 0.85rem;
+    }
+
+    .navbar-today--mobile {
+        display: flex;
+    }
+
+    .navbar-link--desktop-only {
+        display: none;
     }
 }
 

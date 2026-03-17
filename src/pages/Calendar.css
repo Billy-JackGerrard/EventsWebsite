@@ -83,7 +83,7 @@
 }
 
 .calendar-panel {
-    width: 320px;
+    width: clamp(260px, 30%, 320px);
     flex-shrink: 0;
     height: 100%;
     display: flex;

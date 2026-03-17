@@ -74,6 +74,18 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
   return (
     <div className="event-list-page">
       <div className="event-list-layout">
+      <div className="event-list-chips" aria-label="Filter by category">
+        {CATEGORIES.map(cat => (
+          <button
+            key={cat}
+            className={`event-list-chip${hiddenCategories.has(cat) ? " event-list-chip--hidden" : ""}`}
+            onClick={() => toggleCategory(cat)}
+          >
+            <span className="event-list-chip-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
+            {cat}
+          </button>
+        ))}
+      </div>
       <aside className="event-list-sidebar">
         <div className="event-list-sidebar-title">Categories</div>
         {CATEGORIES.map(cat => (

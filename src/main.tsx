@@ -27,6 +27,7 @@ function App() {
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deletingEvent, setDeletingEvent] = useState<Event | null>(null);
   const [pendingCount, setPendingCount] = useState(0);
+  const [userEmail, setUserEmail] = useState<string | null>(null);
   const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
   const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
   const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
@@ -78,11 +79,13 @@ const fetchPendingCount = useCallback(async () => {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsLoggedIn(!!session);
+      setUserEmail(session?.user?.email ?? null);
       if (session) fetchPendingCount();
     }).catch(console.error);
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsLoggedIn(!!session);
+      setUserEmail(session?.user?.email ?? null);
       if (session) fetchPendingCount();
       if (!session) {
         setView("calendar");
@@ -214,7 +217,7 @@ const fetchPendingCount = useCallback(async () => {
             onEditEvent={ev => handleEditEvent(ev, "admin-queue")}
           />
         )}
-        {view === "admin-messages" && isLoggedIn && <AdminMessages />}
+        {view === "admin-messages" && isLoggedIn && <AdminMessages userEmail={userEmail} />}
         {view === "contact" && <Contact />}
         {view === "about" && <AboutUs />}
         {view === "privacy" && <PrivacyPolicy />}

@@ -89,6 +89,59 @@
   }
 }
 
+/* ── Mobile category chip strip ── */
+.event-list-chips {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 0.4rem;
+  padding: 0 0 0.5rem 0;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.event-list-chips::-webkit-scrollbar {
+  display: none;
+}
+
+.event-list-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-inset);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s, opacity 0.12s;
+}
+
+.event-list-chip:hover {
+  border-color: var(--color-border);
+}
+
+.event-list-chip--hidden {
+  opacity: 0.4;
+  text-decoration: line-through;
+}
+
+.event-list-chip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+@media (min-width: 860px) {
+  .event-list-chips {
+    display: none;
+  }
+}
+
 /* ── Month heading ── */
 .event-list-month {
   margin-bottom: 2rem;
@@ -230,7 +283,8 @@
 @media (max-width: 600px) {
   .event-list-item {
     grid-template-columns: 10px 1fr 14px;
-    row-gap: 0.2rem;
+    row-gap: 0.4rem;
+    padding: 0.75rem 0.85rem;
   }
 
   .event-list-time,

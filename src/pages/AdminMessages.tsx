@@ -31,13 +31,12 @@ function formatTimestamp(iso: string): string {
   });
 }
 
-export default function AdminMessages() {
+export default function AdminMessages({ userEmail }: { userEmail: string | null }) {
   const [messages, setMessages] = useState<ContactMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [compose, setCompose] = useState("");
-  const [composeName, setComposeName] = useState("");
-  const [adminEmail, setAdminEmail] = useState<string | null>(null);
+  const [composeName, setComposeName] = useState(userEmail ? userEmail.split("@")[0] : "");
   const [sending, setSending] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
@@ -60,11 +59,6 @@ export default function AdminMessages() {
 
   useEffect(() => {
     fetchMessages();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      const email = user?.email ?? null;
-      setAdminEmail(email);
-      setComposeName(email ? email.split("@")[0] : "");
-    });
   }, []);
 
   const handleSend = async () => {
@@ -74,7 +68,7 @@ export default function AdminMessages() {
 
     const { data, error: dbError } = await supabase
       .from("contact_messages")
-      .insert({ type: "general", name: composeName.trim() || null, email: adminEmail, message: compose.trim(), is_admin: true })
+      .insert({ type: "general", name: composeName.trim() || null, email: userEmail, message: compose.trim(), is_admin: true })
       .select()
       .single();
 

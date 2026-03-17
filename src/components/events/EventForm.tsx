@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from "react";
 import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
-import { isoToLocal, getSoftMinDateTime } from "../../utils/dates";
+import { isoToLocal, getSoftMinDateTime, formatLocalDateTime } from "../../utils/dates";
 import type { Event, Category, AgeRating } from "../../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS, AGE_RATINGS, BOOKING_INFO_OPTIONS, BOOKING_INFO_LABELS } from "../../utils/types";
 import RecurrencePicker from "./RecurrencePicker";
@@ -151,9 +151,52 @@ export default function EventForm({
   }, [initialValues]);
 
   const handleStartsAtChange = (value: string) => {
+    const oldStartsAt = startsAt;
     setStartsAt(value);
-    if (finishesAt && finishesAt <= value) setFinishesAt("");
     onStartsAtChange?.(value);
+
+    if (!value) {
+      setFinishesAt("");
+      return;
+    }
+
+    const newStart = new Date(value);
+    if (finishesAt) {
+      // Shift finish to preserve the existing duration
+      if (oldStartsAt) {
+        const duration = new Date(finishesAt).getTime() - new Date(oldStartsAt).getTime();
+        setFinishesAt(formatLocalDateTime(new Date(newStart.getTime() + duration)));
+      } else {
+        setFinishesAt(formatLocalDateTime(new Date(newStart.getTime() + 60 * 60 * 1000)));
+      }
+    } else {
+      // Auto-fill finish to start + 1 hour
+      setFinishesAt(formatLocalDateTime(new Date(newStart.getTime() + 60 * 60 * 1000)));
+    }
+  };
+
+  // Derived date/time parts for split inputs (iOS-friendly)
+  const startsAtDate = startsAt.slice(0, 10);
+  const startsAtTime = startsAt.length >= 16 ? startsAt.slice(11, 16) : "";
+  const finishesAtDate = finishesAt.slice(0, 10);
+  const finishesAtTime = finishesAt.length >= 16 ? finishesAt.slice(11, 16) : "";
+  const minDate = minDateTime.slice(0, 10);
+
+  const handleStartsAtDateChange = (date: string) => {
+    const combined = date && startsAtTime ? `${date}T${startsAtTime}` : "";
+    handleStartsAtChange(combined);
+  };
+  const handleStartsAtTimeChange = (time: string) => {
+    const combined = startsAtDate && time ? `${startsAtDate}T${time}` : "";
+    handleStartsAtChange(combined);
+  };
+  const handleFinishesAtDateChange = (date: string) => {
+    const time = finishesAtTime;
+    setFinishesAt(date && time ? `${date}T${time}` : "");
+  };
+  const handleFinishesAtTimeChange = (time: string) => {
+    const date = finishesAtDate || startsAtDate;
+    setFinishesAt(date && time ? `${date}T${time}` : "");
   };
 
   const handleSubmit = () => {
@@ -161,6 +204,10 @@ export default function EventForm({
 
     if (!title || !startsAt) {
       setInternalError("Please fill in at least a title and start time.");
+      return;
+    }
+    if (!finishesAt) {
+      setInternalError("Please fill in a finish time.");
       return;
     }
     if (!category) {
@@ -370,27 +417,45 @@ export default function EventForm({
       )}
 
       <div className="form-field">
-        <label htmlFor="ef-starts-at" className="form-label">Start Time *</label>
-        <input
-          id="ef-starts-at"
-          className="form-input"
-          type="datetime-local"
-          min={minDateTime}
-          value={startsAt}
-          onChange={e => handleStartsAtChange(e.target.value)}
-        />
+        <label className="form-label">Start Time *</label>
+        <div className="datetime-row">
+          <input
+            id="ef-starts-at-date"
+            className="form-input"
+            type="date"
+            min={minDate}
+            value={startsAtDate}
+            onChange={e => handleStartsAtDateChange(e.target.value)}
+          />
+          <input
+            id="ef-starts-at-time"
+            className="form-input"
+            type="time"
+            value={startsAtTime}
+            onChange={e => handleStartsAtTimeChange(e.target.value)}
+          />
+        </div>
       </div>
 
       <div className="form-field">
-        <label htmlFor="ef-ends-at" className="form-label">End Time</label>
-        <input
-          id="ef-ends-at"
-          className="form-input"
-          type="datetime-local"
-          min={startsAt || minDateTime}
-          value={finishesAt}
-          onChange={e => setFinishesAt(e.target.value)}
-        />
+        <label className="form-label">End Time *</label>
+        <div className="datetime-row">
+          <input
+            id="ef-ends-at-date"
+            className="form-input"
+            type="date"
+            min={startsAtDate || minDate}
+            value={finishesAtDate}
+            onChange={e => handleFinishesAtDateChange(e.target.value)}
+          />
+          <input
+            id="ef-ends-at-time"
+            className="form-input"
+            type="time"
+            value={finishesAtTime}
+            onChange={e => handleFinishesAtTimeChange(e.target.value)}
+          />
+        </div>
         {finishesAt && startsAt && finishesAt <= startsAt && (
           <span className="form-field-error">End time must be after the start time.</span>
         )}

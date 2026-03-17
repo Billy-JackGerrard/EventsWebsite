@@ -347,6 +347,108 @@
   font-size: 0.9rem;
 }
 
+/* ── Category dropdown ── */
+.event-list-category-dropdown {
+  position: relative;
+}
+
+.event-list-category-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 999px;
+  border: 1px solid var(--color-border-subtle);
+  background: var(--color-bg-inset);
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 0.78rem;
+  cursor: pointer;
+  transition: background 0.12s, border-color 0.12s;
+}
+
+.event-list-category-trigger:hover {
+  border-color: var(--color-border);
+}
+
+.event-list-category-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--color-accent);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.event-list-category-chevron {
+  font-size: 0.55rem;
+  color: var(--color-text-muted);
+  margin-left: 0.1rem;
+}
+
+.event-list-category-panel {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 200;
+  min-width: 220px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 10px;
+  box-shadow: var(--shadow-md);
+  padding: 0.35rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.event-list-category-option {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.45rem 0.55rem;
+  border-radius: 6px;
+  border: none;
+  background: transparent;
+  color: var(--color-text-primary);
+  font-family: inherit;
+  font-size: 0.82rem;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.event-list-category-option:hover {
+  background: var(--color-bg-inset);
+}
+
+.event-list-category-option--hidden {
+  opacity: 0.45;
+}
+
+.event-list-category-option--hidden .event-list-category-option-label {
+  text-decoration: line-through;
+}
+
+.event-list-category-option-label {
+  flex: 1;
+}
+
+.event-list-category-option-check {
+  font-size: 0.75rem;
+  color: var(--color-accent);
+  width: 14px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
 /* ── Mobile ── */
 @media (max-width: 600px) {
   .event-list-item {

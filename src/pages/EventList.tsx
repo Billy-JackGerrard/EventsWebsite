@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
@@ -45,6 +45,8 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [hiddenCategories, setHiddenCategories] = useState<Set<string>>(new Set());
   const [dateFilter, setDateFilter] = useState<"all" | "week" | "weekend" | "month">("all");
+  const [categoryDropdownOpen, setCategoryDropdownOpen] = useState(false);
+  const categoryDropdownRef = useRef<HTMLDivElement>(null);
 
   function toggleCategory(cat: string) {
     setHiddenCategories(prev => {
@@ -54,6 +56,23 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
       return next;
     });
   }
+
+  useEffect(() => {
+    if (!categoryDropdownOpen) return;
+    function handleOutside(e: MouseEvent) {
+      if (categoryDropdownRef.current && !categoryDropdownRef.current.contains(e.target as Node))
+        setCategoryDropdownOpen(false);
+    }
+    function handleEscape(e: KeyboardEvent) {
+      if (e.key === "Escape") setCategoryDropdownOpen(false);
+    }
+    document.addEventListener("mousedown", handleOutside);
+    document.addEventListener("keydown", handleEscape);
+    return () => {
+      document.removeEventListener("mousedown", handleOutside);
+      document.removeEventListener("keydown", handleEscape);
+    };
+  }, [categoryDropdownOpen]);
 
   useEffect(() => {
     const now = new Date();
@@ -127,17 +146,41 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
               </button>
             ))}
           </div>
-          <div className="event-list-chips" aria-label="Filter by category">
-            {CATEGORIES.map(cat => (
-              <button
-                key={cat}
-                className={`event-list-chip${hiddenCategories.has(cat) ? " event-list-chip--hidden" : ""}`}
-                onClick={() => toggleCategory(cat)}
-              >
-                <span className="event-list-chip-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
-                {cat}
-              </button>
-            ))}
+          <div className="event-list-category-dropdown" ref={categoryDropdownRef}>
+            <button
+              className="event-list-category-trigger"
+              onClick={() => setCategoryDropdownOpen(prev => !prev)}
+              aria-expanded={categoryDropdownOpen}
+              aria-haspopup="listbox"
+            >
+              <span>Categories</span>
+              {hiddenCategories.size > 0 && (
+                <span className="event-list-category-badge">{hiddenCategories.size}</span>
+              )}
+              <span className="event-list-category-chevron" aria-hidden="true">
+                {categoryDropdownOpen ? "▲" : "▼"}
+              </span>
+            </button>
+
+            {categoryDropdownOpen && (
+              <div className="event-list-category-panel" role="listbox" aria-multiselectable="true" aria-label="Filter by category">
+                {CATEGORIES.map(cat => (
+                  <button
+                    key={cat}
+                    className={`event-list-category-option${hiddenCategories.has(cat) ? " event-list-category-option--hidden" : ""}`}
+                    onClick={() => toggleCategory(cat)}
+                    role="option"
+                    aria-selected={!hiddenCategories.has(cat)}
+                  >
+                    <span className="event-list-chip-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
+                    <span className="event-list-category-option-label">{cat}</span>
+                    <span className="event-list-category-option-check" aria-hidden="true">
+                      {hiddenCategories.has(cat) ? "" : "✓"}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

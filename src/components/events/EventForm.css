@@ -1,3 +1,19 @@
+/* ── Date + time split row ── */
+.datetime-row {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.datetime-row .form-input[type="date"] {
+  flex: 3;
+  min-width: 0;
+}
+
+.datetime-row .form-input[type="time"] {
+  flex: 2;
+  min-width: 0;
+}
+
 .eventform-root {
   display: flex;
   flex-direction: column;

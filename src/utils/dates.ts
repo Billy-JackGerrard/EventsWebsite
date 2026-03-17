@@ -14,7 +14,7 @@ const parseLocal = (isoString: string): Date => new Date(isoString);
  * Formats a Date as "YYYY-MM-DDTHH:mm" in local time.
  * Shared by isoToLocal and getSoftMinDateTime.
  */
-const formatLocalDateTime = (d: Date): string =>
+export const formatLocalDateTime = (d: Date): string =>
   [
     d.getFullYear(),
     String(d.getMonth() + 1).padStart(2, "0"),

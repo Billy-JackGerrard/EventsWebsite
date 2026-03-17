@@ -27,8 +27,7 @@ export default function AdminAboutUs({ onSaved, onCancel }: Props) {
       .then(({ data }) => {
         if (data) setSections((data.content as { sections: Section[] }).sections);
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }, () => setLoading(false));
   }, []);
 
   const updateTitle = (i: number, value: string) => {

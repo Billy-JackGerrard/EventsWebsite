@@ -36,8 +36,7 @@ export default function AboutUs({ isLoggedIn, onEdit }: Props) {
       .then(({ data }) => {
         setContent(data ? (data.content as AboutContent) : null);
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      }, () => setLoading(false));
   }, []);
 
   return (

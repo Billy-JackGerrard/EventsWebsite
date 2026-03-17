@@ -103,6 +103,7 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
     return true;
   });
   const groups = groupByMonth(visibleEvents);
+  const expandedEvent = expandedId !== null ? events.find(e => e.id === expandedId) ?? null : null;
 
   return (
     <div className="event-list-page">
@@ -136,57 +137,71 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
         </div>
 
         {/* Events column — LEFT on desktop */}
-        <div className="event-list-container">
-          {loading ? (
-            <div className="event-list-loading">
-              {Array.from({ length: 5 }).map((_, i) => (
-                <div key={i} className="event-list-skeleton" />
-              ))}
-            </div>
-          ) : groups.length === 0 ? (
-            <div className="event-list-empty">
-              {hiddenCategories.size > 0 || dateFilter !== "all"
-                ? "No events match your current filters."
-                : "No upcoming events found."}
-            </div>
-          ) : (
-            groups.map(group => (
-              <section key={group.label} className="event-list-month">
-                <h2 className="event-list-month-heading">{group.label}</h2>
-                <div className="event-list-items">
-                  {group.events.map(ev => (
-                    <div key={ev.id} className="event-list-item-wrap">
-                      <button
-                        className={`event-list-item${expandedId === ev.id ? " event-list-item--expanded" : ""}`}
-                        onClick={() => toggleExpand(ev.id)}
-                      >
-                        <span
-                          className="event-list-dot"
-                          style={{ background: CATEGORY_COLOURS[ev.category] }}
-                        />
-                        <span className="event-list-title">{ev.title}</span>
-                        <span className="event-list-time">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
-                        {ev.location && (
-                          <span className="event-list-location">📍 {ev.location}</span>
-                        )}
-                        <span className="event-list-chevron">{expandedId === ev.id ? "▼" : "▶"}</span>
-                      </button>
-                      {expandedId === ev.id && (
-                        <div className="event-list-detail">
-                          <EventDetailCard
-                            event={ev}
-                            isLoggedIn={isLoggedIn}
-                            onClose={() => setExpandedId(null)}
-                            onEdit={onEditEvent}
-                            onDelete={onDeleteEvent}
+        <div className={`event-list-container${expandedId !== null ? " event-list-container--split" : ""}`}>
+          <div className="event-list-items-col">
+            {loading ? (
+              <div className="event-list-loading">
+                {Array.from({ length: 5 }).map((_, i) => (
+                  <div key={i} className="event-list-skeleton" />
+                ))}
+              </div>
+            ) : groups.length === 0 ? (
+              <div className="event-list-empty">
+                {hiddenCategories.size > 0 || dateFilter !== "all"
+                  ? "No events match your current filters."
+                  : "No upcoming events found."}
+              </div>
+            ) : (
+              groups.map(group => (
+                <section key={group.label} className="event-list-month">
+                  <h2 className="event-list-month-heading">{group.label}</h2>
+                  <div className="event-list-items">
+                    {group.events.map(ev => (
+                      <div key={ev.id} className="event-list-item-wrap">
+                        <button
+                          className={`event-list-item${expandedId === ev.id ? " event-list-item--expanded" : ""}`}
+                          onClick={() => toggleExpand(ev.id)}
+                        >
+                          <span
+                            className="event-list-dot"
+                            style={{ background: CATEGORY_COLOURS[ev.category] }}
                           />
-                        </div>
-                      )}
-                    </div>
-                  ))}
-                </div>
-              </section>
-            ))
+                          <span className="event-list-title">{ev.title}</span>
+                          <span className="event-list-time">{formatDateTimeRange(ev.starts_at, ev.finishes_at)}</span>
+                          {ev.location && (
+                            <span className="event-list-location">📍 {ev.location}</span>
+                          )}
+                          <span className="event-list-chevron">{expandedId === ev.id ? "▼" : "▶"}</span>
+                        </button>
+                        {expandedId === ev.id && (
+                          <div className="event-list-detail event-list-detail--mobile">
+                            <EventDetailCard
+                              event={ev}
+                              isLoggedIn={isLoggedIn}
+                              onClose={() => setExpandedId(null)}
+                              onEdit={onEditEvent}
+                              onDelete={onDeleteEvent}
+                            />
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </section>
+              ))
+            )}
+          </div>
+
+          {expandedEvent && (
+            <div className="event-list-detail-panel">
+              <EventDetailCard
+                event={expandedEvent}
+                isLoggedIn={isLoggedIn}
+                onClose={() => setExpandedId(null)}
+                onEdit={onEditEvent}
+                onDelete={onDeleteEvent}
+              />
+            </div>
           )}
         </div>
 

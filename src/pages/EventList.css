@@ -171,6 +171,45 @@
 }
 
 
+/* ── Items column (wraps month sections) ── */
+.event-list-items-col {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ── Desktop side panel for expanded detail ── */
+.event-list-detail-panel {
+  display: none;
+}
+
+@media (min-width: 860px) {
+  .event-list-container--split {
+    display: flex;
+    flex-direction: row;
+    gap: 1.5rem;
+    align-items: flex-start;
+  }
+
+  .event-list-detail-panel {
+    display: block;
+    width: 320px;
+    flex-shrink: 0;
+    position: sticky;
+    top: 2rem;
+  }
+
+  /* Override EventDetails card sizing — let the panel control placement */
+  .event-list-detail-panel .event-detail-card {
+    width: 100%;
+    position: static;
+  }
+
+  /* Hide inline expand on desktop when the side panel is active */
+  .event-list-container--split .event-list-detail--mobile {
+    display: none;
+  }
+}
+
 /* ── Month heading ── */
 .event-list-month {
   margin-bottom: 2rem;

@@ -12,7 +12,7 @@ type ContactMessage = {
   message: string;
   created_at: string;
   is_admin: boolean;
-  reply_to_id: number | null;
+  reply_to_id: string | null;
 };
 
 const TYPE_LABELS: Record<ContactType, string> = {

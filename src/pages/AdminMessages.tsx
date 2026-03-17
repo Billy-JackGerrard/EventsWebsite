@@ -5,7 +5,7 @@ import "./AdminMessages.css";
 type ContactType = "general" | "bug" | "suggestion";
 
 type ContactMessage = {
-  id: number;
+  id: string;
   type: ContactType;
   name: string | null;
   email: string | null;
@@ -39,12 +39,12 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
   const [compose, setCompose] = useState("");
   const [composeName, setComposeName] = useState("");
   const [sending, setSending] = useState(false);
-  const [deletingId, setDeletingId] = useState<number | null>(null);
-  const [confirmDelete, setConfirmDelete] = useState<number | null>(null);
-  const [editingId, setEditingId] = useState<number | null>(null);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
+  const [confirmDelete, setConfirmDelete] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [editText, setEditText] = useState("");
-  const [savingId, setSavingId] = useState<number | null>(null);
-  const [replyingToId, setReplyingToId] = useState<number | null>(null);
+  const [savingId, setSavingId] = useState<string | null>(null);
+  const [replyingToId, setReplyingToId] = useState<string | null>(null);
   const [replyText, setReplyText] = useState("");
   const [replySending, setReplySending] = useState(false);
 
@@ -94,7 +94,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
     setMessages(prev => [data, ...prev]);
   };
 
-  const handleReply = async (parentId: number) => {
+  const handleReply = async (parentId: string) => {
     if (!replyText.trim()) return;
     setReplySending(true);
     setError(null);
@@ -124,7 +124,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
     setReplyingToId(null);
   };
 
-  const handleEditSave = async (id: number) => {
+  const handleEditSave = async (id: string) => {
     if (!editText.trim()) return;
     setSavingId(id);
     setError(null);
@@ -146,7 +146,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
     setEditText("");
   };
 
-  const handleDelete = async (id: number) => {
+  const handleDelete = async (id: string) => {
     setDeletingId(id);
     setConfirmDelete(null);
     setError(null);
@@ -167,7 +167,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
   };
 
   const topLevel = messages.filter(m => m.reply_to_id == null);
-  const repliesFor = (parentId: number) =>
+  const repliesFor = (parentId: string) =>
     messages
       .filter(m => m.reply_to_id === parentId)
       .sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime());

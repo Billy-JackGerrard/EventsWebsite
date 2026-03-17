@@ -256,7 +256,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
                     </>
                   ) : (
                     <>
-                      {msg.is_admin && editingId !== msg.id && (
+                      {msg.is_admin && msg.email === userEmail && editingId !== msg.id && (
                         <button
                           className="msgs-action-btn"
                           onClick={() => handleEditStart(msg)}

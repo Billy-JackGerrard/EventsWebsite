@@ -198,6 +198,10 @@
 
 @media (max-width: 600px) {
   .admin-about-page {
+    padding: 0.75rem;
+  }
+
+  .admin-about-section {
     padding: 1rem;
   }
 
@@ -207,6 +211,17 @@
   }
 
   .admin-about-remove-section-btn {
-    align-self: flex-end;
+    width: 100%;
+    text-align: center;
+  }
+
+  .admin-about-actions {
+    flex-direction: column-reverse;
+  }
+
+  .admin-about-cancel-btn,
+  .admin-about-save-btn {
+    width: 100%;
+    text-align: center;
   }
 }

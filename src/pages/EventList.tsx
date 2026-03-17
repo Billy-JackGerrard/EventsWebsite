@@ -114,42 +114,37 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent }: Pr
     <div className="event-list-page">
       <div className="event-list-layout">
 
-        {/* Mobile-only filter chips — hidden at 860px+ where sidebar takes over */}
+        {/* Mobile-only filter panel — hidden at 860px+ where sidebar takes over */}
         <div className="event-list-mobile-filters">
-          <div className="event-list-filter-section">
-            <span className="event-list-filter-label">When</span>
-            <div className="event-list-chips" role="group" aria-label="Date filter">
-              {(["all", "week", "weekend", "month"] as const).map(f => (
-                <button
-                  key={f}
-                  className={`event-list-chip${dateFilter === f ? " event-list-chip--active" : ""}`}
-                  onClick={() => setDateFilter(f)}
-                >
-                  {DATE_FILTER_LABELS[f]}
-                </button>
-              ))}
-            </div>
-          </div>
-          <div className="event-list-filter-section">
-            <span className="event-list-filter-label">Category</span>
-            <div className="event-list-chips" aria-label="Filter by category">
+          <div className="event-list-filter-controls">
+            {(["all", "week", "weekend", "month"] as const).map(f => (
               <button
-                className={`event-list-chip${selectedCategories.size === 0 ? " event-list-chip--active" : ""}`}
-                onClick={() => setSelectedCategories(new Set())}
+                key={f}
+                className={`event-list-filter-ctrl-btn${dateFilter === f ? " event-list-filter-ctrl-btn--active" : ""}`}
+                onClick={() => setDateFilter(f)}
               >
-                All
+                {DATE_FILTER_LABELS[f]}
               </button>
-              {CATEGORIES.map(cat => (
-                <button
-                  key={cat}
-                  className={`event-list-chip${selectedCategories.has(cat) ? " event-list-chip--active" : ""}`}
-                  onClick={() => toggleCategory(cat)}
-                >
-                  <span className="event-list-chip-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
-                  {cat}
-                </button>
-              ))}
-            </div>
+            ))}
+          </div>
+          <div className="event-list-filter-legend">
+            <button
+              className={`event-list-filter-legend-item${selectedCategories.size === 0 ? " event-list-filter-legend-item--active" : ""}`}
+              onClick={() => setSelectedCategories(new Set())}
+            >
+              <span className="event-list-filter-legend-dot" style={{ background: "var(--color-text-muted)" }} />
+              <span className="event-list-filter-legend-label">All</span>
+            </button>
+            {CATEGORIES.map(cat => (
+              <button
+                key={cat}
+                className={`event-list-filter-legend-item${selectedCategories.has(cat) ? " event-list-filter-legend-item--active" : selectedCategories.size > 0 ? " event-list-filter-legend-item--dimmed" : ""}`}
+                onClick={() => toggleCategory(cat)}
+              >
+                <span className="event-list-filter-legend-dot" style={{ background: CATEGORY_COLOURS[cat] }} />
+                <span className="event-list-filter-legend-label">{cat}</span>
+              </button>
+            ))}
           </div>
         </div>
 

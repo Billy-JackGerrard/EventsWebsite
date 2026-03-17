@@ -36,7 +36,7 @@ export default function AdminMessages({ userEmail, onMessagesCountChange }: { us
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [compose, setCompose] = useState("");
-  const [composeName, setComposeName] = useState(userEmail ? userEmail.split("@")[0] : "");
+  const [composeName, setComposeName] = useState("");
   const [sending, setSending] = useState(false);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<number | null>(null);

@@ -81,6 +81,7 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
     price:         row.price,
     booking_info:  row.booking_info,
     accessibility: row.accessibility,
+    age_rating:    row.age_rating,
     admin_id:      await getAdminId(),
   });
 

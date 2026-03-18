@@ -184,20 +184,24 @@ export default function EventForm({
   const minDate = minDateTime.slice(0, 10);
 
   const handleStartsAtDateChange = (date: string) => {
-    const combined = date && startsAtTime ? `${date}T${startsAtTime}` : "";
+    if (!date) { handleStartsAtChange(""); return; }
+    const combined = `${date}T${startsAtTime || "09:00"}`;
     handleStartsAtChange(combined);
   };
   const handleStartsAtTimeChange = (time: string) => {
-    const combined = startsAtDate && time ? `${startsAtDate}T${time}` : "";
+    if (!time) { handleStartsAtChange(""); return; }
+    const combined = `${startsAtDate || minDate}T${time}`;
     handleStartsAtChange(combined);
   };
   const handleFinishesAtDateChange = (date: string) => {
-    const time = finishesAtTime;
-    setFinishesAt(date && time ? `${date}T${time}` : "");
+    if (!date) { setFinishesAt(""); return; }
+    const time = finishesAtTime || startsAtTime || "10:00";
+    setFinishesAt(`${date}T${time}`);
   };
   const handleFinishesAtTimeChange = (time: string) => {
-    const date = finishesAtDate || startsAtDate;
-    setFinishesAt(date && time ? `${date}T${time}` : "");
+    if (!time) { setFinishesAt(""); return; }
+    const date = finishesAtDate || startsAtDate || minDate;
+    setFinishesAt(`${date}T${time}`);
   };
 
   const handleSubmit = (e?: React.FormEvent) => {

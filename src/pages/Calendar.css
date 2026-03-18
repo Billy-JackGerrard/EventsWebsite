@@ -35,38 +35,6 @@
     border-right: 1px solid var(--color-border);
 }
 
-/* ── Right panel: event list for the selected day ── */
-.calendar-panel-bottom {
-    padding: 0.75rem 1rem 0;
-    border-top: 1px solid var(--color-border);
-    flex-shrink: 0;
-}
-
-
-.calendar-panel-legend {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.3rem 0.65rem;
-    padding-bottom: 0.75rem;
-}
-
-.calendar-panel-legend-item {
-    display: flex;
-    align-items: center;
-    gap: 0.35rem;
-}
-
-.calendar-panel-legend-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    flex-shrink: 0;
-}
-
-.calendar-panel-legend-label {
-    font-size: 0.7rem;
-    color: var(--color-text-muted);
-}
 
 .calendar-panel {
     width: clamp(260px, 30%, 320px);

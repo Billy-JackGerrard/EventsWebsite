@@ -9,6 +9,7 @@ import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
 import EventDetailCard from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
+import CategoryLegend from "../components/CategoryLegend";
 import "./EventList.css";
 
 type Props = {
@@ -141,7 +142,9 @@ export default function EventList({ isLoggedIn, onEditEvent, onDeleteEvent, onDu
             <span className="event-list-filter-toggle-label">Filters</span>
             <span className="event-list-filter-toggle-arrow">{filtersCollapsed ? "▲" : "▼"}</span>
           </button>
-          {!filtersCollapsed && (
+          {filtersCollapsed ? (
+            <CategoryLegend />
+          ) : (
             <FilterPanel
               selectedCategories={selectedCategories}
               onToggleCategory={toggleCategory}

@@ -1,0 +1,24 @@
+.category-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.65rem;
+  padding-top: 0.35rem;
+}
+
+.category-legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+}
+
+.category-legend-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.category-legend-label {
+  font-size: 0.7rem;
+  color: var(--color-text-muted);
+}

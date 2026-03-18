@@ -1,13 +1,14 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from "react";
 import { MONTHS, formatDateTimeRange, toLocalDateKey } from "../utils/dates";
 import type { Event } from "../utils/types";
-import { CATEGORIES, CATEGORY_COLOURS, isLightColor } from "../utils/types";
+import { CATEGORY_COLOURS, isLightColor } from "../utils/types";
 import { useCalendarEvents } from "../hooks/useCalendarEvents";
 import { useFilters } from "../hooks/useFilters";
 import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import EventDetails from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
+import CategoryLegend from "../components/CategoryLegend";
 import "./Calendar.css";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -524,19 +525,6 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
           </>
         )}
 
-        {/* Always-visible bottom: legend (hidden when filters are open, since they show colours) */}
-        {filtersCollapsed && (
-          <div className="calendar-panel-bottom">
-            <div className="calendar-panel-legend">
-              {CATEGORIES.map(c => (
-                <div key={c} className="calendar-panel-legend-item">
-                  <span className="calendar-panel-legend-dot" style={{ background: CATEGORY_COLOURS[c] }} />
-                  <span className="calendar-panel-legend-label">{c}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
       </div>
 
       {/* ── Mobile-only filter bar — fixed bottom ── */}
@@ -549,7 +537,9 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
           <span className="calendar-filter-toggle-label">Filters</span>
           <span className="calendar-filter-toggle-arrow">{filtersCollapsed ? "▲" : "▼"}</span>
         </button>
-        {!filtersCollapsed && (
+        {filtersCollapsed ? (
+          <CategoryLegend />
+        ) : (
           <FilterPanel
             selectedCategories={selectedCategories}
             onToggleCategory={toggleCategory}

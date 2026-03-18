@@ -13,6 +13,8 @@ type Props = {
   onClearCategories: () => void;
   dateFilter: DateFilter;
   onSetDateFilter: (f: DateFilter) => void;
+  /** Show only category dots — hides date filters and clear button */
+  compact?: boolean;
 };
 
 export default function FilterPanel({
@@ -21,28 +23,33 @@ export default function FilterPanel({
   onClearCategories,
   dateFilter,
   onSetDateFilter,
+  compact,
 }: Props) {
   return (
     <div className="filter-panel">
-      <div className="filter-panel-dates">
-        {(["all", "week", "weekend", "month"] as const).map(f => (
-          <button
-            key={f}
-            className={`filter-panel-date-btn${dateFilter === f ? " filter-panel-date-btn--active" : ""}`}
-            onClick={() => onSetDateFilter(f)}
-          >
-            {DATE_FILTER_LABELS[f]}
-          </button>
-        ))}
-      </div>
+      {!compact && (
+        <div className="filter-panel-dates">
+          {(["all", "week", "weekend", "month"] as const).map(f => (
+            <button
+              key={f}
+              className={`filter-panel-date-btn${dateFilter === f ? " filter-panel-date-btn--active" : ""}`}
+              onClick={() => onSetDateFilter(f)}
+            >
+              {DATE_FILTER_LABELS[f]}
+            </button>
+          ))}
+        </div>
+      )}
       <div className="filter-panel-cats">
-        <button
-          className={`filter-panel-cat${selectedCategories.size === 0 ? " filter-panel-cat--active" : ""}`}
-          onClick={onClearCategories}
-        >
-          <span className="filter-panel-cat-dot" style={{ background: "var(--color-text-muted)" }} />
-          <span className="filter-panel-cat-label">All</span>
-        </button>
+        {!compact && (
+          <button
+            className={`filter-panel-cat${selectedCategories.size === 0 ? " filter-panel-cat--active" : ""}`}
+            onClick={onClearCategories}
+          >
+            <span className="filter-panel-cat-dot" style={{ background: "var(--color-text-muted)" }} />
+            <span className="filter-panel-cat-label">All</span>
+          </button>
+        )}
         {CATEGORIES.map(cat => (
           <button
             key={cat}

@@ -8,7 +8,6 @@ import { passesDateFilter, matchesSearch } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 import EventDetails from "../components/events/EventDetails";
 import FilterPanel from "../components/FilterPanel";
-import CategoryLegend from "../components/CategoryLegend";
 import "./Calendar.css";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
@@ -537,17 +536,14 @@ export default function Calendar({ isLoggedIn, onEditEvent, onDeleteEvent, onDup
           <span className="calendar-filter-toggle-label">Filters</span>
           <span className="calendar-filter-toggle-arrow">{filtersCollapsed ? "▲" : "▼"}</span>
         </button>
-        {filtersCollapsed ? (
-          <CategoryLegend />
-        ) : (
-          <FilterPanel
-            selectedCategories={selectedCategories}
-            onToggleCategory={toggleCategory}
-            onClearCategories={clearCategories}
-            dateFilter={dateFilter}
-            onSetDateFilter={setDateFilter}
-          />
-        )}
+        <FilterPanel
+          selectedCategories={selectedCategories}
+          onToggleCategory={toggleCategory}
+          onClearCategories={clearCategories}
+          dateFilter={dateFilter}
+          onSetDateFilter={setDateFilter}
+          compact={filtersCollapsed}
+        />
       </div>
 
     </div>

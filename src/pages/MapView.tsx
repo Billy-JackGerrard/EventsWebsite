@@ -136,7 +136,14 @@ export default function MapView({ onViewEvent }: Props) {
     markersRef.current.addTo(map);
     mapRef.current = map;
 
+    // Leaflet calculates tile coverage from the container size at init.
+    // The flex layout may not have settled yet, so watch for resize and
+    // tell Leaflet to recalculate.
+    const ro = new ResizeObserver(() => map.invalidateSize());
+    ro.observe(mapContainerRef.current);
+
     return () => {
+      ro.disconnect();
       map.remove();
       mapRef.current = null;
     };

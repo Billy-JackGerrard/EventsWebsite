@@ -1,6 +1,6 @@
 .navbar {
     width: 100%;
-    background: rgba(15, 23, 42, 0.75);
+    background: rgba(23, 49, 120, 0.88);
     backdrop-filter: blur(16px) saturate(1.8);
     -webkit-backdrop-filter: blur(16px) saturate(1.8);
     display: flex;
@@ -8,7 +8,7 @@
     justify-content: space-between;
     padding: 0.75rem 2rem;
     box-sizing: border-box;
-    box-shadow: 0 1px 0 rgba(255, 255, 255, 0.06), 0 4px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.18);
     position: fixed;
     top: 0;
     left: 0;
@@ -17,8 +17,8 @@
 
 @media (prefers-color-scheme: dark) {
     .navbar {
-        background: rgba(2, 6, 23, 0.8);
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04), 0 4px 24px rgba(0, 0, 0, 0.5);
+        background: rgba(13, 30, 75, 0.9);
+        box-shadow: 0 4px 24px rgba(0, 0, 0, 0.5);
     }
 }
 
@@ -278,7 +278,7 @@
         top: 100%;
         left: 0;
         right: 0;
-        background: rgba(15, 23, 42, 0.95);
+        background: rgba(23, 49, 120, 0.96);
         backdrop-filter: blur(20px) saturate(1.8);
         -webkit-backdrop-filter: blur(20px) saturate(1.8);
         flex-direction: column;

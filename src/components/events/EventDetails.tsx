@@ -62,7 +62,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
   return (
     <div className="event-detail-card">
       <div className="event-detail-close-row">
-        <button className="event-detail-close" onClick={onClose} aria-label="Close">✕</button>
+        <button className="event-detail-close" onClick={onClose} aria-label="Back"><span className="event-detail-close-arrow">←</span> Back</button>
         {isLoggedIn && (
           <div className="event-detail-admin-actions">
             <button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event">
@@ -103,14 +103,20 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
         <div className="event-detail-nodesc">No description provided.</div>
       )}
 
-      {(event.event_type === 'in_person' || event.event_type === 'both') && (
-        <div className="event-detail-row">
-          <span className="event-detail-icon">📍</span>
-          <span className="event-detail-text">
-            {[event.location, event.address && formatAddress(event.address)].filter(Boolean).join(" — ")}
-          </span>
-        </div>
-      )}
+      {(event.event_type === 'in_person' || event.event_type === 'both') && (() => {
+        const displayText = [event.location, event.address && formatAddress(event.address)].filter(Boolean).join(" — ");
+        const mapsUrl = event.latitude && event.longitude
+          ? `https://www.google.com/maps/search/?api=1&query=${event.latitude},${event.longitude}`
+          : `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(displayText)}`;
+        return (
+          <div className="event-detail-row">
+            <span className="event-detail-icon">📍</span>
+            <a className="event-detail-link" href={mapsUrl} target="_blank" rel="noopener noreferrer">
+              {displayText}
+            </a>
+          </div>
+        );
+      })()}
 
       {(event.event_type === 'online' || event.event_type === 'both') && (
         <div className="event-detail-row">
@@ -229,7 +235,7 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
               endDate: toLocalDateKey(endIso),
               endTime: formatTime(endIso),
               timeZone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-              location: event.location ?? undefined,
+              location: [event.location, event.address && formatAddress(event.address)].filter(Boolean).join(" — ") || undefined,
               description: event.description ?? undefined,
               options: ["Apple", "Google", "iCal", "Microsoft365", "Outlook.com", "Yahoo"],
               listStyle: "modal",

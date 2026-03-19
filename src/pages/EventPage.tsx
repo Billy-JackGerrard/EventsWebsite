@@ -15,9 +15,6 @@ export default function EventPage({ event, isLoggedIn, onBack, onEdit, onDelete,
   return (
     <div className="eventpage-page">
       <div className="eventpage-card">
-        <button className="eventpage-back" onClick={onBack}>
-          <span className="eventpage-back-arrow">←</span> Back
-        </button>
         <EventDetailCard
           event={event}
           isLoggedIn={isLoggedIn}

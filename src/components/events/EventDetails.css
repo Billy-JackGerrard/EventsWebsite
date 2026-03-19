@@ -33,25 +33,30 @@
 }
 
 .event-detail-close {
-    background: transparent;
-    border: 1px solid var(--color-border-subtle);
-    color: var(--color-text-muted);
-    font-size: 0.7rem;
-    width: 24px;
-    height: 24px;
-    border-radius: 50%;
-    cursor: pointer;
-    display: flex;
+    display: inline-flex;
     align-items: center;
-    justify-content: center;
-    padding: 0;
+    gap: 0.4rem;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    font-family: monospace;
+    letter-spacing: 0.05em;
+    padding: 0.4rem 0.85rem;
+    border-radius: 2px;
+    cursor: pointer;
     transition: border-color 0.15s, color 0.15s;
     flex-shrink: 0;
 }
 
 .event-detail-close:hover {
-    border-color: var(--color-text-error);
-    color: var(--color-text-error);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.event-detail-close-arrow {
+    font-size: 1rem;
+    line-height: 1;
 }
 
 .event-detail-admin-actions {

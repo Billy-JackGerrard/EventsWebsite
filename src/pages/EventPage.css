@@ -23,34 +23,6 @@
   align-self: initial;
 }
 
-/* Back button */
-.eventpage-back {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  background: transparent;
-  border: 1px solid var(--color-border);
-  color: var(--color-text-muted);
-  font-size: 0.8rem;
-  font-family: monospace;
-  letter-spacing: 0.05em;
-  padding: 0.4rem 0.85rem;
-  border-radius: 2px;
-  cursor: pointer;
-  margin-bottom: 1.25rem;
-  transition: border-color 0.15s, color 0.15s;
-}
-
-.eventpage-back:hover {
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-.eventpage-back-arrow {
-  font-size: 1rem;
-  line-height: 1;
-}
-
 @media (max-width: 560px) {
   .eventpage-page {
     padding: 1rem;

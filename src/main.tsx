@@ -242,6 +242,7 @@ function App() {
           <Calendar
             onAddEvent={handleAddEventFromCalendar}
             onViewEvent={handleViewEvent}
+            onNavigate={handleNavigate}
             searchOpen={searchOpen}
             onToggleSearch={handleToggleSearch}
             onScrollToTodayReady={handleScrollToTodayReady}

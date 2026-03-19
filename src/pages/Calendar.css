@@ -329,6 +329,11 @@
     display: none;
 }
 
+/* ── Mobile view switcher — hidden on desktop ── */
+.calendar-view-switcher {
+    display: none;
+}
+
 /* ── Scrollable months ── */
 .calendar-scroll-container {
     flex: 1;
@@ -656,6 +661,54 @@
 
     .calendar-panel-empty { display: none; }
     .calendar-panel-filters { display: none; }
+
+    /* View switcher — top-right toolbar */
+    .calendar-view-switcher {
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+        gap: 0.25rem;
+        padding: 0.4rem 0.5rem;
+        flex-shrink: 0;
+        background: var(--color-bg-inset);
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .calendar-view-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        background: transparent;
+        border: 1px solid var(--color-border);
+        color: var(--color-text-muted);
+        font-family: var(--font-heading);
+        font-size: 0.7rem;
+        font-weight: 600;
+        letter-spacing: 0.03em;
+        padding: 0.3rem 0.6rem;
+        border-radius: var(--radius-full);
+        cursor: pointer;
+        transition: all var(--duration-fast) var(--ease-out);
+    }
+
+    .calendar-view-btn:hover {
+        color: var(--color-text-primary);
+        border-color: var(--color-accent);
+        background: var(--color-bg-accent-tint);
+    }
+
+    .calendar-view-btn--active {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+        color: #fff;
+        cursor: default;
+    }
+
+    .calendar-view-btn--active:hover {
+        background: var(--color-accent);
+        border-color: var(--color-accent);
+        color: #fff;
+    }
 
     .calendar-day-number  { font-size: 0.8rem; }
     .calendar-day-label   { font-size: 0.6rem; letter-spacing: 0.03em; }

@@ -27,7 +27,7 @@ function pinSvg(fill: string): string {
     `<defs><filter id="s" x="-20%" y="-10%" width="140%" height="130%">` +
     `<feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-opacity="0.35"/></filter></defs>` +
     `<path filter="url(#s)" fill="${fill}" d="M15 0.5C7 0.5 0.5 7 0.5 15c0 10.5 14.5 26 14.5 26s14.5-15.5 14.5-26C29.5 7 23 0.5 15 0.5z"/>` +
-    `<circle cx="15" cy="14.5" r="5.5" fill="#fff" opacity="0.95"/>` +
+    `<circle cx="15" cy="14.5" r="8.5" fill="#fff" opacity="0.95"/>` +
     `</svg>`;
 }
 

@@ -108,7 +108,7 @@ export type ContactMessage = {
   reply_to_id: string | null;
 };
 
-/** Shared type for AboutUs / AdminAboutUs page sections. */
+/** Shared type for site content sections. */
 export type Section = {
   title: string;
   paragraphs: string[];

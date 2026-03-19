@@ -131,6 +131,26 @@
     border-color: rgba(255, 255, 255, 0.25);
 }
 
+/* ── Browse Events CTA — mobile-only ── */
+.navbar-link--browse {
+    display: none;
+}
+
+/* ── Subtle link (Admin Login — de-emphasised) ── */
+.navbar-link--subtle {
+    color: rgba(255, 255, 255, 0.4);
+    font-size: 0.7rem;
+}
+
+.navbar-link--subtle:hover {
+    color: rgba(255, 255, 255, 0.75);
+}
+
+/* ── Admin section divider — mobile-only ── */
+.navbar-admin-divider {
+    display: none;
+}
+
 /* ── Queue/Messages buttons — relative so the badge can anchor to them ── */
 .navbar-link--queue,
 .navbar-link--messages {
@@ -317,6 +337,34 @@
         border-bottom: 1px solid rgba(255, 255, 255, 0.15);
         padding-bottom: 0.25rem;
         margin-bottom: 0.25rem;
+    }
+
+    /* Browse Events CTA — visible on mobile, replaces Calendar/List/Map */
+    .navbar-link--browse {
+        display: flex;
+        justify-content: center;
+        background: rgba(255, 255, 255, 0.15);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        color: #ffffff;
+        font-weight: 600;
+        font-size: 0.9rem;
+    }
+
+    .navbar-link--browse:hover {
+        background: rgba(255, 255, 255, 0.22);
+    }
+
+    /* Hide Home/Calendar/List/Map on mobile — Browse Events covers them */
+    .navbar-link--desktop-nav {
+        display: none;
+    }
+
+    /* Admin divider — visible on mobile */
+    .navbar-admin-divider {
+        display: block;
+        height: 1px;
+        background: rgba(255, 255, 255, 0.15);
+        margin: 0.25rem 0;
     }
 }
 

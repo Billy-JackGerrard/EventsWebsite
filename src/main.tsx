@@ -9,12 +9,12 @@ import Calendar from "./pages/Calendar.tsx";
 import Login from "./pages/Login.tsx";
 import AdminQueue from "./pages/AdminQueue.tsx";
 import AdminMessages from "./pages/AdminMessages.tsx";
-import AdminAboutUs from "./pages/AdminAboutUs.tsx";
+
 import Account from "./pages/Account.tsx";
 import Home from "./pages/Home.tsx";
 import AdminHome from "./pages/AdminHome.tsx";
 import Contact from "./pages/Contact.tsx";
-import AboutUs from "./pages/AboutUs.tsx";
+
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import EventList from "./pages/EventList.tsx";
 import MapView from "./pages/MapView.tsx";
@@ -31,7 +31,6 @@ import type { View } from "./utils/views.ts";
 const PAGE_PATHS: Partial<Record<View, string>> = {
   home: "/home",
   map: "/map",
-  about: "/about",
   contact: "/contact",
   privacy: "/privacy",
 };
@@ -101,6 +100,12 @@ function App() {
       });
       return;
     }
+    // Redirect legacy /about URL to /home
+    if (path === "/about") {
+      window.history.replaceState({}, "", "/home");
+      setView("home");
+      return;
+    }
     const pageView = PATH_TO_VIEW[path];
     if (pageView) setView(pageView);
   }, []);
@@ -138,7 +143,7 @@ function App() {
   useEffect(() => {
     if (view === "admin-queue" && !isLoggedIn) setView("login");
     if (view === "admin-messages" && !isLoggedIn) setView("login");
-    if (view === "admin-about" && !isLoggedIn) setView("login");
+
     if (view === "admin-home" && !isLoggedIn) setView("login");
     if (view === "account" && !isLoggedIn) setView("login");
     if (view === "edit-event" && !isLoggedIn) setView("calendar");
@@ -287,13 +292,7 @@ function App() {
         )}
         {view === "admin-messages" && isLoggedIn && <AdminMessages userEmail={userEmail} adminName={adminName} onMessagesCountChange={setMessagesCount} />}
         {view === "contact" && <Contact />}
-        {view === "about" && <AboutUs isLoggedIn={isLoggedIn} onEdit={() => handleNavigate("admin-about")} />}
-        {view === "admin-about" && isLoggedIn && (
-          <AdminAboutUs
-            onSaved={() => handleNavigate("about")}
-            onCancel={() => handleNavigate("about")}
-          />
-        )}
+
         {view === "home" && (
           <Home
             isLoggedIn={isLoggedIn}

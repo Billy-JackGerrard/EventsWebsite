@@ -25,6 +25,7 @@ export default function AdminHome({ onSaved, onCancel }: Props) {
   const [headline, setHeadline] = useState("");
   const [subtitle, setSubtitle] = useState("");
   const [sections, setSections] = useState<Section[]>([]);
+  const [aboutSections, setAboutSections] = useState<Section[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -35,31 +36,32 @@ export default function AdminHome({ onSaved, onCancel }: Props) {
   }, []);
 
   useEffect(() => {
-    supabase
-      .from("site_content")
-      .select("content")
-      .eq("key", "home")
-      .single()
-      .then(({ data, error }) => {
-        if (error) setError("Failed to load content. Please try refreshing.");
-        else if (data) {
-          const c = data.content as HomeContent;
-          setHeadline(c.hero?.headline ?? "");
-          setSubtitle(c.hero?.subtitle ?? "");
-          setSections(c.sections ?? []);
-        }
-        setLoading(false);
-      });
+    Promise.all([
+      supabase.from("site_content").select("content").eq("key", "home").single(),
+      supabase.from("site_content").select("content").eq("key", "about_us").single(),
+    ]).then(([homeRes, aboutRes]) => {
+      if (homeRes.error) setError("Failed to load content. Please try refreshing.");
+      else if (homeRes.data) {
+        const c = homeRes.data.content as HomeContent;
+        setHeadline(c.hero?.headline ?? "");
+        setSubtitle(c.hero?.subtitle ?? "");
+        setSections(c.sections ?? []);
+      }
+      if (aboutRes.data) {
+        setAboutSections((aboutRes.data.content as { sections: Section[] }).sections ?? []);
+      }
+      setLoading(false);
+    });
   }, []);
 
   useEffect(() => {
     if (!loading) resizeAll();
   }, [loading, resizeAll]);
 
-  useEffect(() => {
-    resizeAll();
-  }, [sections, resizeAll]);
+  useEffect(() => { resizeAll(); }, [sections, resizeAll]);
+  useEffect(() => { resizeAll(); }, [aboutSections, resizeAll]);
 
+  /* ── Home section helpers ── */
   const updateTitle = (i: number, value: string) => {
     setSections(prev => prev.map((s, idx) => idx === i ? { ...s, title: value } : s));
   };
@@ -90,18 +92,52 @@ export default function AdminHome({ onSaved, onCancel }: Props) {
     setSections(prev => [...prev, { title: "", paragraphs: [""] }]);
   };
 
+  /* ── About section helpers ── */
+  const updateAboutTitle = (i: number, value: string) => {
+    setAboutSections(prev => prev.map((s, idx) => idx === i ? { ...s, title: value } : s));
+  };
+
+  const updateAboutParagraph = (sIdx: number, pIdx: number, value: string) => {
+    setAboutSections(prev => prev.map((s, idx) =>
+      idx === sIdx ? { ...s, paragraphs: s.paragraphs.map((p, j) => j === pIdx ? value : p) } : s
+    ));
+  };
+
+  const addAboutParagraph = (sIdx: number) => {
+    setAboutSections(prev => prev.map((s, idx) =>
+      idx === sIdx ? { ...s, paragraphs: [...s.paragraphs, ""] } : s
+    ));
+  };
+
+  const removeAboutParagraph = (sIdx: number, pIdx: number) => {
+    setAboutSections(prev => prev.map((s, idx) =>
+      idx === sIdx ? { ...s, paragraphs: s.paragraphs.filter((_, j) => j !== pIdx) } : s
+    ));
+  };
+
+  const removeAboutSection = (i: number) => {
+    setAboutSections(prev => prev.filter((_, idx) => idx !== i));
+  };
+
+  const addAboutSection = () => {
+    setAboutSections(prev => [...prev, { title: "", paragraphs: [""] }]);
+  };
+
+  /* ── Save both content entries ── */
   const handleSave = async () => {
     setSaving(true);
     setError(null);
-    const content: HomeContent = {
+    const homeContent: HomeContent = {
       hero: { headline, subtitle },
       sections,
     };
-    const { error: dbError } = await supabase
-      .from("site_content")
-      .upsert({ key: "home", content, updated_at: new Date().toISOString() });
+    const now = new Date().toISOString();
+    const [homeResult, aboutResult] = await Promise.all([
+      supabase.from("site_content").upsert({ key: "home", content: homeContent, updated_at: now }),
+      supabase.from("site_content").upsert({ key: "about_us", content: { sections: aboutSections }, updated_at: now }),
+    ]);
     setSaving(false);
-    if (dbError) {
+    if (homeResult.error || aboutResult.error) {
       setError("Failed to save. Please try again.");
       return;
     }
@@ -111,7 +147,7 @@ export default function AdminHome({ onSaved, onCancel }: Props) {
   return (
     <div className="admin-home-page">
       <div className="admin-home-container" ref={containerRef}>
-        <h2 className="admin-home-title">Edit Home Page</h2>
+        <h2 className="admin-home-title">Edit Home &amp; About</h2>
 
         {error && <div className="form-error" role="alert">{error}</div>}
 
@@ -119,7 +155,7 @@ export default function AdminHome({ onSaved, onCancel }: Props) {
           <p className="admin-home-loading">Loading…</p>
         ) : (
           <>
-            {/* Hero */}
+            {/* ── Hero ── */}
             <div className="admin-home-section">
               <h3 className="admin-home-section-label">Hero</h3>
               <div className="admin-home-field">
@@ -146,7 +182,7 @@ export default function AdminHome({ onSaved, onCancel }: Props) {
               </div>
             </div>
 
-            {/* Sections */}
+            {/* ── Home Sections ── */}
             {sections.map((section, sIdx) => (
               <div key={sIdx} className="admin-home-section">
                 <div className="admin-home-section-header">
@@ -196,6 +232,62 @@ export default function AdminHome({ onSaved, onCancel }: Props) {
               + Add section
             </button>
 
+            {/* ── About Us divider ── */}
+            <div className="admin-home-divider">
+              <span>About Us</span>
+            </div>
+
+            {/* ── About Sections ── */}
+            {aboutSections.map((section, sIdx) => (
+              <div key={`about-${sIdx}`} className="admin-home-section">
+                <div className="admin-home-section-header">
+                  <input
+                    className="form-input"
+                    type="text"
+                    placeholder="Section title"
+                    value={section.title}
+                    onChange={e => updateAboutTitle(sIdx, e.target.value)}
+                  />
+                  <button
+                    className="admin-home-remove-section-btn"
+                    onClick={() => removeAboutSection(sIdx)}
+                  >
+                    Remove section
+                  </button>
+                </div>
+
+                {section.paragraphs.map((para, pIdx) => (
+                  <div key={pIdx} className="admin-home-para-row">
+                    <textarea
+                      className="form-input admin-home-textarea"
+                      value={para}
+                      placeholder="Paragraph text (use **bold** for bold)"
+                      onChange={e => {
+                        autoResize(e.target);
+                        updateAboutParagraph(sIdx, pIdx, e.target.value);
+                      }}
+                    />
+                    <button
+                      className="admin-home-remove-para-btn"
+                      onClick={() => removeAboutParagraph(sIdx, pIdx)}
+                      title="Remove paragraph"
+                    >
+                      ×
+                    </button>
+                  </div>
+                ))}
+
+                <button className="admin-home-add-para-btn" onClick={() => addAboutParagraph(sIdx)}>
+                  + Add paragraph
+                </button>
+              </div>
+            ))}
+
+            <button className="admin-home-add-section-btn" onClick={addAboutSection}>
+              + Add about section
+            </button>
+
+            {/* ── Actions ── */}
             <div className="admin-home-actions">
               <button className="admin-home-cancel-btn" onClick={onCancel} disabled={saving}>
                 Cancel

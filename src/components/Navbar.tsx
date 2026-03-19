@@ -34,7 +34,7 @@ export default function Navbar({
 
   return (
     <nav className="navbar">
-      <button className="navbar-brand" onClick={() => navigate("calendar")} type="button">
+      <button className="navbar-brand" onClick={() => navigate("home")} type="button">
         <svg className="navbar-logo-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" aria-hidden="true">
           <rect x="8.5" y="18" width="15"  height="10"   rx="3"    fill="white"/>
           <rect x="4"   y="14" width="3.5" height="7"    rx="1.75" fill="white" transform="rotate(-40 7.75 17.5)"/>
@@ -71,35 +71,62 @@ export default function Navbar({
           </div>
         )}
 
+        {/* Primary CTA — replaces Calendar/List/Map on mobile */}
         <button
-          className={`navbar-link ${currentView === "home" ? "navbar-link--active" : ""}`}
+          className={`navbar-link navbar-link--browse ${["calendar", "list", "map"].includes(currentView) ? "navbar-link--active" : ""}`}
+          onClick={() => navigate("calendar")}
+        >
+          Browse Events
+        </button>
+
+        <button
+          className={`navbar-link navbar-link--desktop-nav ${currentView === "home" ? "navbar-link--active" : ""}`}
           onClick={() => navigate("home")}
         >
           Home
         </button>
 
         <button
-          className={`navbar-link ${currentView === "calendar" ? "navbar-link--active" : ""}`}
+          className={`navbar-link navbar-link--desktop-nav ${currentView === "calendar" ? "navbar-link--active" : ""}`}
           onClick={() => navigate("calendar")}
         >
           Calendar
         </button>
 
         <button
-          className={`navbar-link ${currentView === "list" ? "navbar-link--active" : ""}`}
+          className={`navbar-link navbar-link--desktop-nav ${currentView === "list" ? "navbar-link--active" : ""}`}
           onClick={() => navigate("list")}
         >
           List
         </button>
 
         <button
-          className={`navbar-link ${currentView === "map" ? "navbar-link--active" : ""}`}
+          className={`navbar-link navbar-link--desktop-nav ${currentView === "map" ? "navbar-link--active" : ""}`}
           onClick={() => navigate("map")}
         >
           Map
         </button>
 
-        {isLoggedIn ? (
+        <button
+          className={`navbar-link navbar-link--submit ${currentView === "add-event" ? "navbar-link--active" : ""}`}
+          onClick={() => navigate("add-event")}
+        >
+          Submit Event
+        </button>
+
+        {!isLoggedIn && (
+          <button
+            className={`navbar-link ${currentView === "contact" ? "navbar-link--active" : ""}`}
+            onClick={() => navigate("contact")}
+          >
+            Contact
+          </button>
+        )}
+
+        {/* Admin section — separated on mobile */}
+        {isLoggedIn && <div className="navbar-admin-divider" />}
+
+        {isLoggedIn && (
           <button
             className={`navbar-link navbar-link--messages ${currentView === "admin-messages" ? "navbar-link--active" : ""}`}
             onClick={() => navigate("admin-messages")}
@@ -109,21 +136,7 @@ export default function Navbar({
               <span className="navbar-pending-badge">{messagesCount}</span>
             )}
           </button>
-        ) : (
-          <button
-            className={`navbar-link ${currentView === "contact" ? "navbar-link--active" : ""}`}
-            onClick={() => navigate("contact")}
-          >
-            Contact
-          </button>
         )}
-
-        <button
-          className={`navbar-link navbar-link--submit ${currentView === "add-event" ? "navbar-link--active" : ""}`}
-          onClick={() => navigate("add-event")}
-        >
-          Submit Event
-        </button>
 
         {isLoggedIn && (
           <button
@@ -137,13 +150,6 @@ export default function Navbar({
           </button>
         )}
 
-        <button
-          className={`navbar-link ${currentView === "about" ? "navbar-link--active" : ""}`}
-          onClick={() => navigate("about")}
-        >
-          About
-        </button>
-
         {isLoggedIn ? (
           <button
             className={`navbar-link navbar-link--account ${currentView === "account" ? "navbar-link--active" : ""}`}
@@ -153,7 +159,7 @@ export default function Navbar({
           </button>
         ) : (
           <button
-            className={`navbar-link ${currentView === "login" ? "navbar-link--active" : ""}`}
+            className={`navbar-link navbar-link--subtle ${currentView === "login" ? "navbar-link--active" : ""}`}
             onClick={() => navigate("login")}
           >
             Admin Login

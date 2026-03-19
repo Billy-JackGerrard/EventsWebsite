@@ -21,25 +21,35 @@ type Props = {
 const approvedEvents = () =>
   supabase.from("events").select("*").eq("approved", true).order("starts_at", { ascending: true });
 
-/** Create a colored circle DivIcon for a category. */
+/** SVG pin matching the Google Maps teardrop style. */
+function pinSvg(fill: string): string {
+  return `<svg xmlns="http://www.w3.org/2000/svg" width="30" height="42" viewBox="0 0 30 42" class="map-pin-svg">` +
+    `<defs><filter id="s" x="-20%" y="-10%" width="140%" height="130%">` +
+    `<feDropShadow dx="0" dy="1" stdDeviation="1.2" flood-opacity="0.35"/></filter></defs>` +
+    `<path filter="url(#s)" fill="${fill}" d="M15 0.5C7 0.5 0.5 7 0.5 15c0 10.5 14.5 26 14.5 26s14.5-15.5 14.5-26C29.5 7 23 0.5 15 0.5z"/>` +
+    `<circle cx="15" cy="14.5" r="5.5" fill="#fff" opacity="0.95"/>` +
+    `</svg>`;
+}
+
+/** Create a Google Maps-style pin icon for a category. */
 function categoryIcon(category: Category): L.DivIcon {
   const color = CATEGORY_COLOURS[category];
   return L.divIcon({
     className: "map-marker",
-    html: `<span class="map-pin" style="--pin-color:${color}"><span class="map-pin-head"></span><span class="map-pin-point"></span></span>`,
-    iconSize: [28, 38],
-    iconAnchor: [14, 38],
-    popupAnchor: [0, -36],
+    html: pinSvg(color),
+    iconSize: [30, 42],
+    iconAnchor: [15, 42],
+    popupAnchor: [0, -38],
   });
 }
 
 /** Neutral icon for venues with mixed categories. */
 const mixedIcon = L.divIcon({
   className: "map-marker",
-  html: `<span class="map-pin map-pin--mixed"><span class="map-pin-head"></span><span class="map-pin-point"></span></span>`,
-  iconSize: [28, 38],
-  iconAnchor: [14, 38],
-  popupAnchor: [0, -36],
+  html: pinSvg("#6366f1"),
+  iconSize: [30, 42],
+  iconAnchor: [15, 42],
+  popupAnchor: [0, -38],
 });
 
 /** Group events by their lat,lng coordinate pair. */

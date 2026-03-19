@@ -74,6 +74,7 @@
 
   /* Font tokens */
   --font-display: 'Inter', system-ui, sans-serif;
+  --font-heading: 'Plus Jakarta Sans', 'Inter', system-ui, sans-serif;
   --font-mono: 'SF Mono', 'Fira Code', 'Cascadia Code', monospace;
 
   /* Accent gradient */
@@ -101,7 +102,7 @@
 
 /* ── Headings ──────────────────────────────────────── */
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
+  font-family: var(--font-heading);
   line-height: 1.25;
   font-weight: 700;
   margin: 0;
@@ -285,10 +286,11 @@ button:focus-visible {
 .page-card {
   background: var(--color-bg-card);
   border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-lg);
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-md);
   padding: 2rem;
   max-width: 100%;
+  transition: box-shadow 0.3s var(--ease-out);
 }
 
 /* Form field wrapper */
@@ -298,13 +300,14 @@ button:focus-visible {
   margin-bottom: 1rem;
 }
 
-/* Uppercase monospace label above form inputs */
+/* Uppercase label above form inputs */
 .form-label {
   color: var(--color-accent);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   letter-spacing: var(--ls-widest);
   text-transform: uppercase;
-  font-family: var(--font-mono);
+  font-family: var(--font-heading);
+  font-weight: 700;
   margin-bottom: 0.4rem;
 }
 
@@ -312,9 +315,9 @@ button:focus-visible {
 .form-input {
   background: var(--color-bg-inset);
   border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
+  border-radius: var(--radius-md);
   color: var(--color-text-primary);
-  padding: 0.6rem 0.8rem;
+  padding: 0.65rem 0.9rem;
   font-size: 0.95rem;
   outline: none;
   transition: border-color var(--duration-fast) var(--ease-out),
@@ -324,7 +327,7 @@ button:focus-visible {
 
 .form-input:focus {
   border-color: var(--color-accent);
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
 }
 
 /* Inline per-field validation message */
@@ -350,11 +353,12 @@ button:focus-visible {
   background: var(--color-accent-gradient);
   color: var(--color-text-dark);
   border: none;
-  border-radius: var(--radius-md);
-  padding: 0.75rem;
-  font-size: 1rem;
+  border-radius: var(--radius-full);
+  padding: 0.8rem 1.5rem;
+  font-size: 0.95rem;
   font-weight: 600;
-  font-family: inherit;
+  font-family: var(--font-heading);
+  letter-spacing: 0.01em;
   cursor: pointer;
   margin-top: 0.5rem;
   transition: transform var(--duration-fast) var(--ease-out),
@@ -363,8 +367,8 @@ button:focus-visible {
 }
 
 .btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 4px 12px rgba(37, 99, 235, 0.35);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
   border-color: transparent;
 }
 
@@ -433,10 +437,11 @@ button:focus-visible {
 /* Shared section divider label */
 .section-label {
   color: var(--color-accent);
-  font-size: 0.75rem;
-  letter-spacing: var(--ls-widest);
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  font-family: var(--font-mono);
+  font-family: var(--font-heading);
+  font-weight: 700;
   margin: 0 0 0.6rem;
   border-bottom: 1px solid var(--color-border);
   padding-bottom: 0.4rem;
@@ -453,27 +458,30 @@ button:focus-visible {
 .contact-type-tab {
   background: var(--color-bg-inset);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: var(--radius-full);
   color: var(--color-text-muted);
-  font-family: var(--font-mono);
+  font-family: var(--font-heading);
   font-size: 0.78rem;
-  letter-spacing: var(--ls-wide);
+  font-weight: 600;
+  letter-spacing: 0.03em;
   padding: 0.45rem 0.9rem;
   cursor: pointer;
-  transition: all 0.15s;
+  transition: all 0.2s var(--ease-out);
 }
 
 .contact-type-tab:hover {
   border-color: var(--color-accent);
-  color: var(--color-text-primary);
+  color: var(--color-accent);
+  background: var(--color-bg-accent-tint);
   transform: none;
 }
 
 .contact-type-tab--active {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--color-accent-gradient);
+  border-color: transparent;
   color: var(--color-text-dark);
-  font-weight: bold;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 /* =====================================================

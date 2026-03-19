@@ -29,9 +29,10 @@
 
 .queue-title {
   color: var(--color-text-primary);
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   margin: 0 0 1.5rem;
   text-align: center;
 }
@@ -52,20 +53,23 @@
 
 .queue-card {
   background: var(--color-bg-card);
-  border-radius: 10px;
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   padding: 1.25rem 1.5rem;
   cursor: pointer;
-  border: 2px solid transparent;
-  transition: border-color 0.15s;
+  border: 1px solid var(--color-border-subtle);
+  transition: all 0.25s var(--ease-out);
 }
 
 .queue-card:hover {
   border-color: var(--color-border-accent-strong);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-2px);
 }
 
 .queue-card--selected {
   border-color: var(--color-accent);
+  box-shadow: 0 0 0 1px var(--color-accent), var(--shadow-md);
 }
 
 .queue-card-header {
@@ -77,8 +81,9 @@
 
 .queue-event-title {
   color: var(--color-accent);
+  font-family: var(--font-heading);
   font-size: 1.1rem;
-  font-weight: bold;
+  font-weight: 700;
 }
 
 .queue-event-date {
@@ -100,13 +105,14 @@
   display: inline-block;
   margin-top: 0.6rem;
   color: var(--color-accent);
-  font-family: var(--font-mono);
+  font-family: var(--font-heading);
   font-size: 0.72rem;
-  letter-spacing: 0.08em;
+  font-weight: 600;
+  letter-spacing: 0.04em;
   background: var(--color-bg-accent-tint);
   border: 1px solid var(--color-border-accent);
-  border-radius: 2px;
-  padding: 0.2rem 0.5rem;
+  border-radius: var(--radius-full);
+  padding: 0.2rem 0.6rem;
 }
 
 .queue-detail-actions {
@@ -117,18 +123,19 @@
 
 .queue-btn {
   flex: 1;
-  padding: 0.6rem;
+  padding: 0.65rem;
   border: none;
-  border-radius: 2px;
-  font-size: 0.9rem;
-  font-weight: bold;
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.2s var(--ease-out);
   min-width: 0;
 }
 
 .queue-btn:hover {
-  opacity: 0.85;
+  transform: translateY(-1px);
 }
 
 .queue-btn:disabled {
@@ -137,8 +144,12 @@
 }
 
 .queue-btn--approve {
-  background: var(--color-accent);
+  background: var(--color-accent-gradient);
   color: var(--color-text-dark);
+}
+
+.queue-btn--approve:hover {
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
 }
 
 .queue-btn--reject {
@@ -155,7 +166,6 @@
 
 .queue-btn--cancel:hover {
   border-color: var(--color-text-primary);
-  opacity: 1;
 }
 
 

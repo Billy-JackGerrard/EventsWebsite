@@ -9,9 +9,10 @@
 }
 
 .account-title {
-  font-family: var(--font-display);
-  font-size: 1.4rem;
-  font-weight: 700;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   color: var(--color-text-primary);
   margin: 0 0 1.75rem;
 }
@@ -21,12 +22,12 @@
 }
 
 .account-section-heading {
-  font-family: var(--font-mono);
+  font-family: var(--font-heading);
   font-size: 0.72rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--color-text-muted);
+  letter-spacing: 0.08em;
+  color: var(--color-accent);
   margin: 0 0 1rem;
 }
 
@@ -40,7 +41,7 @@
 
 .account-divider {
   height: 1px;
-  background: var(--color-bg-inset);
+  background: var(--color-border-subtle);
   margin: 1.75rem 0;
 }
 
@@ -49,8 +50,8 @@
   color: var(--color-text-success);
   background: #f0fdf4;
   border: 1px solid #bbf7d0;
-  border-radius: var(--radius-sm);
-  padding: 0.5rem 0.75rem;
+  border-radius: var(--radius-md);
+  padding: 0.55rem 0.85rem;
   margin-bottom: 0.75rem;
 }
 
@@ -73,17 +74,18 @@
   background: transparent;
   border: 1px solid var(--color-border-error);
   color: var(--color-text-error);
-  font-family: var(--font-mono);
+  font-family: var(--font-heading);
   font-size: 0.78rem;
-  font-weight: 600;
+  font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   padding: 0.5rem 1.25rem;
   border-radius: var(--radius-full);
   cursor: pointer;
   transition: background var(--duration-fast) var(--ease-out),
               border-color var(--duration-fast) var(--ease-out),
-              color var(--duration-fast) var(--ease-out);
+              color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out);
   white-space: nowrap;
 }
 
@@ -91,6 +93,7 @@
   background: #fee2e2;
   border-color: var(--color-text-error);
   color: #b91c1c;
+  transform: translateY(-1px);
 }
 
 /* ── Dark mode ── */

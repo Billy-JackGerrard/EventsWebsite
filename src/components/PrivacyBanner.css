@@ -13,12 +13,14 @@
   align-items: center;
   justify-content: center;
   gap: 1rem;
-  padding: 0.65rem 1.5rem;
+  padding: 0.7rem 1.5rem;
   background: var(--color-bg-card);
-  border-top: 1px solid var(--color-border);
-  box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.08);
+  border-top: 1px solid var(--color-border-subtle);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.06);
   flex-wrap: wrap;
   animation: banner-slide-up 0.4s var(--ease-out);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
 }
 
 .privacy-banner-text {
@@ -46,22 +48,23 @@
 }
 
 .privacy-banner-dismiss {
-  background: var(--color-accent);
+  background: var(--color-accent-gradient);
   border: none;
-  border-radius: 4px;
+  border-radius: var(--radius-full);
   color: #ffffff;
-  font-size: 0.8rem;
-  font-weight: 600;
-  font-family: inherit;
-  padding: 0.35rem 0.9rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  padding: 0.4rem 1rem;
   cursor: pointer;
   white-space: nowrap;
   flex-shrink: 0;
-  transition: opacity 0.15s;
+  transition: all 0.2s var(--ease-out);
 }
 
 .privacy-banner-dismiss:hover {
-  opacity: 0.85;
+  transform: translateY(-1px);
+  box-shadow: 0 3px 10px rgba(37, 99, 235, 0.3);
   border-color: transparent;
 }
 

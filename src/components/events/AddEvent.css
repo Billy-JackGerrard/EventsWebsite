@@ -90,6 +90,7 @@
   font-size: 3rem;
   color: var(--color-accent);
   margin-bottom: 1rem;
+  animation: success-pop 0.4s var(--ease-out);
 }
 
 .addevent-success-msg {
@@ -107,27 +108,30 @@
 }
 
 .event-type-btn {
-  padding: 0.45rem 1rem;
+  padding: 0.45rem 1.1rem;
   background: var(--color-bg-inset);
   color: var(--color-text-muted);
   border: 1px solid var(--color-border);
-  border-radius: 999px;
-  font-size: 0.875rem;
-  font-family: inherit;
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
+  transition: all 0.2s var(--ease-out);
 }
 
 .event-type-btn--active {
-  background: var(--color-accent);
+  background: var(--color-accent-gradient);
   color: var(--color-text-dark);
-  border-color: var(--color-accent);
-  font-weight: 600;
+  border-color: transparent;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 .event-type-btn:not(.event-type-btn--active):hover {
-  border-color: var(--color-text-muted);
-  color: var(--color-text-primary);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-bg-accent-tint);
 }
 
 @media (max-width: 560px) {

@@ -1,15 +1,14 @@
 .event-detail-card {
     background: var(--color-bg-card);
-    border-radius: var(--radius-lg);
+    border-radius: var(--radius-xl);
     box-shadow: var(--shadow-md);
     padding: 1.5rem;
     position: relative;
     width: 100%;
     box-sizing: border-box;
     animation: detail-in 0.3s var(--ease-out);
-    border-top: 3px solid transparent;
-    border-image: var(--color-accent-gradient) 1;
-    border-image-slice: 1;
+    border: 1px solid var(--color-border-subtle);
+    border-top: 3px solid var(--color-accent);
 }
 
 @media (min-width: 700px) {
@@ -109,6 +108,7 @@
 
 .event-detail-title {
     color: var(--color-accent);
+    font-family: var(--font-heading);
     font-size: 1.15rem;
     font-weight: 700;
     margin: 0 0 0.4rem;
@@ -117,14 +117,15 @@
 
 .event-detail-category {
     display: inline-block;
-    font-size: 0.7rem;
-    font-family: var(--font-mono);
-    letter-spacing: 0.06em;
+    font-size: 0.68rem;
+    font-family: var(--font-heading);
+    font-weight: 700;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     color: #fff;
     border: 1px solid transparent;
-    border-radius: 3px;
-    padding: 0.1rem 0.45rem;
+    border-radius: var(--radius-full);
+    padding: 0.15rem 0.6rem;
     margin-bottom: 0.5rem;
 }
 
@@ -180,9 +181,9 @@
     color: var(--color-text-primary);
     font-size: 0.88rem;
     line-height: 1.65;
-    padding: 0.75rem;
+    padding: 0.85rem 1rem;
     background: var(--color-bg-inset);
-    border-radius: 2px;
+    border-radius: var(--radius-md);
     border-left: 3px solid var(--color-accent);
     white-space: pre-wrap;
     margin-bottom: 0.75rem;
@@ -203,9 +204,10 @@
 
 .event-detail-contact-heading {
     color: var(--color-accent);
-    font-family: var(--font-mono);
+    font-family: var(--font-heading);
     font-size: 0.72rem;
-    letter-spacing: 0.1em;
+    font-weight: 700;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     margin-bottom: 0.65rem;
 }
@@ -332,20 +334,19 @@
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);
     font-size: 0.8rem;
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-    padding: 0.45rem 0.75rem;
-    border-radius: var(--radius-sm);
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-full);
     cursor: pointer;
-    transition: background var(--duration-fast) var(--ease-out),
-                color var(--duration-fast),
-                border-color var(--duration-fast),
-                transform var(--duration-fast) var(--ease-out);
+    transition: all 0.2s var(--ease-out);
 }
 
 .event-detail-share-btn:hover {
-    border-color: var(--color-text-muted);
-    color: var(--color-text-primary);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: var(--color-bg-accent-tint);
     transform: translateY(-1px);
 }
 
@@ -356,18 +357,20 @@
     border: 1px solid var(--color-border);
     color: var(--color-text-muted);
     font-size: 0.8rem;
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-    padding: 0.45rem 0.75rem;
-    border-radius: 2px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-full);
     cursor: pointer;
     margin-top: 0.4rem;
-    transition: background 0.15s, color 0.15s, border-color 0.15s;
+    transition: all 0.2s var(--ease-out);
 }
 
 .event-detail-duplicate-btn:hover {
-    border-color: var(--color-text-muted);
-    color: var(--color-text-primary);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+    background: var(--color-bg-accent-tint);
 }
 
 /* ── Add to Calendar button ── */
@@ -383,17 +386,20 @@
     border: 1px solid var(--color-accent);
     color: var(--color-accent);
     font-size: 0.8rem;
-    font-family: var(--font-mono);
-    letter-spacing: 0.05em;
-    padding: 0.45rem 0.75rem;
-    border-radius: 2px;
+    font-family: var(--font-heading);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 0.5rem 0.75rem;
+    border-radius: var(--radius-full);
     cursor: pointer;
-    transition: background 0.15s, color 0.15s;
+    transition: all 0.2s var(--ease-out);
 }
 
 .event-detail-cal-btn:hover {
     background: var(--color-accent);
     color: var(--color-bg-card);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 10px rgba(37, 99, 235, 0.25);
 }
 
 /* ── Actions slot (e.g. admin approve/reject) ── */

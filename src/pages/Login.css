@@ -5,42 +5,50 @@
     align-items: center;
     justify-content: center;
 }
-  
+
 .login-card {
-    max-width: 340px;
+    max-width: 380px;
     width: 100%;
 }
-  
+
 .login-title {
-    color: var(--color-accent);
-    font-family: var(--font-display);
+    color: var(--color-text-primary);
+    font-family: var(--font-heading);
     text-align: center;
-    margin: 0 0 1.5rem;
-    font-size: 1.4rem;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    margin: 0 0 0.4rem;
+    font-size: 1.6rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
 }
-  
+
+.login-subtitle {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+    margin: 0 0 1.75rem;
+}
+
 .login-success-icon {
     font-size: 2.5rem;
     color: var(--color-accent);
     margin-bottom: 1rem;
 }
-  
+
 .login-back-btn {
     background: transparent;
     border: none;
     color: var(--color-text-muted);
-    font-family: var(--font-mono);
-    font-size: 0.78rem;
+    font-family: var(--font-heading);
+    font-size: 0.82rem;
+    font-weight: 600;
     cursor: pointer;
     margin-top: 1rem;
     width: 100%;
-    padding: 0.25rem;
+    padding: 0.4rem;
     transition: color 0.15s;
     border-radius: 0;
 }
-  
+
 .login-back-btn:hover {
     color: var(--color-accent);
     border-color: transparent;

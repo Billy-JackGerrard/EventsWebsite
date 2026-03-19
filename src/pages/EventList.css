@@ -228,33 +228,35 @@
 }
 
 .event-list-timeline-btn {
-  padding: 0.35rem 1rem;
+  padding: 0.4rem 1.1rem;
   background: transparent;
-  border: 1px solid transparent;
-  border-radius: 6px;
+  border: 1px solid var(--color-border-subtle);
+  border-radius: var(--radius-full);
   color: var(--color-text-muted);
-  font-family: inherit;
-  font-size: 0.82rem;
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background 0.12s, color 0.12s, border-color 0.12s;
+  transition: all 0.2s var(--ease-out);
 }
 
 .event-list-timeline-btn:hover {
-  border-color: transparent;
-  color: var(--color-text-primary);
-  background: var(--color-bg-inset);
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-bg-accent-tint);
 }
 
 .event-list-timeline-btn--active {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--color-accent-gradient);
+  border-color: transparent;
   color: var(--color-text-dark);
-  font-weight: 600;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(37, 99, 235, 0.25);
 }
 
 .event-list-timeline-btn--active:hover {
-  background: var(--color-accent);
-  border-color: var(--color-accent);
+  background: var(--color-accent-gradient);
+  border-color: transparent;
   color: var(--color-text-dark);
   opacity: 0.9;
 }
@@ -308,12 +310,12 @@
 }
 
 .event-list-month-heading {
-  font-family: var(--font-display);
-  font-size: 0.75rem;
+  font-family: var(--font-heading);
+  font-size: 0.78rem;
   font-weight: 700;
-  letter-spacing: 0.12em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--color-text-muted);
+  color: var(--color-accent);
   margin: 0 0 0.6rem 0;
   padding-bottom: 0.4rem;
   border-bottom: 1px solid var(--color-border-subtle);
@@ -337,16 +339,13 @@
   grid-template-columns: 10px 1fr auto auto 14px;
   align-items: center;
   gap: 0.6rem;
-  padding: 0.65rem 0.85rem;
+  padding: 0.7rem 1rem;
   background: var(--color-bg-card);
   border: 1px solid var(--color-border-subtle);
-  border-radius: var(--radius-md);
+  border-radius: var(--radius-lg);
   cursor: pointer;
   text-align: left;
-  transition: background var(--duration-fast) var(--ease-out),
-              border-color var(--duration-fast) var(--ease-out),
-              transform var(--duration-fast) var(--ease-out),
-              box-shadow var(--duration-fast) var(--ease-out);
+  transition: all 0.25s var(--ease-out);
   color: inherit;
   font-family: inherit;
 }
@@ -366,6 +365,7 @@
 }
 
 .event-list-title {
+  font-family: var(--font-heading);
   font-size: 0.9rem;
   font-weight: 600;
   color: var(--color-text-primary);

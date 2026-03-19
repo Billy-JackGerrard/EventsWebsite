@@ -13,9 +13,10 @@
 
 .admin-home-title {
   color: var(--color-text-primary);
-  font-size: 1.35rem;
-  font-weight: 700;
-  letter-spacing: -0.01em;
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
   margin: 0 0 1.5rem;
   text-align: center;
 }
@@ -30,21 +31,28 @@
 
 .admin-home-section {
   background: var(--color-bg-card);
-  border-radius: 10px;
+  border-radius: var(--radius-xl);
   box-shadow: var(--shadow-sm);
   padding: 1.25rem 1.5rem;
   margin-bottom: 1rem;
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
+  border: 1px solid var(--color-border-subtle);
+  transition: box-shadow 0.25s var(--ease-out);
+}
+
+.admin-home-section:hover {
+  box-shadow: var(--shadow-md);
 }
 
 .admin-home-section-label {
-  color: var(--color-text-muted);
-  font-size: 0.75rem;
+  color: var(--color-accent);
+  font-size: 0.72rem;
+  font-family: var(--font-heading);
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.06em;
   margin: 0 0 0.2rem;
 }
 
@@ -92,12 +100,12 @@
 
 .admin-home-remove-section-btn {
   padding: 0.3rem 0.75rem;
-  font-size: 0.8rem;
-  font-weight: bold;
-  font-family: var(--font-display);
-  border-radius: 2px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
+  border-radius: var(--radius-full);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.15s var(--ease-out);
   background: var(--color-bg-error);
   color: var(--color-text-error);
   border: 1px solid var(--color-border-error);
@@ -106,6 +114,7 @@
 
 .admin-home-remove-section-btn:hover {
   border-color: var(--color-text-error);
+  transform: translateY(-1px);
 }
 
 .admin-home-remove-para-btn {
@@ -113,9 +122,9 @@
   font-size: 1rem;
   line-height: 1;
   font-weight: bold;
-  border-radius: 2px;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.15s var(--ease-out);
   background: var(--color-bg-error);
   color: var(--color-text-error);
   border: 1px solid var(--color-border-error);
@@ -129,41 +138,43 @@
 
 .admin-home-add-para-btn {
   align-self: flex-start;
-  padding: 0.3rem 0.75rem;
-  font-size: 0.8rem;
-  font-family: var(--font-display);
-  font-weight: bold;
-  border-radius: 2px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.78rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.15s var(--ease-out);
   background: transparent;
   color: var(--color-text-muted);
   border: 1px solid var(--color-border-subtle);
 }
 
 .admin-home-add-para-btn:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-text-primary);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-bg-accent-tint);
 }
 
 .admin-home-add-section-btn {
   width: 100%;
-  padding: 0.6rem;
+  padding: 0.7rem;
   font-size: 0.85rem;
-  font-family: var(--font-display);
-  font-weight: bold;
-  border-radius: 6px;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  border-radius: var(--radius-lg);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.2s var(--ease-out);
   background: transparent;
   color: var(--color-text-muted);
-  border: 1px dashed var(--color-border-subtle);
+  border: 2px dashed var(--color-border-subtle);
   margin-bottom: 1.5rem;
 }
 
 .admin-home-add-section-btn:hover {
-  color: var(--color-text-primary);
-  border-color: var(--color-text-primary);
+  color: var(--color-accent);
+  border-color: var(--color-accent);
+  background: var(--color-bg-accent-tint);
 }
 
 /* ── Actions ────────────────────────────────────────────────────────────── */
@@ -175,13 +186,13 @@
 }
 
 .admin-home-cancel-btn {
-  padding: 0.5rem 1.25rem;
-  font-size: 0.9rem;
-  font-family: var(--font-display);
-  font-weight: bold;
-  border-radius: 2px;
+  padding: 0.55rem 1.25rem;
+  font-size: 0.88rem;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  border-radius: var(--radius-full);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.15s var(--ease-out);
   background: transparent;
   color: var(--color-text-primary);
   border: 1px solid var(--color-border-subtle);
@@ -197,20 +208,21 @@
 }
 
 .admin-home-save-btn {
-  padding: 0.5rem 1.25rem;
-  background: var(--color-accent);
+  padding: 0.55rem 1.5rem;
+  background: var(--color-accent-gradient);
   color: var(--color-text-dark);
   border: none;
-  border-radius: 2px;
-  font-size: 0.9rem;
-  font-weight: bold;
-  font-family: var(--font-display);
+  border-radius: var(--radius-full);
+  font-size: 0.88rem;
+  font-weight: 700;
+  font-family: var(--font-heading);
   cursor: pointer;
-  transition: opacity 0.15s;
+  transition: all 0.2s var(--ease-out);
 }
 
 .admin-home-save-btn:hover {
-  opacity: 0.85;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 16px rgba(37, 99, 235, 0.3);
 }
 
 .admin-home-save-btn:disabled {
@@ -241,6 +253,7 @@
   background: var(--color-bg-page);
   padding: 0 1rem;
   color: var(--color-accent);
+  font-family: var(--font-heading);
   font-size: 0.85rem;
   font-weight: 700;
   text-transform: uppercase;

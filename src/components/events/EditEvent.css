@@ -92,10 +92,10 @@
   }
   
   .editrecur-choice-btn {
-    background: var(--color-accent);
+    background: var(--color-accent-gradient);
     color: var(--color-text-dark);
     border: none;
-    border-radius: 2px;
+    border-radius: var(--radius-lg);
     padding: 0.85rem 1rem;
     cursor: pointer;
     text-align: left;
@@ -103,7 +103,7 @@
     flex-direction: column;
     gap: 0.2rem;
     font-family: inherit;
-    transition: opacity 0.15s;
+    transition: all 0.2s var(--ease-out);
   }
   
   .editrecur-choice-btn:hover:not(:disabled) {
@@ -131,7 +131,7 @@
   }
   
   .editrecur-choice-title {
-    font-family: var(--font-display);
+    font-family: var(--font-heading);
     font-size: 0.9rem;
     font-weight: bold;
   }
@@ -147,14 +147,14 @@
     background: var(--color-text-error);
     color: #fff;
     border: none;
-    border-radius: 2px;
+    border-radius: var(--radius-lg);
     padding: 0.85rem 1rem;
     cursor: pointer;
     text-align: left;
-    font-family: var(--font-display);
+    font-family: var(--font-heading);
     font-size: 0.9rem;
     font-weight: bold;
-    transition: opacity 0.15s;
+    transition: all 0.2s var(--ease-out);
     width: 100%;
   }
 

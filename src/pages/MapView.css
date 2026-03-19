@@ -180,25 +180,54 @@
   display: none;
 }
 
-/* ── Marker styles ── */
+/* ── Pin marker styles ── */
 .map-marker {
   background: transparent !important;
   border: none !important;
 }
 
-.map-marker-dot {
-  display: block;
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  border: 2.5px solid;
-  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+.map-pin {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 28px;
+  height: 38px;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.35));
   transition: transform 0.15s;
+  cursor: pointer;
 }
 
-.map-marker-dot--mixed {
-  background: linear-gradient(135deg, #3b82f6, #f97316) !important;
-  border-color: #fff !important;
+.map-pin:hover {
+  transform: scale(1.15);
+}
+
+/* Rounded top of the pin */
+.map-pin-head {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: var(--pin-color, #3b82f6);
+  border: 2.5px solid #fff;
+  flex-shrink: 0;
+}
+
+/* Triangular point at the bottom */
+.map-pin-point {
+  width: 0;
+  height: 0;
+  border-left: 7px solid transparent;
+  border-right: 7px solid transparent;
+  border-top: 12px solid var(--pin-color, #3b82f6);
+  margin-top: -2px;
+}
+
+/* Mixed-category pin */
+.map-pin--mixed .map-pin-head {
+  background: linear-gradient(135deg, #3b82f6, #f97316);
+}
+
+.map-pin--mixed .map-pin-point {
+  border-top-color: #8b6ca7;
 }
 
 /* ── Popup styles ── */

@@ -26,20 +26,20 @@ function categoryIcon(category: Category): L.DivIcon {
   const color = CATEGORY_COLOURS[category];
   return L.divIcon({
     className: "map-marker",
-    html: `<span class="map-marker-dot" style="background:${color};border-color:${color}"></span>`,
-    iconSize: [18, 18],
-    iconAnchor: [9, 9],
-    popupAnchor: [0, -12],
+    html: `<span class="map-pin" style="--pin-color:${color}"><span class="map-pin-head"></span><span class="map-pin-point"></span></span>`,
+    iconSize: [28, 38],
+    iconAnchor: [14, 38],
+    popupAnchor: [0, -36],
   });
 }
 
 /** Neutral icon for venues with mixed categories. */
 const mixedIcon = L.divIcon({
   className: "map-marker",
-  html: `<span class="map-marker-dot map-marker-dot--mixed"></span>`,
-  iconSize: [18, 18],
-  iconAnchor: [9, 9],
-  popupAnchor: [0, -12],
+  html: `<span class="map-pin map-pin--mixed"><span class="map-pin-head"></span><span class="map-pin-point"></span></span>`,
+  iconSize: [28, 38],
+  iconAnchor: [14, 38],
+  popupAnchor: [0, -36],
 });
 
 /** Group events by their lat,lng coordinate pair. */

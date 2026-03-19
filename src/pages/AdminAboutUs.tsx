@@ -156,7 +156,12 @@ export default function AdminAboutUs({ onSaved, onCancel }: Props) {
                 Cancel
               </button>
               <button className="admin-about-save-btn" onClick={handleSave} disabled={saving}>
-                {saving ? "Saving…" : "Save"}
+                {saving ? (
+                  <span className="btn-loading">
+                    <span className="btn-spinner" aria-hidden="true" />
+                    Saving…
+                  </span>
+                ) : "Save"}
               </button>
             </div>
           </>

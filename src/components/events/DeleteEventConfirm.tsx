@@ -96,7 +96,12 @@ export default function DeleteEventConfirm({ event, onDeleted, onCancel }: Props
             onClick={handleConfirm}
             disabled={step === "deleting"}
           >
-            {step === "deleting" ? "Deleting…" : "Yes, delete permanently"}
+            {step === "deleting" ? (
+              <span className="btn-loading">
+                <span className="btn-spinner" aria-hidden="true" />
+                Deleting…
+              </span>
+            ) : "Yes, delete permanently"}
           </button>
         </div>
         <button

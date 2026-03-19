@@ -119,7 +119,12 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
         onClick={() => approve(detailEvent)}
         disabled={!!actingOn}
       >
-        {actingOn === detailEvent.id ? "Approving…" : "✓ Approve"}
+        {actingOn === detailEvent.id ? (
+          <span className="btn-loading">
+            <span className="btn-spinner" aria-hidden="true" />
+            Approving…
+          </span>
+        ) : "✓ Approve"}
       </button>
 
       {confirmReject === detailEvent.id ? (
@@ -129,7 +134,12 @@ export default function AdminQueue({ onPendingCountChange, onEditEvent }: Props)
             onClick={() => reject(detailEvent)}
             disabled={!!actingOn}
           >
-            {actingOn === detailEvent.id ? "Rejecting…" : "Confirm Reject"}
+            {actingOn === detailEvent.id ? (
+              <span className="btn-loading">
+                <span className="btn-spinner" aria-hidden="true" />
+                Rejecting…
+              </span>
+            ) : "Confirm Reject"}
           </button>
           <button
             className="queue-btn queue-btn--cancel"

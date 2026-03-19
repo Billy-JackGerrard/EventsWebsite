@@ -160,7 +160,12 @@ export default function Contact() {
           onClick={handleSend}
           disabled={!message.trim() || loading}
         >
-          {loading ? "Sending…" : "Send Message →"}
+          {loading ? (
+            <span className="btn-loading">
+              <span className="btn-spinner" aria-hidden="true" />
+              Sending…
+            </span>
+          ) : "Send Message →"}
         </button>
       </div>
     </div>

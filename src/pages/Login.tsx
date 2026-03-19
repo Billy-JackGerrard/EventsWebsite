@@ -93,7 +93,12 @@ export default function Login({ onLogin }: Props) {
             />
           </div>
           <button className="btn-primary" onClick={handleSendReset} disabled={loading}>
-            {loading ? "Sending…" : "Send Reset Link"}
+            {loading ? (
+              <span className="btn-loading">
+                <span className="btn-spinner" aria-hidden="true" />
+                Sending…
+              </span>
+            ) : "Send Reset Link"}
           </button>
           <button className="login-back-btn" onClick={() => { clearError(); setScreen("login"); }}>
             ← Back to Login
@@ -158,7 +163,12 @@ export default function Login({ onLogin }: Props) {
             />
           </div>
           <button className="btn-primary" onClick={handleSavePassword} disabled={loading}>
-            {loading ? "Saving…" : "Save New Password"}
+            {loading ? (
+              <span className="btn-loading">
+                <span className="btn-spinner" aria-hidden="true" />
+                Saving…
+              </span>
+            ) : "Save New Password"}
           </button>
         </div>
       </div>
@@ -213,7 +223,12 @@ export default function Login({ onLogin }: Props) {
           />
         </div>
         <button className="btn-primary" onClick={handleLogin} disabled={loading}>
-          {loading ? "Logging in…" : "Log in"}
+          {loading ? (
+            <span className="btn-loading">
+              <span className="btn-spinner" aria-hidden="true" />
+              Logging in…
+            </span>
+          ) : "Log in"}
         </button>
         <button className="login-back-btn" onClick={() => { clearError(); setScreen("forgot"); }}>
           Forgot your password?

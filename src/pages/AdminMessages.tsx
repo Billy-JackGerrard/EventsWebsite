@@ -213,7 +213,12 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
               onClick={() => handleEditSave(msg.id)}
               disabled={!editText.trim() || savingId === msg.id}
             >
-              {savingId === msg.id ? "Saving…" : "Save"}
+              {savingId === msg.id ? (
+                <span className="btn-loading">
+                  <span className="btn-spinner" aria-hidden="true" />
+                  Saving…
+                </span>
+              ) : "Save"}
             </button>
             <button
               className="msgs-action-btn"
@@ -239,7 +244,12 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
               onClick={() => handleDelete(msg.id)}
               disabled={deletingId === msg.id}
             >
-              {deletingId === msg.id ? "Deleting…" : "Confirm Delete"}
+              {deletingId === msg.id ? (
+                <span className="btn-loading">
+                  <span className="btn-spinner" aria-hidden="true" />
+                  Deleting…
+                </span>
+              ) : "Confirm Delete"}
             </button>
             <button
               className="msgs-action-btn"
@@ -320,7 +330,12 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
             onClick={handleSend}
             disabled={!compose.trim() || sending}
           >
-            {sending ? "Sending…" : "Send →"}
+            {sending ? (
+              <span className="btn-loading">
+                <span className="btn-spinner" aria-hidden="true" />
+                Sending…
+              </span>
+            ) : "Send →"}
           </button>
         </div>
 
@@ -361,7 +376,12 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
                         onClick={() => handleReply(msg.id)}
                         disabled={!replyText.trim() || replySending}
                       >
-                        {replySending ? "Sending…" : "Send Reply →"}
+                        {replySending ? (
+                          <span className="btn-loading">
+                            <span className="btn-spinner" aria-hidden="true" />
+                            Sending…
+                          </span>
+                        ) : "Send Reply →"}
                       </button>
                     </div>
                   </div>

@@ -547,7 +547,12 @@ export default function EventForm({
           disabled={submitting || submitDisabled || !!(finishesAt && startsAt && finishesAt <= startsAt)}
           type="submit"
         >
-          {submitting ? submittingLabel : submitLabel}
+          {submitting ? (
+            <span className="btn-loading">
+              <span className="btn-spinner" aria-hidden="true" />
+              {submittingLabel}
+            </span>
+          ) : submitLabel}
         </button>
       </div>
     </form>

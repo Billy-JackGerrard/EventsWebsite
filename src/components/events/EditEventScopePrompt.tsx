@@ -1,3 +1,4 @@
+import { useState } from "react";
 import "./shared-card.css";
 import "./EditEvent.css";
 
@@ -12,6 +13,24 @@ type Props = {
 };
 
 export default function EditEventScopePrompt({ eventTitle, saving, error, onChoose, onBack }: Props) {
+  const [chosen, setChosen] = useState<RecurringScope | null>(null);
+
+  const handleChoose = (scope: RecurringScope) => {
+    setChosen(scope);
+    onChoose(scope);
+  };
+
+  const btnClass = (scope: RecurringScope) => {
+    if (chosen === null) {
+      // Nothing chosen yet — both look equal/neutral
+      return "editrecur-choice-btn editrecur-choice-btn--secondary";
+    }
+    // After choosing, highlight the chosen one and dim the other
+    return chosen === scope
+      ? "editrecur-choice-btn"
+      : "editrecur-choice-btn editrecur-choice-btn--secondary editrecur-choice-btn--unchosen";
+  };
+
   return (
     <div className="addevent-page">
       <div className="addevent-card">
@@ -26,23 +45,27 @@ export default function EditEventScopePrompt({ eventTitle, saving, error, onChoo
 
         <div className="editrecur-choices">
           <button
-            className="editrecur-choice-btn"
-            onClick={() => onChoose("single")}
+            className={btnClass("single")}
+            onClick={() => handleChoose("single")}
             disabled={saving}
           >
             <span className="editrecur-choice-title">
-              {saving ? "Saving…" : "Just this event"}
+              {saving && chosen === "single" ? (
+                <span className="btn-loading"><span className="btn-spinner" aria-hidden="true" />Saving…</span>
+              ) : "Just this event"}
             </span>
             <span className="editrecur-choice-desc">Only update this single occurrence</span>
           </button>
 
           <button
-            className="editrecur-choice-btn editrecur-choice-btn--secondary"
-            onClick={() => onChoose("all-future")}
+            className={btnClass("all-future")}
+            onClick={() => handleChoose("all-future")}
             disabled={saving}
           >
             <span className="editrecur-choice-title">
-              {saving ? "Saving…" : "This & all future events"}
+              {saving && chosen === "all-future" ? (
+                <span className="btn-loading"><span className="btn-spinner" aria-hidden="true" />Saving…</span>
+              ) : "This & all future events"}
             </span>
             <span className="editrecur-choice-desc">Update this occurrence and all that follow it</span>
           </button>

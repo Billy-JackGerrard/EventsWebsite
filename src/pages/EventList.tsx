@@ -70,8 +70,14 @@ function MonthSection({ group, onViewEvent }: { group: MonthGroup; onViewEvent: 
 }
 
 export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: Props) {
-  const { events, loading, error } = useUpcomingEvents();
+  const [showPast, setShowPast] = useState(false);
+  const { events, loading, error } = useUpcomingEvents(showPast);
   const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
+
+  function switchTimeline(past: boolean) {
+    setShowPast(past);
+    setDateFilter("all");
+  }
   const [searchQuery, setSearchQuery] = useState("");
   const [filtersCollapsed, setFiltersCollapsed] = useState(true);
   const searchInputRef = useRef<HTMLInputElement>(null);
@@ -145,6 +151,20 @@ export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: P
         {/* Events column — LEFT on desktop */}
         <div className="event-list-container">
           <div className="event-list-items-col">
+            <div className="event-list-timeline-toggle">
+              <button
+                className={`event-list-timeline-btn${!showPast ? " event-list-timeline-btn--active" : ""}`}
+                onClick={() => switchTimeline(false)}
+              >
+                Upcoming
+              </button>
+              <button
+                className={`event-list-timeline-btn${showPast ? " event-list-timeline-btn--active" : ""}`}
+                onClick={() => switchTimeline(true)}
+              >
+                Past
+              </button>
+            </div>
             {error ? (
             <div className="form-error" role="alert">{error}</div>
           ) : loading ? (
@@ -157,7 +177,7 @@ export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: P
               <div className="event-list-empty">
                 {selectedCategories.size > 0 || dateFilter !== "all"
                   ? "No events match your current filters."
-                  : "No upcoming events found."}
+                  : showPast ? "No past events found." : "No upcoming events found."}
               </div>
             ) : (
               groups.map(group => (
@@ -169,16 +189,20 @@ export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: P
 
         {/* Sidebar — RIGHT on desktop, hidden on mobile */}
         <aside className="event-list-sidebar">
-          <div className="event-list-sidebar-title">When</div>
-          {(["all", "week", "weekend", "month"] as const).map(f => (
-            <button
-              key={f}
-              className={`category-filter-btn${dateFilter === f ? " category-filter-btn--selected" : ""}`}
-              onClick={() => setDateFilter(f)}
-            >
-              {DATE_FILTER_LABELS[f]}
-            </button>
-          ))}
+          {!showPast && (
+            <>
+              <div className="event-list-sidebar-title">When</div>
+              {(["all", "week", "weekend", "month"] as const).map(f => (
+                <button
+                  key={f}
+                  className={`category-filter-btn${dateFilter === f ? " category-filter-btn--selected" : ""}`}
+                  onClick={() => setDateFilter(f)}
+                >
+                  {DATE_FILTER_LABELS[f]}
+                </button>
+              ))}
+            </>
+          )}
           <div className="event-list-sidebar-title event-list-sidebar-title--section">Categories</div>
           <button
             className={`category-filter-btn${selectedCategories.size === 0 ? " category-filter-btn--selected" : ""}`}

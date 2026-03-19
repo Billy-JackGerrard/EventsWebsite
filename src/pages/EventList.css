@@ -220,6 +220,45 @@
   min-width: 0;
 }
 
+/* ── Timeline toggle (Upcoming / Past) ── */
+.event-list-timeline-toggle {
+  display: flex;
+  gap: 0.4rem;
+  margin-bottom: 1.25rem;
+}
+
+.event-list-timeline-btn {
+  padding: 0.35rem 1rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 0.82rem;
+  cursor: pointer;
+  transition: background 0.12s, color 0.12s, border-color 0.12s;
+}
+
+.event-list-timeline-btn:hover {
+  border-color: transparent;
+  color: var(--color-text-primary);
+  background: var(--color-bg-inset);
+}
+
+.event-list-timeline-btn--active {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text-dark);
+  font-weight: 600;
+}
+
+.event-list-timeline-btn--active:hover {
+  background: var(--color-accent);
+  border-color: var(--color-accent);
+  color: var(--color-text-dark);
+  opacity: 0.9;
+}
+
 
 /* ── Month heading ── */
 .event-list-month {

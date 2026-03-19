@@ -14,6 +14,7 @@ import Contact from "./pages/Contact.tsx";
 import AboutUs from "./pages/AboutUs.tsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.tsx";
 import EventList from "./pages/EventList.tsx";
+import MapView from "./pages/MapView.tsx";
 import EventPage from "./pages/EventPage.tsx";
 import Navbar from "./components/Navbar.tsx";
 import PrivacyBanner from "./components/PrivacyBanner.tsx";
@@ -25,6 +26,7 @@ import type { View } from "./utils/views.ts";
 
 /** Public pages that get their own shareable URL path. */
 const PAGE_PATHS: Partial<Record<View, string>> = {
+  map: "/map",
   about: "/about",
   contact: "/contact",
   privacy: "/privacy",
@@ -237,6 +239,9 @@ function App() {
             searchOpen={listSearchOpen}
             onToggleSearch={handleListToggleSearch}
           />
+        )}
+        {view === "map" && (
+          <MapView onViewEvent={handleViewEvent} />
         )}
         {view === "event" && viewingEvent && (
           <EventPage

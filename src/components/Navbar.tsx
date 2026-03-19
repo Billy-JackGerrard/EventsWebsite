@@ -92,6 +92,13 @@ export default function Navbar({
           List
         </button>
 
+        <button
+          className={`navbar-link ${currentView === "map" ? "navbar-link--active" : ""}`}
+          onClick={() => navigate("map")}
+        >
+          Map
+        </button>
+
         {isLoggedIn ? (
           <button
             className={`navbar-link navbar-link--messages ${currentView === "admin-messages" ? "navbar-link--active" : ""}`}

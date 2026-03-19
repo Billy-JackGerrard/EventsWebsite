@@ -40,7 +40,7 @@
   --color-border-error: rgba(220, 38, 38, 0.3);
 
   /* Badge */
-  --color-bg-badge: #ef4444;
+  --color-bg-badge: #f59e0b;
 
   /* Z-index layers — reference these instead of bare numbers */
   --z-navbar:      100;
@@ -158,7 +158,7 @@ button:focus-visible {
 
     --color-border-error: rgba(248, 113, 113, 0.3);
 
-    --color-bg-badge: #f87171;
+    --color-bg-badge: #fb923c;
 
     --color-shadow: rgba(0, 0, 0, 0.5);
     --shadow-sm: 0 1px 4px rgba(0,0,0,0.25), 0 2px 8px rgba(0,0,0,0.3);

@@ -248,6 +248,20 @@
         display: none;
     }
 
+    /* On mobile, make badge inline next to the text instead of at the far right */
+    .navbar-link--messages,
+    .navbar-link--queue {
+        position: static;
+    }
+
+    .navbar-link--messages .navbar-pending-badge,
+    .navbar-link--queue .navbar-pending-badge {
+        position: static;
+        display: inline-flex;
+        margin-left: 0.5rem;
+        vertical-align: middle;
+    }
+
     .navbar-controls-group {
         flex-direction: column;
         border-right: none;

@@ -454,7 +454,7 @@ export default function EventForm({
                 }}
                 onFocus={() => { if (locationResults.length > 0) setLocationDropdownOpen(true); }}
               />
-              {locationDropdownOpen && locationResults.length > 0 && (
+              {locationDropdownOpen && (locationResults.length > 0 || (locationLoading && location.length >= 3)) && (
                 <div className="location-dropdown">
                   {locationResults.map(r => (
                     <button
@@ -471,9 +471,20 @@ export default function EventForm({
                       </span>
                     </button>
                   ))}
+                  {locationLoading && locationResults.length === 0 && (
+                    <div className="location-dropdown-loading">
+                      <span className="location-search-spinner" aria-hidden="true" />
+                      Searching locations…
+                    </div>
+                  )}
                 </div>
               )}
-              {locationLoading && <span className="location-search-hint">Searching...</span>}
+              {locationLoading && (
+                <span className="location-search-hint">
+                  <span className="location-search-spinner" aria-hidden="true" />
+                  Searching locations…
+                </span>
+              )}
             </div>
           </div>
 

@@ -102,3 +102,11 @@ Event images — Even a simple category-based placeholder system would improve t
 once domain is sorted, i need to add the domain to these places:
 - cloudflare turnstile allowed urls
 - supabase redirected urls allowed
+
+
+
+
+
+
+
+

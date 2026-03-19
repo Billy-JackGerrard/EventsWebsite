@@ -25,7 +25,7 @@ export function useLocationSearch(query: string) {
   const [results, setResults] = useState<NominatimResult[]>([]);
   const [loading, setLoading] = useState(false);
   const abortRef = useRef<AbortController | null>(null);
-  const debouncedQuery = useDebouncedValue(query, 400);
+  const debouncedQuery = useDebouncedValue(query, 300);
 
   useEffect(() => {
     if (debouncedQuery.length < 3) {
@@ -46,6 +46,8 @@ export function useLocationSearch(query: string) {
       countrycodes: "gb",
       limit: "5",
       addressdetails: "1",
+      viewbox: "-3.35,55.88,-3.05,56.01",
+      bounded: "0",
     });
 
     fetch(`${NOMINATIM_URL}?${params}`, {

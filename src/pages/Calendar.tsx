@@ -228,7 +228,10 @@ export default function Calendar({ onAddEvent, onViewEvent, searchOpen, onToggle
 
   const scrollToToday = useCallback(() => {
     todayMonthRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
-    setSelected({ day: today.getDate(), month: today.getMonth(), year: today.getFullYear() });
+    // On mobile, only scroll — don't open the day panel as it covers the screen
+    if (window.innerWidth > 700) {
+      setSelected({ day: today.getDate(), month: today.getMonth(), year: today.getFullYear() });
+    }
   }, [today]);
 
   useEffect(() => {

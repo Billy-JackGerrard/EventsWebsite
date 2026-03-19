@@ -204,7 +204,8 @@
     width: 170px;
     flex-shrink: 0;
     position: sticky;
-    top: 2rem;
+    top: 0;
+    align-self: flex-start;
   }
 
   .event-list-mobile-filters {

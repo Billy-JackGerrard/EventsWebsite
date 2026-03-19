@@ -117,16 +117,16 @@
 
 .location-dropdown {
   position: absolute;
-  top: calc(100% + 3px);
+  top: calc(100% + 4px);
   left: 0;
   right: 0;
   background: var(--color-bg-card);
   border: 1px solid var(--color-border);
-  border-radius: 2px;
+  border-radius: 8px;
   z-index: var(--z-dropdown);
-  max-height: 220px;
+  max-height: 240px;
   overflow-y: auto;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: var(--shadow-md);
 }
 
 .location-dropdown-option {
@@ -134,27 +134,32 @@
   flex-direction: column;
   gap: 0.15rem;
   width: 100%;
-  padding: 0.5rem 0.8rem;
+  padding: 0.6rem 0.85rem;
   background: transparent;
   border: none;
-  border-radius: 0;
+  border-bottom: 1px solid var(--color-border-subtle);
   color: var(--color-text-primary);
   font-size: 0.95rem;
   font-family: inherit;
   cursor: pointer;
   text-align: left;
+  transition: background 0.1s;
+}
+
+.location-dropdown-option:last-child {
+  border-bottom: none;
 }
 
 .location-dropdown-option:hover {
-  background: var(--color-bg-inset, rgba(0, 0, 0, 0.05));
+  background: var(--color-bg-accent-tint);
 }
 
 .location-dropdown-name {
-  font-weight: 500;
+  font-weight: 600;
 }
 
 .location-dropdown-detail {
-  font-size: 0.8rem;
+  font-size: 0.78rem;
   color: var(--color-text-muted);
 }
 
@@ -167,11 +172,37 @@
   color: var(--color-text-muted);
 }
 
+/* ── Location search loading indicator ── */
 .location-search-hint {
-  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.78rem;
   color: var(--color-text-muted);
-  margin-top: 0.25rem;
-  display: block;
+  margin-top: 0.35rem;
+}
+
+.location-search-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid var(--color-border);
+  border-top-color: var(--color-accent);
+  border-radius: 50%;
+  animation: location-spin 0.6s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes location-spin {
+  to { transform: rotate(360deg); }
+}
+
+.location-dropdown-loading {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 0.85rem;
+  font-size: 0.82rem;
+  color: var(--color-text-muted);
 }
 
 /* Stack date + time vertically on very narrow screens */

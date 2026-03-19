@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "supabase": {
+      "command": "npx",
+      "args": ["-y", "@supabase/mcp-server-supabase", "--access-token", "sbp_e616a123cbd574b87d173289ae2e679e6840b385"]
+    },
+    "cloudflare": {
+      "command": "npx",
+      "args": ["-y", "@cloudflare/mcp-server-cloudflare"],
+      "env": {
+        "CLOUDFLARE_API_TOKEN": "cfut_VJIDPQCVZf3ntiIDYw3FdVjhpusMJXI79t8Ax6310d01614f"
+      }
+    }
+  }
+}

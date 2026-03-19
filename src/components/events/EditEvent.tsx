@@ -115,10 +115,12 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
         .gte("starts_at", event.starts_at);
 
       if (startDelta === 0) {
-        // No time shift — bulk update all future occurrences in a single query
+        // No time shift — bulk update all future occurrences in a single query.
+        // Exclude starts_at/finishes_at from patch so each occurrence keeps its own date.
+        const { starts_at: _s, finishes_at: _f, ...fieldPatch } = patch;
         const { error: bulkErr } = await supabase
           .from("events")
-          .update({ ...patch, finishes_at: row.finishes_at })
+          .update(fieldPatch)
           .eq("recurrence->>id", event.recurrence!.id)
           .gte("starts_at", event.starts_at);
 

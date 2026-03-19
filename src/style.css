@@ -180,6 +180,10 @@ button:focus-visible {
   padding-bottom: var(--privacy-banner-height, 0px);
 }
 
+@media (prefers-reduced-motion: reduce) {
+  .page-view { animation: none; }
+}
+
 /* =====================================================
    SKELETON LOADERS
    ===================================================== */

@@ -1,9 +1,9 @@
 import { useState, useEffect, useRef, useCallback } from "react";
-import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 import { CATEGORIES, CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
 import { useFilters } from "../hooks/useFilters";
+import { useUpcomingEvents } from "../hooks/useUpcomingEvents";
 import { passesDateFilter, matchesSearch, DATE_FILTER_LABELS } from "../utils/eventFilters";
 import { useDebouncedValue } from "../hooks/useDebouncedValue";
 
@@ -37,40 +37,12 @@ function groupByMonth(events: Event[]): MonthGroup[] {
 }
 
 export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: Props) {
-  const [events, setEvents] = useState<Event[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { events, loading, error } = useUpcomingEvents();
   const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
   const [searchQuery, setSearchQuery] = useState("");
   const [filtersCollapsed, setFiltersCollapsed] = useState(true);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchWrapRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    let isCurrent = true;
-    const now = new Date();
-    const end = new Date(now);
-    end.setFullYear(end.getFullYear() + 1);
-
-    supabase
-      .from("events")
-      .select("*")
-      .eq("approved", true)
-      .gte("starts_at", now.toISOString())
-      .lte("starts_at", end.toISOString())
-      .order("starts_at", { ascending: true })
-      .then(({ data, error }) => {
-        if (!isCurrent) return;
-        if (error) {
-          setError(error.message);
-        } else {
-          setEvents(data || []);
-        }
-        setLoading(false);
-      });
-
-    return () => { isCurrent = false; };
-  }, []);
 
   // Focus input when search opens; clear query when it closes
   useEffect(() => {

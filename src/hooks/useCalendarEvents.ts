@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect, useMemo, useCallback } from "react";
 import { supabase } from "../supabaseClient";
 import type { Event } from "../utils/types";
 import { toLocalDateKey } from "../utils/dates";
@@ -23,6 +23,9 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
   const [allEvents, setAllEvents] = useState<Event[]>([]);
   const [loading,  setLoading]  = useState(true);
   const [error,    setError]    = useState<string | null>(null);
+  const [retryKey, setRetryKey] = useState(0);
+
+  const retry = useCallback(() => setRetryKey(k => k + 1), []);
 
   // Stable cache keys so the effect only re-fires when the window actually changes
   const fromKey = `${windowStart.year}-${windowStart.month}`;
@@ -57,7 +60,7 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
 
     fetchEvents();
     return () => { isCurrent = false; };
-  }, [fromKey, toKey]);
+  }, [fromKey, toKey, retryKey]);
 
   // Forward-looking events for the search dropdown (up to 1 year ahead).
   // Fetched once on mount — independent of the calendar scroll window.
@@ -103,5 +106,5 @@ export function useCalendarEvents(windowStart: MonthKey, windowEnd: MonthKey) {
     return map;
   }, [events]);
 
-  return { eventsByDate, allEvents, loading, error };
+  return { eventsByDate, allEvents, loading, error, retry };
 }

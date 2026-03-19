@@ -174,8 +174,21 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
 
     const adminId = await getAdminId();
 
-    // Delete all future occurrences of the old series.
+    // Fetch old occurrences before deleting so we can rollback on insert failure.
+    let oldRows: Record<string, unknown>[] = [];
     if (event.recurrence) {
+      const { data: existing, error: fetchErr } = await supabase
+        .from("events")
+        .select("*")
+        .eq("recurrence->>id", event.recurrence.id)
+        .gte("starts_at", event.starts_at);
+
+      if (fetchErr) { setError(fetchErr.message); setSaving(false); return; }
+      oldRows = (existing ?? []).map(({ id, ...rest }: Record<string, unknown>) => {
+        void id;
+        return rest;
+      });
+
       const { error: delErr } = await supabase
         .from("events")
         .delete()
@@ -227,7 +240,13 @@ export default function EditEvent({ event, onSaved, onCancel, defaultRecurringSc
       .select()
       .order("starts_at", { ascending: true });
 
-    if (insertErr) { setError(insertErr.message); setSaving(false); return; }
+    if (insertErr) {
+      // Rollback: re-insert old events that were deleted
+      if (oldRows.length > 0) await supabase.from("events").insert(oldRows);
+      setError(insertErr.message);
+      setSaving(false);
+      return;
+    }
 
     onSaved((inserted as Event[])[0]);
     setSaving(false);

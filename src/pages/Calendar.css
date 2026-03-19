@@ -14,13 +14,31 @@
 
 /* ── Error banner ── */
 .calendar-error-banner {
-    background: var(--color-error-bg, #fef2f2);
+    background: var(--color-bg-error);
     color: var(--color-text-error);
     padding: 0.75rem 1rem;
     border-radius: 8px;
     margin: 0.5rem 1rem;
     font-size: 0.9rem;
     text-align: center;
+}
+
+.calendar-error-retry {
+    background: transparent;
+    border: 1px solid var(--color-text-error);
+    color: var(--color-text-error);
+    font-size: 0.8rem;
+    font-weight: 600;
+    padding: 0.25rem 0.75rem;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-left: 0.5rem;
+    transition: background 0.15s;
+}
+
+.calendar-error-retry:hover {
+    background: var(--color-text-error);
+    color: var(--color-text-dark);
 }
 
 /* ── Left column: the scrollable calendar ── */
@@ -79,7 +97,7 @@
     font-family: monospace;
     letter-spacing: 0.05em;
     padding: 0 0.6rem;
-    height: 26px;
+    height: 34px;
     border-radius: 3px;
     cursor: pointer;
     transition: background 0.15s, color 0.15s;
@@ -96,8 +114,8 @@
     border: 1px solid var(--color-border-subtle);
     color: var(--color-text-muted);
     font-size: 0.7rem;
-    width: 26px;
-    height: 26px;
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     cursor: pointer;
     display: flex;

@@ -24,6 +24,7 @@ const NOMINATIM_URL = "https://nominatim.openstreetmap.org/search";
 export function useLocationSearch(query: string) {
   const [results, setResults] = useState<NominatimResult[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   const debouncedQuery = useDebouncedValue(query, 500);
 
@@ -31,6 +32,7 @@ export function useLocationSearch(query: string) {
     if (debouncedQuery.length < 3) {
       setResults([]);
       setLoading(false);
+      setError(null);
       return;
     }
 
@@ -39,6 +41,7 @@ export function useLocationSearch(query: string) {
     abortRef.current = controller;
 
     setLoading(true);
+    setError(null);
 
     const params = new URLSearchParams({
       format: "json",
@@ -68,13 +71,14 @@ export function useLocationSearch(query: string) {
         if (err.name !== "AbortError") {
           setResults([]);
           setLoading(false);
+          setError("Location search failed. Please try again.");
         }
       });
 
     return () => controller.abort();
   }, [debouncedQuery]);
 
-  const clear = () => setResults([]);
+  const clear = () => { setResults([]); setError(null); };
 
-  return { results, loading, clear };
+  return { results, loading, error, clear };
 }

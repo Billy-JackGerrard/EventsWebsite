@@ -138,6 +138,17 @@
   border: 1px solid rgba(80, 180, 120, 0.25);
 }
 
+@media (prefers-color-scheme: dark) {
+  .msgs-badge--bug {
+    background: rgba(248, 113, 113, 0.15);
+    border-color: rgba(248, 113, 113, 0.3);
+  }
+  .msgs-badge--suggestion {
+    background: rgba(110, 212, 160, 0.15);
+    border-color: rgba(110, 212, 160, 0.3);
+  }
+}
+
 .msgs-sender {
   color: var(--color-text-primary);
   font-size: 0.85rem;

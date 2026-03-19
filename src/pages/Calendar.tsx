@@ -174,7 +174,7 @@ export default function Calendar({ onAddEvent, onViewEvent, searchOpen, onToggle
 
   const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
 
-  const { eventsByDate: rawEventsByDate, allEvents, loading, error: fetchError } = useCalendarEvents(windowStart, windowEnd);
+  const { eventsByDate: rawEventsByDate, allEvents, loading, error: fetchError, retry } = useCalendarEvents(windowStart, windowEnd);
 
   const eventsByDate = useMemo(() => {
     if (selectedCategories.size === 0 && dateFilter === "all") return rawEventsByDate;
@@ -301,7 +301,8 @@ export default function Calendar({ onAddEvent, onViewEvent, searchOpen, onToggle
 
       {fetchError && (
         <div className="calendar-error-banner" role="alert">
-          Failed to load events. Please try refreshing the page.
+          Failed to load events.{" "}
+          <button className="calendar-error-retry" onClick={retry}>Retry</button>
         </div>
       )}
 

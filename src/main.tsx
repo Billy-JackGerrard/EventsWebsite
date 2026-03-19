@@ -4,7 +4,7 @@ import { StrictMode, useState, useEffect, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { supabase } from "./supabaseClient";
-import { deduplicateByRecurrence } from "./utils/recurrence";
+import { useAuth } from "./hooks/useAuth";
 import Calendar from "./pages/Calendar.tsx";
 import Login from "./pages/Login.tsx";
 import AdminQueue from "./pages/AdminQueue.tsx";
@@ -51,29 +51,38 @@ async function fetchEventById(id: string): Promise<Event | null> {
 }
 
 function App() {
+  // ── Auth ────────────────────────────────────────────────────────────────
+  const {
+    isLoggedIn, adminName, userEmail,
+    pendingCount, setPendingCount,
+    messagesCount, setMessagesCount,
+    fetchPendingCount, handleLogout,
+  } = useAuth();
+
+  // ── View / navigation ──────────────────────────────────────────────────
   const [view, setView] = useState<View>("calendar");
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [adminName, setAdminName] = useState<string | null>(null);
-  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
-  const [deletingEvent, setDeletingEvent] = useState<Event | null>(null);
-  const [pendingCount, setPendingCount] = useState(0);
-  const [messagesCount, setMessagesCount] = useState(0);
-  const [userEmail, setUserEmail] = useState<string | null>(null);
-  const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
-  const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
-  const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
-  const [duplicatingEvent, setDuplicatingEvent] = useState<Event | null>(null);
-  const [searchOpen, setSearchOpen] = useState(false);
-  const [listSearchOpen, setListSearchOpen] = useState(false);
   const [viewingEvent, setViewingEvent] = useState<Event | null>(null);
   const [postEventReturn, setPostEventReturn] = useState<View>("calendar");
+
+  // ── Edit / delete flow ─────────────────────────────────────────────────
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [deletingEvent, setDeletingEvent] = useState<Event | null>(null);
+  const [postEditReturn, setPostEditReturn] = useState<View>("calendar");
+  const [postDeleteReturn, setPostDeleteReturn] = useState<View>("calendar");
+
+  // ── Add event flow ─────────────────────────────────────────────────────
+  const [addEventDate, setAddEventDate] = useState<string | undefined>(undefined);
+  const [duplicatingEvent, setDuplicatingEvent] = useState<Event | null>(null);
+
+  // ── Search state ───────────────────────────────────────────────────────
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [listSearchOpen, setListSearchOpen] = useState(false);
   const scrollToTodayRef = useRef<(() => void) | null>(null);
   const handleToggleSearch = useCallback(() => setSearchOpen(o => !o), []);
   const handleListToggleSearch = useCallback(() => setListSearchOpen(o => !o), []);
-
   const handleScrollToTodayReady = useCallback((fn: () => void) => { scrollToTodayRef.current = fn; }, []);
 
-  // Deep-link: resolve URL path to the correct view on first load
+  // ── Deep-link: resolve URL on first load ───────────────────────────────
   useEffect(() => {
     const path = window.location.pathname;
     const eventMatch = path.match(/^\/event\/([^/]+)$/);
@@ -88,7 +97,7 @@ function App() {
     }
     const pageView = PATH_TO_VIEW[path];
     if (pageView) setView(pageView);
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleViewEvent = useCallback((event: Event) => {
     setViewingEvent(event);
@@ -97,7 +106,7 @@ function App() {
     setView("event");
   }, [view, postEventReturn]);
 
-  // Handle browser back/forward
+  // ── Browser back/forward ───────────────────────────────────────────────
   useEffect(() => {
     const handler = () => {
       const path = window.location.pathname;
@@ -119,46 +128,7 @@ function App() {
     return () => window.removeEventListener("popstate", handler);
   }, [postEventReturn]);
 
-const fetchMessagesCount = useCallback(async () => {
-    const { count, error } = await supabase
-      .from("contact_messages")
-      .select("id", { count: "exact", head: true });
-    if (!error) setMessagesCount(count ?? 0);
-  }, []);
-
-  const fetchPendingCount = useCallback(async () => {
-    const { data } = await supabase
-      .from("events")
-      .select("id, recurrence")
-      .eq("approved", false);
-
-    if (!data) return;
-    setPendingCount(deduplicateByRecurrence(data).length);
-  }, []);
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setIsLoggedIn(!!session);
-      setUserEmail(session?.user?.email ?? null);
-      setAdminName((session?.user?.user_metadata?.display_name as string) ?? null);
-      if (session) { fetchPendingCount().catch(console.error); fetchMessagesCount().catch(console.error); }
-    }).catch(console.error);
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsLoggedIn(!!session);
-      setUserEmail(session?.user?.email ?? null);
-      setAdminName((session?.user?.user_metadata?.display_name as string) ?? null);
-      if (session) { fetchPendingCount().catch(console.error); fetchMessagesCount().catch(console.error); }
-      if (!session) {
-        setView("calendar");
-        setPendingCount(0);
-        setMessagesCount(0);
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [fetchPendingCount, fetchMessagesCount]);
-
+  // ── Auth guard ─────────────────────────────────────────────────────────
   useEffect(() => {
     if (view === "admin-queue" && !isLoggedIn) setView("login");
     if (view === "admin-messages" && !isLoggedIn) setView("login");
@@ -167,13 +137,8 @@ const fetchMessagesCount = useCallback(async () => {
     if (view === "admin-queue" && isLoggedIn) fetchPendingCount();
   }, [view, isLoggedIn, fetchPendingCount]);
 
+  // ── Navigation handlers ────────────────────────────────────────────────
   const handleLogin = () => setView("calendar");
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsLoggedIn(false);
-    setView("calendar");
-  };
 
   const handleNavigate = (v: View) => {
     if (v !== "add-event") { setAddEventDate(undefined); setDuplicatingEvent(null); }
@@ -235,6 +200,12 @@ const fetchMessagesCount = useCallback(async () => {
     setView("add-event");
   };
 
+  const handleAppLogout = async () => {
+    await handleLogout();
+    setView("calendar");
+  };
+
+  // ── Render ─────────────────────────────────────────────────────────────
   return (
     <>
       <PrivacyBanner onNavigate={handleNavigate} />
@@ -245,7 +216,7 @@ const fetchMessagesCount = useCallback(async () => {
         messagesCount={messagesCount}
         adminName={adminName}
         onNavigate={handleNavigate}
-        onLogout={handleLogout}
+        onLogout={handleAppLogout}
         showCalendarControls={view === "calendar" || view === "list"}
         onScrollToToday={view === "list" ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : () => scrollToTodayRef.current?.()}
         onToggleSearch={view === "list" ? handleListToggleSearch : handleToggleSearch}

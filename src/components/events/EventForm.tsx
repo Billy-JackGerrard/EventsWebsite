@@ -3,12 +3,12 @@ import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
 import { isoToLocal, getSoftMinDateTime, formatLocalDateTime } from "../../utils/dates";
 import type { Event, EventAddress, Category, AgeRating } from "../../utils/types";
-import { CATEGORIES, CATEGORY_COLOURS, AGE_RATINGS, BOOKING_INFO_OPTIONS, BOOKING_INFO_LABELS, formatAddress } from "../../utils/types";
-import { useLocationSearch } from "../../hooks/useLocationSearch";
-import type { NominatimResult } from "../../hooks/useLocationSearch";
+import { CATEGORIES, CATEGORY_COLOURS, AGE_RATINGS, BOOKING_INFO_OPTIONS, BOOKING_INFO_LABELS } from "../../utils/types";
 import { isValidEmail } from "../../utils/validation";
 import { useClickOutside } from "../../hooks/useClickOutside";
 import RecurrencePicker from "./RecurrencePicker";
+import LocationField from "./LocationField";
+import AccessibilityField from "./AccessibilityField";
 import "./EventForm.css";
 
 export type { RecurrenceRule };
@@ -49,13 +49,6 @@ type Props = {
   children?: React.ReactNode;
 };
 
-const ADVANCED_ACCESS_OPTIONS: Record<string, string[]> = {
-  Audio: ["Hearing loop (T-loop)", "Audio description"],
-  Physical: ["Wheelchair accessible", "Step-free access", "Accessible toilets", "Quiet room available"],
-  Sensory: ["Low sensory environment", "Relaxed performance"],
-};
-const ALL_ADVANCED_OPTIONS = Object.values(ADVANCED_ACCESS_OPTIONS).flat();
-
 export default function EventForm({
   initialValues,
   prefillDate,
@@ -78,10 +71,6 @@ export default function EventForm({
   const [address, setAddress] = useState<EventAddress | null>(initialValues?.address ?? null);
   const [latitude, setLatitude] = useState<number | null>(initialValues?.latitude ?? null);
   const [longitude, setLongitude] = useState<number | null>(initialValues?.longitude ?? null);
-  const [locationDropdownOpen, setLocationDropdownOpen] = useState(false);
-  const [locationQuery, setLocationQuery] = useState("");
-  const locationFieldRef = useRef<HTMLDivElement>(null);
-  const { results: locationResults, loading: locationLoading, clear: clearLocationResults } = useLocationSearch(locationQuery);
   const [startsAt, setStartsAt] = useState(() => {
     if (initialValues?.starts_at) return isoToLocal(initialValues.starts_at);
     if (prefillDate) return `${prefillDate}T09:00`;
@@ -110,15 +99,6 @@ export default function EventForm({
   const [accessibilityOther, setAccessibilityOther] = useState<string>(
     initialValues?.accessibility?.find(o => o.startsWith("Other: "))?.replace("Other: ", "") ?? ""
   );
-  const [showMoreAccessibility, setShowMoreAccessibility] = useState(
-    () => (initialValues?.accessibility ?? []).some(o => ALL_ADVANCED_OPTIONS.includes(o) || o.startsWith("Other: "))
-  );
-
-  const toggleAccessibility = (option: string) => {
-    setAccessibility(prev =>
-      prev.includes(option) ? prev.filter(o => o !== option) : [...prev, option]
-    );
-  };
 
   const [recurrenceEnabled, setRecurrenceEnabled] = useState(false);
   const [recurrenceRule, setRecurrenceRule] = useState<RecurrenceRule>(DEFAULT_RULE);
@@ -130,31 +110,9 @@ export default function EventForm({
   }, []);
 
   const closeCategoryDropdown = useCallback(() => setCategoryOpen(false), []);
-  const closeLocationDropdown = useCallback(() => setLocationDropdownOpen(false), []);
   useClickOutside(categoryRef, closeCategoryDropdown, categoryOpen);
-  useClickOutside(locationFieldRef, closeLocationDropdown, locationDropdownOpen);
 
-  const handleLocationSelect = (result: NominatimResult) => {
-    const name = result.address?.amenity || result.name || result.display_name.split(",")[0];
-    setLocation(name);
-    setLocationQuery("");
-
-    const addr: EventAddress = {
-      road: result.address?.road,
-      house_number: result.address?.house_number,
-      suburb: result.address?.suburb,
-      city: result.address?.city,
-      state: result.address?.state,
-      postcode: result.address?.postcode,
-      country: result.address?.country,
-    };
-    setAddress(addr);
-    setLatitude(parseFloat(result.lat));
-    setLongitude(parseFloat(result.lon));
-    setLocationDropdownOpen(false);
-    clearLocationResults();
-  };
-
+  // ── Reset all fields when initialValues changes (edit form re-init) ────
   const prevInitialRef = useRef<Event | undefined>(initialValues);
   useEffect(() => {
     if (initialValues && initialValues !== prevInitialRef.current) {
@@ -164,7 +122,6 @@ export default function EventForm({
       setIsInPerson(initialValues.event_type !== 'online');
       setIsOnline(initialValues.event_type === 'online' || initialValues.event_type === 'both');
       setLocation(initialValues.location ?? "");
-      setLocationQuery("");
       setAddress(initialValues.address ?? null);
       setLatitude(initialValues.latitude ?? null);
       setLongitude(initialValues.longitude ?? null);
@@ -178,7 +135,6 @@ export default function EventForm({
       setCategory(initialValues.category ?? "");
       setAccessibility((initialValues.accessibility ?? []).filter(o => !o.startsWith("Other: ")));
       setAccessibilityOther(initialValues.accessibility?.find(o => o.startsWith("Other: "))?.replace("Other: ", "") ?? "");
-      setShowMoreAccessibility((initialValues.accessibility ?? []).some(o => ALL_ADVANCED_OPTIONS.includes(o) || o.startsWith("Other: ")));
       setAgeRating(initialValues.age_rating ?? null);
       setRecurrenceEnabled(false);
       setRecurrenceRule(DEFAULT_RULE);
@@ -186,6 +142,7 @@ export default function EventForm({
     }
   }, [initialValues]);
 
+  // ── Date/time handling ─────────────────────────────────────────────────
   const handleStartsAtChange = (value: string) => {
     const oldStartsAt = startsAt;
     setStartsAt(value);
@@ -198,7 +155,6 @@ export default function EventForm({
 
     const newStart = new Date(value);
     if (finishesAt) {
-      // Shift finish to preserve the existing duration
       if (oldStartsAt) {
         const duration = new Date(finishesAt).getTime() - new Date(oldStartsAt).getTime();
         setFinishesAt(formatLocalDateTime(new Date(newStart.getTime() + duration)));
@@ -206,7 +162,6 @@ export default function EventForm({
         setFinishesAt(formatLocalDateTime(new Date(newStart.getTime() + 60 * 60 * 1000)));
       }
     } else {
-      // Auto-fill finish to start + 1 hour
       setFinishesAt(formatLocalDateTime(new Date(newStart.getTime() + 60 * 60 * 1000)));
     }
   };
@@ -239,6 +194,7 @@ export default function EventForm({
     setFinishesAt(`${date}T${time}`);
   };
 
+  // ── Submit ─────────────────────────────────────────────────────────────
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
     setInternalError(null);
@@ -298,8 +254,6 @@ export default function EventForm({
     const occurrences = expandRecurrences(activeRule, firstStart, firstFinish);
     const isRecurring = showRecurrence && recurrenceEnabled && occurrences.length > 1;
 
-    // Embed the series id directly in the rule so there's a single unified
-    // field rather than separate recurrence_id + recurrence_rule columns.
     const recurrence: RecurrenceRule | null = isRecurring
       ? { ...activeRule, id: crypto.randomUUID() }
       : null;
@@ -338,6 +292,7 @@ export default function EventForm({
     }
   }, [displayError]);
 
+  // ── Render ─────────────────────────────────────────────────────────────
   return (
     <form className="eventform-root" noValidate onSubmit={handleSubmit}>
       {displayError && <div className="form-error" ref={errorRef} role="alert">{displayError}</div>}
@@ -436,69 +391,13 @@ export default function EventForm({
       </div>
 
       {isInPerson && (
-        <>
-          <div className="form-field">
-            <label htmlFor="ef-location" className="form-label">Location *</label>
-            <div className="location-field-wrapper" ref={locationFieldRef}>
-              <input
-                id="ef-location"
-                className="form-input"
-                type="text"
-                placeholder="e.g. Blackwood Bar"
-                maxLength={150}
-                value={location}
-                onChange={e => {
-                  setLocation(e.target.value);
-                  setLocationQuery(e.target.value);
-                  setLocationDropdownOpen(true);
-                  // Clear structured data when user types manually
-                  setAddress(null);
-                  setLatitude(null);
-                  setLongitude(null);
-                }}
-                onFocus={() => { if (locationResults.length > 0) setLocationDropdownOpen(true); }}
-              />
-              {locationDropdownOpen && (locationResults.length > 0 || (locationLoading && location.length >= 3)) && (
-                <div className="location-dropdown">
-                  {locationResults.map(r => (
-                    <button
-                      key={r.place_id}
-                      type="button"
-                      className="location-dropdown-option"
-                      onMouseDown={e => { e.preventDefault(); handleLocationSelect(r); }}
-                    >
-                      <span className="location-dropdown-name">
-                        {r.address?.amenity || r.name || r.display_name.split(",")[0]}
-                      </span>
-                      <span className="location-dropdown-detail">
-                        {r.display_name.split(",").slice(1, 3).join(",").trim()}
-                      </span>
-                    </button>
-                  ))}
-                  {locationLoading && locationResults.length === 0 && (
-                    <div className="location-dropdown-loading">
-                      <span className="location-search-spinner" aria-hidden="true" />
-                      Searching locations…
-                    </div>
-                  )}
-                </div>
-              )}
-              {locationLoading && (
-                <span className="location-search-hint">
-                  <span className="location-search-spinner" aria-hidden="true" />
-                  Searching locations…
-                </span>
-              )}
-            </div>
-          </div>
-
-          {address && (
-            <div className="form-field">
-              <label className="form-label">Address</label>
-              <div className="location-address-display">{formatAddress(address)}</div>
-            </div>
-          )}
-        </>
+        <LocationField
+          location={location}
+          address={address}
+          onLocationChange={setLocation}
+          onAddressChange={setAddress}
+          onCoordsChange={(lat, lon) => { setLatitude(lat); setLongitude(lon); }}
+        />
       )}
 
       <div className="form-field">
@@ -597,60 +496,12 @@ export default function EventForm({
         />
       </div>
 
-      <div className="form-field">
-        <label className="form-label">Accessibility</label>
-        <div className="event-type-toggle">
-          {["Delivered in BSL", "BSL/English Interpreter", "Captioned"].map(option => (
-            <button
-              key={option}
-              type="button"
-              className={`event-type-btn${accessibility.includes(option) ? ' event-type-btn--active' : ''}`}
-              onClick={() => toggleAccessibility(option)}
-            >
-              {option}
-            </button>
-          ))}
-        </div>
-        <button
-          type="button"
-          className={`accessibility-more-btn${showMoreAccessibility ? ' accessibility-more-btn--open' : ''}`}
-          onClick={() => setShowMoreAccessibility(v => !v)}
-        >
-          <span className="accessibility-more-btn__arrow">{showMoreAccessibility ? '▾' : '▸'}</span>
-          More accessibility options
-        </button>
-        {showMoreAccessibility && (
-          <div className="accessibility-expanded">
-            {Object.entries(ADVANCED_ACCESS_OPTIONS).map(([group, options]) => (
-              <div key={group} className="accessibility-group">
-                <span className="accessibility-group-label">{group}</span>
-                <div className="event-type-toggle">
-                  {options.map(option => (
-                    <button
-                      key={option}
-                      type="button"
-                      className={`event-type-btn${accessibility.includes(option) ? ' event-type-btn--active' : ''}`}
-                      onClick={() => toggleAccessibility(option)}
-                    >
-                      {option}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ))}
-            <div className="accessibility-group">
-              <span className="accessibility-group-label">Other</span>
-              <input
-                className="form-input"
-                type="text"
-                placeholder="e.g. SubPac devices available"
-                value={accessibilityOther}
-                onChange={e => setAccessibilityOther(e.target.value)}
-              />
-            </div>
-          </div>
-        )}
-      </div>
+      <AccessibilityField
+        accessibility={accessibility}
+        accessibilityOther={accessibilityOther}
+        onAccessibilityChange={setAccessibility}
+        onAccessibilityOtherChange={setAccessibilityOther}
+      />
 
       <div className="form-field">
         <label className="form-label">Age Rating</label>

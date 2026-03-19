@@ -9,8 +9,6 @@ finish fixing all bugs and issues
 
 change the UI to be more professional and sleek - maybe slightly darker blue? think top tier website. wow factor etc
 can add dynamic text/calendar showing as your scroll for example
-
-home/landing page? make it look professional and modern.
 what do the top UI websites have/use?
 
 
@@ -81,8 +79,6 @@ High Impact, Relatively Quick
 These would make the biggest visible difference to a first-time visitor:
 
 SEO & social sharing metadata — Add per-page <title> tags and Open Graph tags so event links look good when shared on WhatsApp/social media. Currently sharing a link just shows a blank preview. This is pure frontend work.
-
-Landing/home page — Right now the site drops straight into the calendar. A simple page explaining what the site is, who it's for, and with a clear "Browse Events" CTA would dramatically improve first impressions and retention.
 
 Medium Impact, More Involved
 Event submission feedback loop — A confirmation email to event submitters (via a Supabase Edge Function) and an email to admins when a new submission arrives. Currently both sides are flying blind. This is probably the biggest friction point for event organisers.

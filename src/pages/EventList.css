@@ -62,6 +62,14 @@
   display: none;
 }
 
+/* Pull the view switcher flush with the top/sides of the page container */
+@media (max-width: 700px) {
+  .event-list-view-switcher {
+    margin: -2rem -1rem 1rem;
+    width: calc(100% + 2rem);
+  }
+}
+
 @media (max-width: 859px) {
   .event-list-mobile-filters {
     position: fixed;

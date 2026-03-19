@@ -27,6 +27,21 @@ import DeleteEventConfirm from "./components/events/DeleteEventConfirm.tsx";
 import type { Event } from "./utils/types.ts";
 import type { View } from "./utils/views.ts";
 
+/** Page titles for each view. */
+const VIEW_TITLES: Partial<Record<View, string>> = {
+  calendar:         "Calendar | BSL Edinburgh",
+  list:             "Events | BSL Edinburgh",
+  map:              "Map | BSL Edinburgh",
+  home:             "Home | BSL Edinburgh",
+  contact:          "Contact | BSL Edinburgh",
+  privacy:          "Privacy Policy | BSL Edinburgh",
+  login:            "Login | BSL Edinburgh",
+  account:          "Account | BSL Edinburgh",
+  "admin-queue":    "Event Queue | BSL Edinburgh",
+  "admin-messages": "Messages | BSL Edinburgh",
+  "admin-home":     "Edit Home | BSL Edinburgh",
+};
+
 /** Every navigable view gets its own shareable URL path. */
 const PAGE_PATHS: Partial<Record<View, string>> = {
   calendar:          "/",
@@ -75,6 +90,14 @@ function App() {
   const [view, setView] = useState<View>("calendar");
   const [viewingEvent, setViewingEvent] = useState<Event | null>(null);
   const [postEventReturn, setPostEventReturn] = useState<View>("calendar");
+
+  useEffect(() => {
+    if (view === "event" && viewingEvent) {
+      document.title = `${viewingEvent.title} | BSL Edinburgh`;
+    } else {
+      document.title = VIEW_TITLES[view] ?? "BSL Edinburgh";
+    }
+  }, [view, viewingEvent]);
 
   // ── Edit / delete flow ─────────────────────────────────────────────────
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
@@ -269,12 +292,13 @@ function App() {
         {view === "list" && (
           <EventList
             onViewEvent={handleViewEvent}
+            onNavigate={handleNavigate}
             searchOpen={listSearchOpen}
             onToggleSearch={handleListToggleSearch}
           />
         )}
         {view === "map" && (
-          <MapView onViewEvent={handleViewEvent} />
+          <MapView onViewEvent={handleViewEvent} onNavigate={handleNavigate} />
         )}
         {view === "event" && viewingEvent && (
           <EventPage

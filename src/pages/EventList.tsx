@@ -14,6 +14,7 @@ import "./EventList.css";
 
 type Props = {
   onViewEvent: (event: Event) => void;
+  onNavigate?: (view: "calendar" | "list" | "map") => void;
   searchOpen?: boolean;
   onToggleSearch?: () => void;
 };
@@ -69,7 +70,9 @@ function MonthSection({ group, onViewEvent }: { group: MonthGroup; onViewEvent: 
   );
 }
 
-export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: Props) {
+export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggleSearch }: Props) {
+  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
+
   const [showPast, setShowPast] = useState(false);
   const { events, loading, error } = useUpcomingEvents(showPast);
   const { selectedCategories, dateFilter, setDateFilter, toggleCategory, clearCategories } = useFilters();
@@ -106,6 +109,38 @@ export default function EventList({ onViewEvent, searchOpen, onToggleSearch }: P
 
   return (
     <div className="event-list-page">
+
+      {/* Mobile view switcher */}
+      <div className="calendar-view-switcher event-list-view-switcher">
+        <button className="calendar-view-btn" onClick={() => onNavigate?.("calendar")}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <rect x="3" y="4" width="18" height="18" rx="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Calendar
+        </button>
+        <button className="calendar-view-btn calendar-view-btn--active" aria-current="page">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <line x1="8" y1="6" x2="21" y2="6"/>
+            <line x1="8" y1="12" x2="21" y2="12"/>
+            <line x1="8" y1="18" x2="21" y2="18"/>
+            <line x1="3" y1="6" x2="3.01" y2="6"/>
+            <line x1="3" y1="12" x2="3.01" y2="12"/>
+            <line x1="3" y1="18" x2="3.01" y2="18"/>
+          </svg>
+          List
+        </button>
+        <button className="calendar-view-btn" onClick={() => onNavigate?.("map")}>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/>
+            <line x1="8" y1="2" x2="8" y2="18"/>
+            <line x1="16" y1="6" x2="16" y2="22"/>
+          </svg>
+          Map
+        </button>
+      </div>
 
       {/* Search bar — shown at top when open */}
       {searchOpen && (

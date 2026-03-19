@@ -1,21 +1,4 @@
-TODO
-
-apple has dropdown boxes built in - consider using those?
-etc
-
-make it more professional
-
-finish fixing all bugs and issues
-
-change the UI to be more professional and sleek - maybe slightly darker blue? think top tier website. wow factor etc
-can add dynamic text/calendar showing as your scroll for example
-what do the top UI websites have/use?
-
-
-
-Gaps:
-
-
+TODO/GAPS/SUGGESTIONS
 
 No way for event submitters to edit or follow up on their submission (eg what if there's a time or room change?)
 No way for admins (or normal peeps) to cancel events (it should show cancelled instead of deleted so peeps know)
@@ -23,12 +6,9 @@ No way for admins (or normal peeps) to cancel events (it should show cancelled i
 No email notifications — admins won't know when something is pending approval unless they log in and check
 Mobile navbar — it'll break on small screens with all those buttons in a row
 
-IDEAS:
 
 in the log in page, if people arent admins/etc maybe they could request to be an admin (providing an email and password)
 also clarify that only admins can log in so peeps arent wondering why there isnt a sign up button
-
-need to do another bug check
 
 email announcements?
 
@@ -58,11 +38,7 @@ accessibility review - send directly to their email
 
 people can click I'm going to a certain event - maybe need to wait until after user accounts are set up
 
-Setup a Map View to see where events are this month, maybe with a number with each pin to show how many events are there
-
 means can filter for city/region etc
-
-rn set for only edinburgh (block non EH postcodes) but they can request to add their region (and be an admin - admins should be per region not for whole website)
 
 add admin view; can see who are the other admins and for which region are they in charge of
 

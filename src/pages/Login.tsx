@@ -75,7 +75,7 @@ export default function Login({ onLogin }: Props) {
       <div className="login-page">
         <div className="page-card login-card">
           <h2 className="login-title">Reset Password</h2>
-          <p style={{ color: "var(--color-text-muted)", fontSize: "0.82rem", textAlign: "center", marginBottom: "1.25rem", fontStyle: "italic" }}>
+          <p className="login-hint">
             Enter your email and we'll send you a reset link.
           </p>
           {error && <div className="form-error" role="alert">{error}</div>}
@@ -112,12 +112,12 @@ export default function Login({ onLogin }: Props) {
     return (
       <div className="login-page">
         <div className="page-card login-card">
-          <div style={{ textAlign: "center", padding: "0.5rem 0 1rem" }}>
+          <div className="login-success-body">
             <div className="login-success-icon">✉</div>
             <h2 className="login-title">Check Your Email</h2>
-            <p style={{ color: "var(--color-text-primary)", fontSize: "0.9rem", lineHeight: 1.6, marginBottom: "1.5rem", opacity: 0.8 }}>
+            <p className="login-success-text">
               If an account exists for{" "}
-              <strong style={{ color: "var(--color-accent)" }}>{email}</strong>,
+              <strong>{email}</strong>,
               a reset link has been sent. Check your inbox.
             </p>
             <button className="btn-primary" onClick={() => { clearError(); setScreen("login"); }}>
@@ -134,7 +134,7 @@ export default function Login({ onLogin }: Props) {
       <div className="login-page">
         <div className="page-card login-card">
           <h2 className="login-title">New Password</h2>
-          <p style={{ color: "var(--color-text-muted)", fontSize: "0.82rem", textAlign: "center", marginBottom: "1.25rem", fontStyle: "italic" }}>
+          <p className="login-hint">
             Choose a new password for your account.
           </p>
           {error && <div className="form-error" role="alert">{error}</div>}
@@ -179,10 +179,10 @@ export default function Login({ onLogin }: Props) {
     return (
       <div className="login-page">
         <div className="page-card login-card">
-          <div style={{ textAlign: "center", padding: "0.5rem 0 1rem" }}>
+          <div className="login-success-body">
             <div className="login-success-icon">✓</div>
             <h2 className="login-title">Password Updated</h2>
-            <p style={{ color: "var(--color-text-primary)", fontSize: "0.9rem", lineHeight: 1.6, marginBottom: "1.5rem", opacity: 0.8 }}>
+            <p className="login-success-text">
               Your password has been changed successfully.
             </p>
             <button className="btn-primary" onClick={onLogin}>

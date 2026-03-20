@@ -29,5 +29,6 @@ dist-ssr
 
 # Claude settings
 .claude/
+CLAUDE.md
 # MCP config (contains API tokens)
 .mcp.json

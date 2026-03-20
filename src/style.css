@@ -601,6 +601,12 @@ button:focus-visible {
   .form-input { font-size: 16px; }
 }
 
+/* ── Landscape phone: width > 700px but height ≤ 500px (e.g. iPhone 14 rotated) ── */
+@media (max-width: 900px) and (max-height: 500px) {
+  :root { --navbar-h: 52px; }
+  .form-input { font-size: 16px; }
+}
+
 /* =====================================================
    SHARED SEARCH BAR
    ===================================================== */

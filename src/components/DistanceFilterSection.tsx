@@ -10,13 +10,25 @@ type Props = {
   onClearDistanceFilter: () => void;
 };
 
-const DEFAULT_RADIUS = 10;
+type Unit = "mi" | "km";
+
+const MI_TO_KM = 1.60934;
 const MIN_RADIUS = 1;
-const MAX_RADIUS = 50;
+const MAX_RADIUS: Record<Unit, number> = { mi: 50, km: 80 };
+const DEFAULT_RADIUS: Record<Unit, number> = { mi: 10, km: 16 };
+
+function toMiles(val: number, unit: Unit): number {
+  return unit === "km" ? Math.round(val / MI_TO_KM) : val;
+}
+
+function fromMiles(miles: number, unit: Unit): number {
+  return unit === "km" ? Math.round(miles * MI_TO_KM) : miles;
+}
 
 export default function DistanceFilterSection({ distanceFilter, onSetDistanceFilter, onClearDistanceFilter }: Props) {
+  const [unit, setUnit] = useState<Unit>("mi");
   const [sliderValue, setSliderValue] = useState<number>(
-    distanceFilter ? distanceFilter.radiusMiles : DEFAULT_RADIUS
+    distanceFilter ? distanceFilter.radiusMiles : DEFAULT_RADIUS["mi"]
   );
   const [locationQuery, setLocationQuery] = useState("");
   const [confirmedLabel, setConfirmedLabel] = useState<string | null>(null);
@@ -29,16 +41,26 @@ export default function DistanceFilterSection({ distanceFilter, onSetDistanceFil
 
   const { results, loading: searchLoading, clear: clearResults } = useLocationSearch(locationQuery);
 
+  function handleUnitChange(newUnit: Unit) {
+    const miles = toMiles(sliderValue, unit);
+    const newVal = fromMiles(miles, newUnit);
+    setUnit(newUnit);
+    setSliderValue(newVal);
+    if (distanceFilter?.center) {
+      onSetDistanceFilter({ center: distanceFilter.center, radiusMiles: miles });
+    }
+  }
+
   function handleSliderChange(e: React.ChangeEvent<HTMLInputElement>) {
     const r = Number(e.target.value);
     setSliderValue(r);
     if (distanceFilter?.center) {
-      onSetDistanceFilter({ center: distanceFilter.center, radiusMiles: r });
+      onSetDistanceFilter({ center: distanceFilter.center, radiusMiles: toMiles(r, unit) });
     }
   }
 
   function handleClear() {
-    setSliderValue(DEFAULT_RADIUS);
+    setSliderValue(DEFAULT_RADIUS[unit]);
     setConfirmedLabel(null);
     setLocationQuery("");
     setGeoStatus("idle");
@@ -54,7 +76,7 @@ export default function DistanceFilterSection({ distanceFilter, onSetDistanceFil
     setDropdownOpen(false);
     clearResults();
     setGeoStatus("idle");
-    onSetDistanceFilter({ center, radiusMiles: sliderValue });
+    onSetDistanceFilter({ center, radiusMiles: toMiles(sliderValue, unit) });
   }
 
   function handleUseMyLocation() {
@@ -71,7 +93,7 @@ export default function DistanceFilterSection({ distanceFilter, onSetDistanceFil
         const center = { lat: pos.coords.latitude, lng: pos.coords.longitude };
         setConfirmedLabel("Your location");
         setGeoStatus("idle");
-        onSetDistanceFilter({ center, radiusMiles: sliderValue });
+        onSetDistanceFilter({ center, radiusMiles: toMiles(sliderValue, unit) });
       },
       () => setGeoStatus("error")
     );
@@ -93,12 +115,22 @@ export default function DistanceFilterSection({ distanceFilter, onSetDistanceFil
           type="range"
           className="filter-panel-distance-slider"
           min={MIN_RADIUS}
-          max={MAX_RADIUS}
+          max={MAX_RADIUS[unit]}
           step="1"
           value={sliderValue}
           onChange={handleSliderChange}
         />
-        <span className="filter-panel-distance-slider-label">{sliderValue} mi</span>
+        <span className="filter-panel-distance-slider-label">{sliderValue}</span>
+        <div className="filter-panel-distance-unit-toggle">
+          <button
+            className={`filter-panel-distance-unit-btn${unit === "mi" ? " filter-panel-distance-unit-btn--active" : ""}`}
+            onClick={() => handleUnitChange("mi")}
+          >mi</button>
+          <button
+            className={`filter-panel-distance-unit-btn${unit === "km" ? " filter-panel-distance-unit-btn--active" : ""}`}
+            onClick={() => handleUnitChange("km")}
+          >km</button>
+        </div>
       </div>
 
       <div className="filter-panel-distance-center" ref={dropdownRef}>

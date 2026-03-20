@@ -292,6 +292,64 @@
     display: none;
 }
 
+/* ── Desktop view switcher — shown in right panel (hidden on mobile) ── */
+.calendar-panel-view-switcher {
+    display: none;
+}
+
+/* ── View switcher button styles (shared across mobile + desktop) ── */
+.calendar-view-switcher-spacer {
+    flex: 1;
+}
+
+.calendar-view-btn--today {
+    background: var(--color-bg-accent-tint);
+    border-color: var(--color-border-accent-strong);
+    color: var(--color-accent);
+}
+
+.calendar-view-btn--today:hover {
+    background: var(--color-border-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+}
+
+.calendar-view-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    color: var(--color-text-muted);
+    font-family: var(--font-heading);
+    font-size: 0.7rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    padding: 0.3rem 0.6rem;
+    border-radius: var(--radius-full);
+    cursor: pointer;
+    transition: all var(--duration-fast) var(--ease-out);
+}
+
+.calendar-view-btn:hover {
+    color: var(--color-text-primary);
+    border-color: var(--color-accent);
+    background: var(--color-bg-accent-tint);
+}
+
+.calendar-view-btn--active {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+    cursor: default;
+}
+
+.calendar-view-btn--active:hover {
+    background: var(--color-accent);
+    border-color: var(--color-accent);
+    color: #fff;
+}
+
 /* ── Scrollable months ── */
 .calendar-scroll-container {
     flex: 1;
@@ -551,6 +609,15 @@
         font-size: 0.55rem;
         line-height: 1;
     }
+
+    .calendar-panel-view-switcher {
+        display: flex;
+        align-items: center;
+        gap: 0.25rem;
+        padding: 0.4rem 0.5rem;
+        flex-shrink: 0;
+        border-bottom: 1px solid var(--color-border);
+    }
 }
 
 /* ── Mobile: panel slides up from bottom ── */
@@ -618,6 +685,7 @@
 
     .calendar-panel-empty { display: none; }
     .calendar-panel-filters { display: none; }
+    .calendar-panel-view-switcher { display: none; }
 
     /* View switcher — toolbar with Today on left, view buttons on right */
     .calendar-view-switcher {
@@ -628,58 +696,6 @@
         flex-shrink: 0;
         background: var(--color-bg-inset);
         border-bottom: 1px solid var(--color-border);
-    }
-
-    .calendar-view-switcher-spacer {
-        flex: 1;
-    }
-
-    .calendar-view-btn--today {
-        background: var(--color-bg-accent-tint);
-        border-color: var(--color-border-accent-strong);
-        color: var(--color-accent);
-    }
-
-    .calendar-view-btn--today:hover {
-        background: var(--color-border-accent);
-        border-color: var(--color-accent);
-        color: var(--color-accent);
-    }
-
-    .calendar-view-btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.3rem;
-        background: transparent;
-        border: 1px solid var(--color-border);
-        color: var(--color-text-muted);
-        font-family: var(--font-heading);
-        font-size: 0.7rem;
-        font-weight: 600;
-        letter-spacing: 0.03em;
-        padding: 0.3rem 0.6rem;
-        border-radius: var(--radius-full);
-        cursor: pointer;
-        transition: all var(--duration-fast) var(--ease-out);
-    }
-
-    .calendar-view-btn:hover {
-        color: var(--color-text-primary);
-        border-color: var(--color-accent);
-        background: var(--color-bg-accent-tint);
-    }
-
-    .calendar-view-btn--active {
-        background: var(--color-accent);
-        border-color: var(--color-accent);
-        color: #fff;
-        cursor: default;
-    }
-
-    .calendar-view-btn--active:hover {
-        background: var(--color-accent);
-        border-color: var(--color-accent);
-        color: #fff;
     }
 
     .calendar-day-number  { font-size: 0.8rem; }
@@ -772,3 +788,18 @@
     transform: translateY(-50%) translateX(2px);
 }
 
+/* ── Landscape phone: compact sizing, keep two-column layout ── */
+@media (max-width: 900px) and (max-height: 500px) {
+    .calendar-cell        { min-height: 3.5rem; }
+    .calendar-event-chip  { font-size: 0.68rem; }
+    .calendar-day-number  { font-size: 0.8rem; }
+    .calendar-day-label   { font-size: 0.6rem; letter-spacing: 0.03em; }
+    .calendar-month-label { padding: 0.45rem 0.75rem 0.2rem; }
+    .calendar-grid        { padding: 0.2rem 0.4rem 0.4rem; }
+    .calendar-day-labels  { padding: 0.25rem 0.4rem 0.2rem; }
+    .calendar-panel       { width: clamp(220px, 28%, 270px); }
+    .calendar-panel-header { padding: 0.55rem 1rem 0.45rem; }
+    .calendar-panel-filters { padding: 0.5rem 0.75rem; gap: 0.5rem; }
+    .calendar-panel-add-btn { height: 36px; }
+    .calendar-panel-close   { width: 36px; height: 36px; }
+}

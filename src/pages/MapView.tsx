@@ -307,6 +307,11 @@ export default function MapView({ onViewEvent, onNavigate }: Props) {
             </svg>
             Home
           </button>
+          <ViewSwitcher
+            className="map-toolbar-view-switcher"
+            activeView="map"
+            onNavigate={v => onNavigate?.(v)}
+          />
         </div>
         <button
           className="map-filter-toggle"

@@ -395,6 +395,14 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
       {/* ── Right: event panel ── */}
       <div className={`calendar-panel ${selected ? "calendar-panel--open" : ""} ${mobilePanelOpen ? "calendar-panel--mobile-open" : ""}`}>
 
+        {/* Desktop view switcher — above filters in right panel */}
+        <ViewSwitcher
+          className="calendar-panel-view-switcher"
+          activeView="calendar"
+          onNavigate={v => { if (v !== "calendar") onNavigate(v); }}
+          onToday={scrollToToday}
+        />
+
         {/* Desktop filter toggle — top of panel column */}
         <div className={`calendar-panel-filters${filtersCollapsed ? " calendar-panel-filters--collapsed" : ""}`}>
           <button className="calendar-panel-filter-toggle" onClick={() => setFiltersCollapsed(c => !c)} aria-expanded={!filtersCollapsed}>

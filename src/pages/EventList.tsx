@@ -213,6 +213,11 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
 
         {/* Sidebar — RIGHT on desktop, hidden on mobile */}
         <aside className="event-list-sidebar">
+          <ViewSwitcher
+            className="event-list-sidebar-switcher"
+            activeView="list"
+            onNavigate={v => onNavigate?.(v)}
+          />
           <FilterPanel
             selectedCategories={selectedCategories}
             onToggleCategory={toggleCategory}

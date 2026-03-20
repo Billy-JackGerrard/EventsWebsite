@@ -46,6 +46,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A2E2E 0%, #1A6B6B 40%, #28AAAA 70%, #38D9D9 100%);
 
     --color-calendar-label-bg:   rgba(210, 240, 240, 0.88);
+    --color-bg-page-gradient: linear-gradient(160deg, #f0fffe 0%, #E0F7F7 50%, #ede8ff 100%);
 
     --radius-sm: 8px;
     --radius-md: 12px;
@@ -108,6 +109,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #020A14 0%, #0A1E2E 30%, #1A5555 60%, #28AAAA 100%);
 
     --color-calendar-label-bg:   rgba(14, 27, 43, 0.88);
+    --color-bg-page-gradient: linear-gradient(160deg, #0c1f32 0%, #0A1A2A 50%, #12102e 100%);
 }
 
 /* =====================================================
@@ -150,6 +152,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #1C0A00 0%, #431407 30%, #7C2D12 55%, #C2410C 75%, #E85D04 100%);
 
     --color-calendar-label-bg:   rgba(254, 243, 230, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #fffcf8 0%, #FEF7F0 50%, #feeee0 100%);
 
     /* Sharp, editorial corners */
     --radius-sm: 3px;
@@ -220,6 +223,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A0400 0%, #1C0A00 25%, #431407 50%, #7C2D12 80%, #431407 100%);
 
     --color-calendar-label-bg:   rgba(20, 10, 0, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #1c1000 0%, #140A00 50%, #1c0c00 100%);
 }
 
 /* =====================================================
@@ -262,6 +266,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #1E0836 0%, #3B0764 35%, #6D28D9 65%, #7C3AED 100%);
 
     --color-calendar-label-bg:   rgba(237, 229, 248, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #f9f5ff 0%, #F3EEFB 50%, #ebe3ff 100%);
 
     /* Soft rounded feel */
     --radius-sm: 8px;
@@ -332,6 +337,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #050210 0%, #0E0620 25%, #2E1065 55%, #581C87 100%);
 
     --color-calendar-label-bg:   rgba(14, 6, 32, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #140828 0%, #0E0620 50%, #160a2e 100%);
 }
 
 /* =====================================================
@@ -374,6 +380,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #022C22 0%, #064E3B 35%, #047857 65%, #059669 100%);
 
     --color-calendar-label-bg:   rgba(209, 250, 229, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #f5fffd 0%, #ECFDF5 50%, #e0faea 100%);
 
     /* Natural, organic rounding */
     --radius-sm: 6px;
@@ -444,6 +451,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #010D08 0%, #021A12 25%, #064E3B 55%, #065F46 100%);
 
     --color-calendar-label-bg:   rgba(2, 26, 18, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #041e16 0%, #021A12 50%, #03201a 100%);
 }
 
 /* =====================================================
@@ -486,6 +494,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #1C0612 0%, #4C0519 35%, #9F1239 65%, #E11D48 100%);
 
     --color-calendar-label-bg:   rgba(255, 228, 230, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #fff8f9 0%, #FFF1F2 50%, #ffe4e8 100%);
 
     /* Elegant rounding */
     --radius-sm: 7px;
@@ -556,6 +565,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A0206 0%, #1A0A10 25%, #4C0519 55%, #9F1239 100%);
 
     --color-calendar-label-bg:   rgba(26, 10, 16, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #220c14 0%, #1A0A10 50%, #220918 100%);
 }
 
 /* =====================================================
@@ -612,6 +622,7 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A0E18 0%, #142233 35%, #1E3D5C 65%, #2D6A9F 100%);
 
     --color-calendar-label-bg:   rgba(237, 232, 210, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #fdfbf0 0%, #F8F4E3 50%, #eeeacc 100%);
 
     /* Generous, soft rounding — less visually jarring */
     --radius-sm: 8px;
@@ -682,4 +693,5 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #060810 0%, #0E1620 25%, #142338 55%, #1A4D73 100%);
 
     --color-calendar-label-bg:   rgba(26, 22, 18, 0.9);
+    --color-bg-page-gradient: linear-gradient(160deg, #201c18 0%, #1A1612 50%, #161410 100%);
 }

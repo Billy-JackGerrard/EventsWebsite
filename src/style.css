@@ -104,6 +104,9 @@
   /* Calendar label */
   --color-calendar-label-bg:   rgba(226, 232, 240, 0.85);
 
+  /* Page background gradient — subtle accent tint applied to body */
+  --color-bg-page-gradient: linear-gradient(160deg, #f8fafd 0%, #f1f5f9 50%, #edf2ff 100%);
+
   /* Letter-spacing */
   --ls-tight: -0.02em;
   --ls-wide: 0.06em;
@@ -159,6 +162,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  background: var(--color-bg-page-gradient);
 }
 
 #app {
@@ -243,6 +247,7 @@ button:focus-visible {
     --color-hero-gradient:       linear-gradient(135deg, #020617 0%, #0f172a 25%, #1e3a8a 50%, #1d4ed8 75%, #1e3a8a 100%);
     --color-bottom-cta-gradient: linear-gradient(135deg, #020617 0%, #0f172a 30%, #1e3a8a 60%, #1d4ed8 100%);
     --color-calendar-label-bg:   rgba(22, 32, 50, 0.85);
+    --color-bg-page-gradient: linear-gradient(160deg, #111827 0%, #0f172a 50%, #0f1a35 100%);
 }
 
 /* =====================================================

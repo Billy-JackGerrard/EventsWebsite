@@ -1,7 +1,7 @@
 /** Central registry for colour themes. */
 
 export type ThemeName =
-  | "classic"
+  | "azure"
   | "ocean"
   | "ember"
   | "amethyst"
@@ -18,7 +18,7 @@ export interface ThemeMeta {
 }
 
 export const THEMES: readonly ThemeMeta[] = [
-  { name: "classic",   label: "Classic",   color: "#2563eb" },
+  { name: "azure",    label: "Azure",     color: "#2563eb" },
   { name: "ocean",     label: "Ocean",     color: "#22d3d3" },
   { name: "ember",     label: "Ember",     color: "#e85d04" },
   { name: "amethyst",  label: "Amethyst",  color: "#7c3aed" },

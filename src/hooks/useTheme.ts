@@ -9,7 +9,10 @@ const THEME_KEY = "bsl-theme";
 const MODE_KEY = "bsl-color-mode";
 
 function getStoredTheme(): ThemeName {
-  return (localStorage.getItem(THEME_KEY) as ThemeName) || "classic";
+  const stored = localStorage.getItem(THEME_KEY);
+  // Migrate old "classic" key to "azure"
+  if (stored === "classic") return "azure";
+  return (stored as ThemeName) || "azure";
 }
 
 function getStoredMode(): ColorMode {
@@ -25,7 +28,7 @@ function applyDark(mode: ColorMode) {
 }
 
 function applyTheme(theme: ThemeName) {
-  if (theme === "classic") {
+  if (theme === "azure") {
     document.documentElement.removeAttribute("data-theme");
   } else {
     document.documentElement.setAttribute("data-theme", theme);

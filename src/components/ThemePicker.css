@@ -9,8 +9,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 34px;
+  gap: 5px;
+  width: auto;
+  min-width: 34px;
   height: 34px;
+  padding: 0 9px;
   background: rgba(255, 255, 255, 0.08);
   border: 1px solid rgba(255, 255, 255, 0.18);
   border-radius: var(--radius-md);
@@ -27,6 +30,15 @@
   background: rgba(255, 255, 255, 0.15);
   border-color: rgba(255, 255, 255, 0.35);
   color: #ffffff;
+}
+
+/* ── Active-theme dot on the trigger button ── */
+.theme-picker-btn-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
 }
 
 /* ── Dropdown panel ── */

@@ -1,8 +1,8 @@
 /* ==========================================================
    COLOUR THEMES
    Each theme defines light + dark variants via CSS custom
-   properties.  "classic" uses the bare :root / :root[data-dark]
-   selectors defined in style.css — only non-classic themes
+   properties.  "azure" uses the bare :root / :root[data-dark]
+   selectors defined in style.css — only non-azure themes
    live here.
    ========================================================== */
 

@@ -22,3 +22,10 @@ export const CONTACT_TYPE_ICONS: Record<ContactType, string> = {
   bug: "🐛",
   suggestion: "💡",
 };
+
+export const CONTACT_TYPE_BADGE_STYLES: Record<ContactType, { background: string; color: string; borderColor: string }> = {
+  general:    { background: "var(--badge-general-bg)",    color: "var(--badge-general-color)",    borderColor: "var(--badge-general-border)" },
+  enquiry:    { background: "var(--badge-enquiry-bg)",    color: "var(--badge-enquiry-color)",    borderColor: "var(--badge-enquiry-border)" },
+  bug:        { background: "var(--badge-bug-bg)",        color: "var(--badge-bug-color)",        borderColor: "var(--badge-bug-border)" },
+  suggestion: { background: "var(--badge-suggestion-bg)", color: "var(--badge-suggestion-color)", borderColor: "var(--badge-suggestion-border)" },
+};

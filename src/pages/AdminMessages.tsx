@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "../supabaseClient";
 import type { ContactType, ContactMessage } from "../utils/types";
 import { CONTACT_TYPES, CONTACT_TYPE_LABELS } from "../utils/contactConfig";
+import ContactTypeBadge from "../components/ContactTypeBadge";
 import "./AdminMessages.css";
 
 function formatTimestamp(iso: string): string {
@@ -169,11 +170,7 @@ export default function AdminMessages({ userEmail, adminName, onMessagesCountCha
           {msg.is_admin && (
             <span className="msgs-badge msgs-badge--admin">Admin</span>
           )}
-          {!isReply && (
-            <span className={`msgs-badge msgs-badge--${msg.type}`}>
-              {CONTACT_TYPE_LABELS[msg.type]}
-            </span>
-          )}
+          {!isReply && <ContactTypeBadge type={msg.type} />}
           <span className="msgs-sender">
             {msg.name || "Anonymous"}
             {msg.email && (

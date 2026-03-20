@@ -124,6 +124,7 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
         activeView="list"
         onNavigate={v => onNavigate?.(v)}
         onToday={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+        onSearch={onToggleSearch}
         className="event-list-view-switcher"
       />
 
@@ -217,6 +218,8 @@ export default function EventList({ onViewEvent, onNavigate, searchOpen, onToggl
             className="event-list-sidebar-switcher"
             activeView="list"
             onNavigate={v => onNavigate?.(v)}
+            onToday={() => window.scrollTo({ top: 0, behavior: "smooth" })}
+            onSearch={onToggleSearch}
           />
           <FilterPanel
             selectedCategories={selectedCategories}

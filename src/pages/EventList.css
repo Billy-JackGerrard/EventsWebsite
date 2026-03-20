@@ -179,8 +179,10 @@
     width: 170px;
     flex-shrink: 0;
     position: sticky;
-    top: 0;
+    top: var(--navbar-h);
     align-self: flex-start;
+    max-height: calc(100vh - var(--navbar-h));
+    overflow-y: auto;
   }
 
   .event-list-mobile-filters {

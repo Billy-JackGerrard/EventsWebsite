@@ -322,7 +322,7 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
       <div className="calendar-col">
 
         {/* Mobile view switcher */}
-        <ViewSwitcher activeView="calendar" onNavigate={v => { if (v !== "calendar") onNavigate(v); }} onToday={scrollToToday} />
+        <ViewSwitcher activeView="calendar" onNavigate={v => { if (v !== "calendar") onNavigate(v); }} onToday={scrollToToday} onSearch={handleSearchToggle} />
 
         {/* Search bar — shown at top of column when open */}
         {searchOpen && (
@@ -401,6 +401,7 @@ export default function Calendar({ onAddEvent, onViewEvent, onNavigate, searchOp
           activeView="calendar"
           onNavigate={v => { if (v !== "calendar") onNavigate(v); }}
           onToday={scrollToToday}
+          onSearch={handleSearchToggle}
         />
 
         {/* Desktop filter toggle — top of panel column */}

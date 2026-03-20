@@ -373,6 +373,26 @@
         background: rgba(255, 255, 255, 0.1);
         margin: 0;
     }
+
+    /* ThemePicker inside dropdown — full width button */
+    .navbar-links .theme-picker {
+        width: 100%;
+    }
+
+    .navbar-links .theme-picker-btn {
+        width: 100%;
+        min-height: 44px;
+        border-radius: var(--radius-md);
+        justify-content: flex-start;
+        padding: 0.6rem 1rem;
+        gap: 0.6rem;
+    }
+
+    .navbar-links .theme-picker-dropdown {
+        right: 0;
+        left: 0;
+        width: auto;
+    }
 }
 
 /* ── Landscape phone: restore hamburger menu (screen too small for desktop nav) ── */
@@ -484,5 +504,24 @@
         height: 1px;
         background: rgba(255, 255, 255, 0.1);
         margin: 0;
+    }
+
+    .navbar-links .theme-picker {
+        width: 100%;
+    }
+
+    .navbar-links .theme-picker-btn {
+        width: 100%;
+        min-height: 44px;
+        border-radius: var(--radius-md);
+        justify-content: flex-start;
+        padding: 0.6rem 1rem;
+        gap: 0.6rem;
+    }
+
+    .navbar-links .theme-picker-dropdown {
+        right: 0;
+        left: 0;
+        width: auto;
     }
 }

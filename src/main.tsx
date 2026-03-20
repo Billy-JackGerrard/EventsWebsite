@@ -285,9 +285,6 @@ function App() {
         messagesCount={messagesCount}
         adminName={adminName}
         onNavigate={handleNavigate}
-        showCalendarControls={view === "calendar" || view === "list"}
-        onScrollToToday={view === "list" ? () => window.scrollTo({ top: 0, behavior: "smooth" }) : () => scrollToTodayRef.current?.()}
-        onToggleSearch={view === "list" ? handleListToggleSearch : handleToggleSearch}
         theme={theme}
         colorMode={colorMode}
         onSetTheme={setTheme}

@@ -12,9 +12,6 @@ type Props = {
   messagesCount: number;
   adminName?: string | null;
   onNavigate: (view: View) => void;
-  showCalendarControls?: boolean;
-  onScrollToToday?: () => void;
-  onToggleSearch?: () => void;
   theme: ThemeName;
   colorMode: ColorMode;
   onSetTheme: (t: ThemeName) => void;
@@ -28,9 +25,6 @@ export default function Navbar({
   messagesCount,
   adminName,
   onNavigate,
-  showCalendarControls,
-  onScrollToToday,
-  onToggleSearch,
   theme,
   colorMode,
   onSetTheme,
@@ -53,13 +47,6 @@ export default function Navbar({
       </button>
 
       <div className="navbar-right">
-        <ThemePicker
-          theme={theme}
-          colorMode={colorMode}
-          onSetTheme={onSetTheme}
-          onSetColorMode={onSetColorMode}
-        />
-
         <button
           className={`navbar-hamburger${menuOpen ? " navbar-hamburger--open" : ""}`}
           onClick={() => setMenuOpen(o => !o)}
@@ -72,13 +59,6 @@ export default function Navbar({
         </button>
 
         <div className={`navbar-links${menuOpen ? " navbar-links--open" : ""}`}>
-          {showCalendarControls && (
-            <div className="navbar-controls-group">
-              <button className="navbar-link navbar-link--desktop-only" onClick={() => { setMenuOpen(false); onScrollToToday?.(); }}>Today</button>
-              <button className="navbar-link" onClick={() => { setMenuOpen(false); onToggleSearch?.(); }}>Search</button>
-            </div>
-          )}
-
           {/* Primary CTA — replaces Calendar/List/Map on mobile */}
           <button
             className={`navbar-link navbar-link--browse ${["calendar", "list", "map"].includes(currentView) ? "navbar-link--active" : ""}`}
@@ -157,6 +137,13 @@ export default function Navbar({
               )}
             </button>
           )}
+
+          <ThemePicker
+            theme={theme}
+            colorMode={colorMode}
+            onSetTheme={onSetTheme}
+            onSetColorMode={onSetColorMode}
+          />
 
           {isLoggedIn ? (
             <button

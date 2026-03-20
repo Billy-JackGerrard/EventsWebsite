@@ -3,10 +3,12 @@ interface ViewSwitcherProps {
   onNavigate: (view: "calendar" | "list" | "map") => void;
   /** If provided, renders the Today button with this handler. Omit on views where Today has no meaning. */
   onToday?: () => void;
+  /** If provided, renders a Search button with this handler. */
+  onSearch?: () => void;
   className?: string;
 }
 
-export default function ViewSwitcher({ activeView, onNavigate, onToday, className }: ViewSwitcherProps) {
+export default function ViewSwitcher({ activeView, onNavigate, onToday, onSearch, className }: ViewSwitcherProps) {
   const cls = ["calendar-view-switcher", className].filter(Boolean).join(" ");
 
   return (
@@ -14,6 +16,11 @@ export default function ViewSwitcher({ activeView, onNavigate, onToday, classNam
       {onToday && (
         <button className="calendar-view-btn calendar-view-btn--today" onClick={onToday}>
           Today
+        </button>
+      )}
+      {onSearch && (
+        <button className="calendar-view-btn calendar-view-btn--search" onClick={onSearch}>
+          Search
         </button>
       )}
       <div className="calendar-view-switcher-spacer" />

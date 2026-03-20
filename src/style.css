@@ -119,7 +119,7 @@
 
   color-scheme: light;
   color: var(--color-text-primary);
-  background-color: var(--color-bg-page);
+  background: var(--color-bg-page-gradient);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
@@ -162,7 +162,7 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
-  background: var(--color-bg-page-gradient);
+  background: transparent;
 }
 
 #app {
@@ -359,6 +359,8 @@ button:focus-visible {
   transition: border-color var(--duration-fast) var(--ease-out),
               box-shadow var(--duration-fast) var(--ease-out);
   font-family: inherit;
+  width: 100%;
+  box-sizing: border-box;
 }
 
 .form-input:focus {

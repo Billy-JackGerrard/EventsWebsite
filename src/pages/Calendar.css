@@ -547,7 +547,6 @@
 /* ── Event detail full page ── */
 .event-detail-page {
     min-height: calc(100vh - var(--navbar-h));
-    background: var(--color-bg-page);
     display: flex;
     align-items: flex-start;
     justify-content: center;

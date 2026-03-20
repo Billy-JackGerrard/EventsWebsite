@@ -1,6 +1,5 @@
 .admin-home-page {
   min-height: 100vh;
-  background: var(--color-bg-page);
   display: flex;
   justify-content: center;
   padding: 2rem;

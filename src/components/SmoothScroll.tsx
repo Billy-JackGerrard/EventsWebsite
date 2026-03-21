@@ -12,7 +12,15 @@ export function SmoothScroll({ children }: SmoothScrollProps) {
     const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     if (prefersReduced) return
 
-    const lenis = new Lenis({ lerp: 0.075, smoothWheel: true, touchMultiplier: 1.5 })
+    const lenis = new Lenis({
+      lerp: 0.075,
+      smoothWheel: true,
+      touchMultiplier: 1.5,
+      prevent: (node: Element) => {
+        const overflowY = getComputedStyle(node).overflowY
+        return overflowY === 'auto' || overflowY === 'scroll'
+      },
+    })
     lenisRef.current = lenis
 
     let rafId: number

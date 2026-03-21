@@ -767,12 +767,12 @@
    ===================================================== */
 :root[data-theme="parchment"] {
     --color-bg-page:    #F8F4E3;
-    --color-bg-card:    #FDFBF2;
+    --color-bg-card:    #FAF4E2;
     --color-bg-inset:   #EDE8D2;
     --color-bg-header:  #2D6A9F;
     --color-bg-error:   #FFF0EE;
 
-    --color-border:        #CFC5A5;
+    --color-border:        #B8AA80;
     --color-border-subtle: #E5E0CC;
 
     --color-accent: #2D6A9F;
@@ -811,10 +811,10 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A0E18 0%, #142233 35%, #1E3D5C 65%, #2D6A9F 100%);
 
     --color-calendar-label-bg:   rgba(237, 232, 210, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #F2EDD8 0%, #F8F4E3 50%, #e4dcb8 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #EDE7D0 0%, #F2EDD8 50%, #D9D0A8 100%);
 
-    --color-bg-panel-gradient: linear-gradient(180deg, #f2edd8 0%, #fdfbf2 100%);
-    --color-bg-card-gradient:  linear-gradient(160deg, #f5f0e0 0%, #fdfbf2 50%);
+    --color-bg-panel-gradient: linear-gradient(180deg, #eae4cc 0%, #faf4e2 100%);
+    --color-bg-card-gradient:  linear-gradient(160deg, #f2ece0 0%, #faf4e2 50%);
 
     /* Generous, soft rounding — less visually jarring */
     --radius-sm: 8px;

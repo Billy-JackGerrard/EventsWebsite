@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { atcb_action } from "add-to-calendar-button";
 import { motion } from "framer-motion";
 import type { Event } from "../../utils/types";
@@ -62,8 +63,30 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
     !!event.contact_name ||
     (!!event.contact_email && !bookingIsContact);
 
+  const touchStartX = useRef(0);
+  const touchStartY = useRef(0);
+
+  const handleTouchStart = (e: React.TouchEvent) => {
+    if (e.touches.length > 1) return;
+    touchStartX.current = e.touches[0].clientX;
+    touchStartY.current = e.touches[0].clientY;
+  };
+
+  const handleTouchEnd = (e: React.TouchEvent) => {
+    const dx = touchStartX.current - e.changedTouches[0].clientX;
+    const dy = Math.abs(touchStartY.current - e.changedTouches[0].clientY);
+    touchStartX.current = 0;
+    touchStartY.current = 0;
+    if (dx >= 60 && dy <= 40) onClose();
+  };
+
+  const handleTouchCancel = () => {
+    touchStartX.current = 0;
+    touchStartY.current = 0;
+  };
+
   return (
-    <motion.div className="event-detail-card" variants={fadeSlideUp} initial="hidden" animate="show">
+    <motion.div className="event-detail-card" variants={fadeSlideUp} initial="hidden" animate="show" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd} onTouchCancel={handleTouchCancel}>
       <div className="event-detail-close-row">
         <motion.button className="event-detail-close" onClick={onClose} aria-label="Back" whileTap={scaleSpring.tap}><span className="event-detail-close-arrow">←</span> Back</motion.button>
         {isLoggedIn && (

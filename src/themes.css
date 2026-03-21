@@ -589,15 +589,15 @@
 
     --color-text-primary: #D1FAE5;
     --color-text-dark:    #ffffff;
-    --color-text-muted:   #6EE7B7;
+    --color-text-muted:   #5EEAD4;
     --color-text-error:   #f87171;
-    --color-text-link:    #6EE7B7;
+    --color-text-link:    #5EEAD4;
 
     --color-bg-accent-tint:        rgba(52, 211, 153, 0.1);
     --color-border-accent:         rgba(52, 211, 153, 0.22);
     --color-border-accent-strong:  rgba(52, 211, 153, 0.38);
     --color-bg-today:              rgba(5, 150, 105, 0.22);
-    --color-bg-surface-raised:     rgba(110, 231, 183, 0.08);
+    --color-bg-surface-raised:     rgba(94, 234, 212, 0.08);
 
     --color-text-success: #86EFAC;
     --color-border-error: rgba(248, 113, 113, 0.3);
@@ -610,7 +610,7 @@
     --shadow-lg: 0 4px 12px rgba(0,0,0,0.28), 0 12px 32px rgba(0,0,0,0.38);
     --shadow-xl: 0 8px 24px rgba(0,0,0,0.32), 0 24px 48px rgba(0,0,0,0.42);
 
-    --color-accent-gradient: linear-gradient(135deg, #34D399 0%, #6EE7B7 50%, #A7F3D0 100%);
+    --color-accent-gradient: linear-gradient(135deg, #34D399 0%, #2DD4BF 50%, #A7F3D0 100%);
 
     --color-shadow-accent: 52, 211, 153;
 
@@ -620,14 +620,15 @@
     --color-navbar-browse-border:rgba(52, 211, 153, 0.3);
 
     --color-hero-gradient:       linear-gradient(135deg, #010D08 0%, #021A12 20%, #064E3B 45%, #065F46 70%, #064E3B 100%);
+    --color-hero-orb-2:          #2DD4BF;
     --color-hero-shimmer:        #A7F3D0;
-    --color-cta-text:            #6EE7B7;
+    --color-cta-text:            #5EEAD4;
     --color-bottom-cta-gradient: linear-gradient(135deg, #010D08 0%, #021A12 25%, #064E3B 55%, #065F46 100%);
 
     --color-calendar-label-bg:   rgba(2, 26, 18, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #083020 0%, #021A12 40%, #071e12 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #062e28 0%, #021A12 40%, #071e12 100%);
 
-    --color-bg-panel-gradient: linear-gradient(180deg, #083020 0%, #0a2e1f 100%);
+    --color-bg-panel-gradient: linear-gradient(180deg, #083c30 0%, #021a12 100%);
     --color-bg-card-gradient:  linear-gradient(160deg, #0e4832 0%, #103d28 55%);
 }
 

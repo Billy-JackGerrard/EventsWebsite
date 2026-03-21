@@ -62,7 +62,31 @@ Event submission feedback loop — A confirmation email to event submitters (via
 Event images — Even a simple category-based placeholder system would improve the visual experience significantly before committing to full image uploads.
 
 
+1.
 
+a lot of the themes on dark modes just turn black at the bottom end, rather than a different colour or more intense shade of the colour etc. review these.
+Also in the calendar view on desktop, the panel on the right hand side doesnt have a gradient? it's still technically a background. Same for the left panel of the map view on desktop.
+Hell, could even apply a gradient to some of the cards, such as filters and event details page, or even a sight gradient to the calendar itself. What do you think?
+
+
+
+2.
+I feel like a lot of the themes, such as rose on dark mode, doesn't offer much contrast between the cards and the background (esp in list view) and they can start to feel a bit 'much'.
+Go through them all and give feedback on whether people will like them or not.
+
+
+3.
+MCP:
+https://github.com/modelcontextprotocol/servers/tree/HEAD/src/sequentialthinking
+
+https://github.com/obra/superpowers 
+
+4.
+When I click on recurring event in submit event, theres a black rectangle border. I don't like this.
+In addition, the recurring section/box css is not consistent with the rest of the page/site. the font is different, it looks rectangular and funky
+
+
+5.
 Go through all the css etc, and think about how to improve the entire user experience as a whole.
 think visibility, consistency, interactions.
 

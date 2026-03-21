@@ -126,37 +126,12 @@ button:focus-visible {
 
 /* =====================================================
    PAGE TRANSITIONS
+   — Handled by Framer Motion (AnimatePresence + pageVariants in main.tsx).
+   — startViewTransition and ::view-transition-* removed to avoid conflicts.
    ===================================================== */
-@keyframes page-fade-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
 .page-view {
-  animation: page-fade-in 0.3s var(--ease-out);
   /* Extra bottom space so the fixed privacy banner never covers content */
   padding-bottom: var(--privacy-banner-height, 0px);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .page-view { animation: none; }
-}
-
-/* View Transitions API — progressive enhancement for page navigation */
-::view-transition-old(root) {
-  animation: 0.2s var(--ease-out) both fade-out;
-}
-
-::view-transition-new(root) {
-  animation: 0.3s var(--ease-out) both fade-in;
-}
-
-@keyframes fade-out {
-  to { opacity: 0; transform: translateY(-4px); }
-}
-
-@keyframes fade-in {
-  from { opacity: 0; transform: translateY(8px); }
 }
 
 /* =====================================================
@@ -443,12 +418,7 @@ button:focus-visible {
   animation: error-slide-in 0.3s var(--ease-out);
 }
 
-/* Success pop animation */
-@keyframes success-pop {
-  0%   { transform: scale(0); opacity: 0; }
-  50%  { transform: scale(1.2); }
-  100% { transform: scale(1); opacity: 1; }
-}
+/* Success pop animation handled by Framer Motion spring (spring scale in AddEvent, Contact) */
 
 /* Scroll-reveal base — used with useInView hook */
 .scroll-reveal {

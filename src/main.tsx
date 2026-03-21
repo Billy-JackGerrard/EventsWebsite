@@ -3,7 +3,10 @@ import './themes.css'
 
 import { StrictMode, useState, useEffect, useCallback, useRef } from "react";
 import { createRoot } from "react-dom/client";
+import { AnimatePresence, MotionConfig, motion } from "framer-motion";
 import ErrorBoundary from "./components/ErrorBoundary";
+import { SmoothScroll } from "./components/SmoothScroll.tsx";
+import { pageVariants } from "./utils/motion.ts";
 import { supabase } from "./supabaseClient";
 import { useAuth } from "./hooks/useAuth";
 import { useTheme } from "./hooks/useTheme";
@@ -215,11 +218,7 @@ function App() {
     const targetPath = PAGE_PATHS[v] ?? "/";
     if (window.location.pathname !== targetPath) window.history.pushState({}, "", targetPath);
 
-    if ((document as any).startViewTransition) {
-      (document as any).startViewTransition(() => setView(v));
-    } else {
-      setView(v);
-    }
+    setView(v);
   };
 
   const handleEditEvent = (event: Event, returnTo: View = "calendar") => {
@@ -278,7 +277,8 @@ function App() {
 
   // ── Render ─────────────────────────────────────────────────────────────
   return (
-    <>
+    <MotionConfig reducedMotion="user">
+      <SmoothScroll>
       <PrivacyBanner onNavigate={handleNavigate} />
       <Navbar
         currentView={view}
@@ -292,7 +292,16 @@ function App() {
         onSetTheme={setTheme}
         onSetColorMode={setColorMode}
       />
-      <div key={view} className="page-view" style={{ paddingTop: "var(--navbar-h)" }}>
+      <AnimatePresence mode="wait" initial={false}>
+      <motion.div
+        key={view}
+        className="page-view"
+        style={{ paddingTop: "var(--navbar-h)" }}
+        variants={pageVariants}
+        initial="hidden"
+        animate="show"
+        exit="exit"
+      >
         {view === "calendar" && (
           <Calendar
             onAddEvent={handleAddEventFromCalendar}
@@ -371,8 +380,10 @@ function App() {
           />
         )}
         {view === "privacy" && <PrivacyPolicy />}
-      </div>
-    </>
+      </motion.div>
+      </AnimatePresence>
+      </SmoothScroll>
+    </MotionConfig>
   );
 }
 

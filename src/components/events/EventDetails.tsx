@@ -1,10 +1,12 @@
 import { atcb_action } from "add-to-calendar-button";
+import { motion } from "framer-motion";
 import type { Event } from "../../utils/types";
 import { CATEGORY_COLOURS, formatAddress } from "../../utils/types";
 import { formatDateTimeRange, toLocalDateKey, formatTime } from "../../utils/dates";
 import { humaniseRule } from "../../utils/recurrence";
 import { useCopyToClipboard } from "../../hooks/useCopyToClipboard";
 import { getVideoDisplayInfo } from "../../utils/videoUtils";
+import { fadeSlideUp, scaleSpring } from "../../utils/motion";
 import "./EventDetails.css";
 
 
@@ -61,18 +63,18 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
     (!!event.contact_email && !bookingIsContact);
 
   return (
-    <div className="event-detail-card">
+    <motion.div className="event-detail-card" variants={fadeSlideUp} initial="hidden" animate="show">
       <div className="event-detail-close-row">
-        <button className="event-detail-close" onClick={onClose} aria-label="Back"><span className="event-detail-close-arrow">←</span> Back</button>
+        <motion.button className="event-detail-close" onClick={onClose} aria-label="Back" whileTap={scaleSpring.tap}><span className="event-detail-close-arrow">←</span> Back</motion.button>
         {isLoggedIn && (
           <div className="event-detail-admin-actions">
-            <button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event">
+            <motion.button className="event-detail-edit-btn" onClick={() => onEdit(event)} aria-label="Edit event" whileTap={scaleSpring.tap}>
               ✎ Edit
-            </button>
+            </motion.button>
             {onDelete && (
-              <button className="event-detail-delete-btn" onClick={() => onDelete(event)} aria-label="Delete event">
+              <motion.button className="event-detail-delete-btn" onClick={() => onDelete(event)} aria-label="Delete event" whileTap={scaleSpring.tap}>
                 ✕ Delete
-              </button>
+              </motion.button>
             )}
           </div>
         )}
@@ -279,6 +281,6 @@ export default function EventDetailCard({ event, isLoggedIn, onClose, onEdit, on
           {actions}
         </div>
       )}
-    </div>
+    </motion.div>
   );
 }

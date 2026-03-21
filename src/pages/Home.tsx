@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef } from "react";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { supabase } from "../supabaseClient";
 import type { Section } from "../utils/types";
 import { useInView } from "../hooks/useInView";
@@ -194,18 +195,13 @@ export default function Home({ isLoggedIn, onEdit, onNavigate }: Props) {
     });
   }, []);
 
-  /* Subtle parallax fade for hero content on scroll */
-  useEffect(() => {
-    const hero = heroRef.current;
-    if (!hero) return;
-    const onScroll = () => {
-      const y = window.scrollY;
-      hero.style.setProperty("--scroll-y", `${y * 0.3}px`);
-      hero.style.setProperty("--scroll-opacity", `${Math.max(0, 1 - y / 600)}`);
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  /* Parallax — scroll-linked transforms on hero orbs and content */
+  const { scrollYProgress } = useScroll({ target: heroRef, offset: ["start start", "end start"] });
+  const orb1Y = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const orb2Y = useTransform(scrollYProgress, [0, 1], [0, 60]);
+  const orb3Y = useTransform(scrollYProgress, [0, 1], [0, -40]);
+  const heroOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const heroContentY = useTransform(scrollYProgress, [0, 0.6], [0, -35]);
 
   /* ── Loading state ── */
   if (loading) {
@@ -241,9 +237,15 @@ export default function Home({ isLoggedIn, onEdit, onNavigate }: Props) {
       {/* ── Hero ─────────────────────────────────────────── */}
       <div className="home-hero" ref={heroRef}>
         <div className="home-hero-bg">
-          <div className="home-hero-orb home-hero-orb--1" />
-          <div className="home-hero-orb home-hero-orb--2" />
-          <div className="home-hero-orb home-hero-orb--3" />
+          <motion.div style={{ y: orb1Y, position: "absolute", inset: 0, pointerEvents: "none" }}>
+            <div className="home-hero-orb home-hero-orb--1" />
+          </motion.div>
+          <motion.div style={{ y: orb2Y, position: "absolute", inset: 0, pointerEvents: "none" }}>
+            <div className="home-hero-orb home-hero-orb--2" />
+          </motion.div>
+          <motion.div style={{ y: orb3Y, position: "absolute", inset: 0, pointerEvents: "none" }}>
+            <div className="home-hero-orb home-hero-orb--3" />
+          </motion.div>
           <div className="home-hero-mesh" />
         </div>
 
@@ -251,7 +253,13 @@ export default function Home({ isLoggedIn, onEdit, onNavigate }: Props) {
           <button className="home-edit-btn" onClick={onEdit}>Edit</button>
         )}
 
-        <div className="home-hero-inner">
+        <motion.div
+          className="home-hero-inner"
+          style={{ opacity: heroOpacity, y: heroContentY }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+        >
           <span className="home-hero-badge">
             <span className="home-hero-badge-dot" />
             Edinburgh BSL Community
@@ -280,7 +288,7 @@ export default function Home({ isLoggedIn, onEdit, onNavigate }: Props) {
               </svg>
             </button>
           </div>
-        </div>
+        </motion.div>
 
         <div className="home-scroll-indicator" aria-hidden="true">
           <div className="home-scroll-dot" />

@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { supabase } from "../supabaseClient";
 import type { ContactType } from "../utils/types";
 import { CONTACT_TYPES, CONTACT_TYPE_LABELS, CONTACT_TYPE_PLACEHOLDERS, CONTACT_TYPE_ICONS } from "../utils/contactConfig";
 import { isValidEmail } from "../utils/validation";
+import { scaleSpring } from "../utils/motion";
 import "./Contact.css";
 
 export default function Contact() {
@@ -57,17 +59,30 @@ export default function Contact() {
       <div className="contact-page">
         <div className="page-card contact-card">
           <div className="contact-success">
-            <svg className="contact-success-icon" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="var(--color-accent)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <motion.svg
+              className="contact-success-icon"
+              width="48"
+              height="48"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="var(--color-accent)"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              aria-hidden="true"
+              animate={{ scale: [0, 1.15, 1], opacity: [0, 1, 1] }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+            >
               <circle cx="12" cy="12" r="9" />
               <polyline points="9 12 11 14 15 10" />
-            </svg>
+            </motion.svg>
             <h2 className="contact-title">Message sent</h2>
             <p className="contact-success-msg">
               Thanks for getting in touch — we'll take a look and get back to you if needed.
             </p>
-            <button className="btn-primary contact-btn--primary" onClick={reset}>
+            <motion.button className="btn-primary contact-btn--primary" onClick={reset} whileTap={scaleSpring.tap}>
               Send Another Message
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>

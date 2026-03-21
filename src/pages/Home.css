@@ -91,13 +91,11 @@
 }
 
 /* ── Hero inner content ── */
+/* Entry animation + scroll-linked opacity/y handled by Framer Motion (motion.div in Home.tsx) */
 .home-hero-inner {
   position: relative;
   z-index: 1;
   max-width: 760px;
-  animation: hero-fade-in 1s var(--ease-out);
-  transform: translateY(calc(var(--scroll-y, 0px) * -0.5));
-  opacity: var(--scroll-opacity, 1);
 }
 
 @keyframes hero-fade-in {

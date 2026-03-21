@@ -86,11 +86,11 @@
   padding: 1rem 0;
 }
 
+/* Entry animation handled by Framer Motion (spring scale in AddEvent.tsx) */
 .addevent-success-icon {
   font-size: 3rem;
   color: var(--color-accent);
   margin-bottom: 1rem;
-  animation: success-pop 0.4s var(--ease-out);
 }
 
 .addevent-success-msg {

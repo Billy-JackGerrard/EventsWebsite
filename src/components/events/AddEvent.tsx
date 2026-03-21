@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import { supabase } from "../../supabaseClient";
 import { useTurnstile } from "../../hooks/useTurnstile";
 import EventForm from "./EventForm";
 import type { EventFormRow } from "./EventForm";
 import type { Event } from "../../utils/types";
+import { scaleSpring } from "../../utils/motion";
 import "./shared-card.css";
 import "./AddEvent.css";
 
@@ -108,7 +110,11 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false }:
       <div className="addevent-page">
         <div className="page-card addevent-card">
           <div className="addevent-success">
-            <div className="addevent-success-icon">✓</div>
+            <motion.div
+              className="addevent-success-icon"
+              animate={{ scale: [0, 1.15, 1], opacity: [0, 1, 1] }}
+              transition={{ type: "spring", stiffness: 400, damping: 15 }}
+            >✓</motion.div>
             <h2 className="addevent-title">
               {isRecurring ? "Recurring Event Submitted!" : "Event Added!"}
             </h2>
@@ -123,9 +129,9 @@ export default function AddEvent({ prefillDate, prefillEvent, isAdmin = false }:
                   : "Thank you! Your event has been submitted and is awaiting approval from an admin."
               )}
             </p>
-            <button className="btn-primary" onClick={resetForm}>
+            <motion.button className="btn-primary" onClick={resetForm} whileTap={scaleSpring.tap}>
               Add Another Event
-            </button>
+            </motion.button>
           </div>
         </div>
       </div>

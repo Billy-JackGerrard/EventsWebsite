@@ -1,4 +1,6 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { motion } from "framer-motion";
+import { scaleSpring } from "../../utils/motion";
 import { expandRecurrences, DEFAULT_RULE } from "../../utils/recurrence";
 import type { RecurrenceRule } from "../../utils/recurrence";
 import { isoToLocal, getSoftMinDateTime, formatLocalDateTime } from "../../utils/dates";
@@ -552,19 +554,21 @@ export default function EventForm({
 
       <div className="eventform-actions">
         {onCancel && (
-          <button
+          <motion.button
             className="btn-primary eventform-btn--cancel"
             onClick={onCancel}
             disabled={submitting}
             type="button"
+            whileTap={scaleSpring.tap}
           >
             Cancel
-          </button>
+          </motion.button>
         )}
-        <button
+        <motion.button
           className="btn-primary"
           disabled={submitting || submitDisabled || videoUploading || !!(finishesAt && startsAt && finishesAt <= startsAt)}
           type="submit"
+          whileTap={scaleSpring.tap}
         >
           {submitting ? (
             <span className="btn-loading">
@@ -572,7 +576,7 @@ export default function EventForm({
               {submittingLabel}
             </span>
           ) : submitLabel}
-        </button>
+        </motion.button>
       </div>
     </form>
   );

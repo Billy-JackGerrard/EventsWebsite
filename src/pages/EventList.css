@@ -276,30 +276,7 @@
   }
 }
 
-/* Staggered item entrance */
-@keyframes item-slide-in {
-  from { opacity: 0; transform: translateY(12px); }
-  to   { opacity: 1; transform: translateY(0); }
-}
-
-.event-list-month.in-view .event-list-item-wrap {
-  animation: item-slide-in var(--duration-normal) var(--ease-out) both;
-}
-
-.event-list-month.in-view .event-list-item-wrap:nth-child(1) { animation-delay: 0s; }
-.event-list-month.in-view .event-list-item-wrap:nth-child(2) { animation-delay: 0.05s; }
-.event-list-month.in-view .event-list-item-wrap:nth-child(3) { animation-delay: 0.1s; }
-.event-list-month.in-view .event-list-item-wrap:nth-child(4) { animation-delay: 0.15s; }
-.event-list-month.in-view .event-list-item-wrap:nth-child(5) { animation-delay: 0.2s; }
-.event-list-month.in-view .event-list-item-wrap:nth-child(6) { animation-delay: 0.25s; }
-.event-list-month.in-view .event-list-item-wrap:nth-child(7) { animation-delay: 0.3s; }
-.event-list-month.in-view .event-list-item-wrap:nth-child(n+8) { animation-delay: 0.35s; }
-
-@media (prefers-reduced-motion: reduce) {
-  .event-list-month.in-view .event-list-item-wrap {
-    animation: none;
-  }
-}
+/* Staggered item entrance handled by Framer Motion (staggerContainer + fadeSlideUp in EventList.tsx) */
 
 .event-list-month-heading {
   font-family: var(--font-heading);

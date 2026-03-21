@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, useCallback } from "react";
+import { motion } from "framer-motion";
 import type { Event } from "../utils/types";
 import { CATEGORY_COLOURS } from "../utils/types";
 import { MONTHS, formatDateTimeRange } from "../utils/dates";
@@ -11,6 +12,7 @@ import { useInView } from "../hooks/useInView";
 import FilterPanel from "../components/FilterPanel";
 import SearchBar from "../components/SearchBar";
 import ViewSwitcher from "../components/ViewSwitcher";
+import { fadeSlideUp, staggerContainer, scaleSpring } from "../utils/motion";
 import "./EventList.css";
 
 type Props = {
@@ -44,12 +46,20 @@ function MonthSection({ group, onViewEvent }: { group: MonthGroup; onViewEvent: 
   return (
     <section ref={ref as React.Ref<HTMLElement>} className={`event-list-month${isInView ? " in-view" : ""}`}>
       <h2 className="event-list-month-heading">{group.label}</h2>
-      <div className="event-list-items">
+      <motion.div
+        className="event-list-items"
+        variants={staggerContainer}
+        initial="hidden"
+        whileInView="show"
+        viewport={{ once: true }}
+      >
         {group.events.map(ev => (
-          <div key={ev.id} className="event-list-item-wrap">
-            <button
+          <motion.div key={ev.id} className="event-list-item-wrap" variants={fadeSlideUp}>
+            <motion.button
               className="event-list-item"
               onClick={() => onViewEvent(ev)}
+              whileHover={scaleSpring.hover}
+              whileTap={scaleSpring.tap}
             >
               <span
                 className="event-list-dot"
@@ -63,10 +73,10 @@ function MonthSection({ group, onViewEvent }: { group: MonthGroup; onViewEvent: 
                 <span className="event-list-location">📍 {ev.location}</span>
               )}
               <span className="event-list-chevron">▶</span>
-            </button>
-          </div>
+            </motion.button>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </section>
   );
 }

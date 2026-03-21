@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { motion } from "framer-motion";
 import type { View } from "../utils/views";
 import type { ThemeName } from "../hooks/useTheme";
 import type { ColorMode } from "../hooks/useTheme";
 import ThemePicker from "./ThemePicker";
+import { bslWave } from "../utils/motion";
 import "./Navbar.css";
 
 type Props = {
@@ -39,12 +41,25 @@ export default function Navbar({
 
   return (
     <nav className="navbar">
-      <button className="navbar-brand" onClick={() => navigate("home")} type="button">
-        <img className="navbar-logo-icon" src="https://img.icons8.com/emoji/48/love-you-gesture-emoji.png" alt="love-you-gesture-emoji" width="32" height="32" />
+      <motion.button
+        className="navbar-brand"
+        onClick={() => navigate("home")}
+        type="button"
+        whileTap={{ scale: 0.97 }}
+      >
+        <motion.img
+          className="navbar-logo-icon"
+          src="https://img.icons8.com/emoji/48/love-you-gesture-emoji.png"
+          alt="love-you-gesture-emoji"
+          width="32"
+          height="32"
+          animate={bslWave.animate}
+          whileHover={bslWave.hover}
+        />
         <span className="navbar-brand-text">
           Edinburgh BSL <span className="navbar-brand-sub">Community</span>
         </span>
-      </button>
+      </motion.button>
 
       <div className="navbar-right">
         <button

@@ -67,9 +67,9 @@
     gap: 0.75rem;
   }
 
+  /* Entry animation handled by Framer Motion (spring scale in Contact.tsx) */
   .contact-success-icon {
     flex-shrink: 0;
-    animation: success-pop 0.4s var(--ease-out);
   }
 
   .contact-success-msg {

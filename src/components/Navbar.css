@@ -393,6 +393,24 @@
         left: 0;
         width: auto;
     }
+
+    /* Stagger slide-in for nav items when mobile menu opens */
+    @keyframes nav-link-in {
+        from { transform: translateX(-10px); opacity: 0.4; }
+        to   { transform: translateX(0); opacity: 1; }
+    }
+
+    .navbar-links--open > * {
+        animation: nav-link-in 0.22s var(--ease-out) both;
+    }
+    .navbar-links--open > *:nth-child(1) { animation-delay: 0.06s; }
+    .navbar-links--open > *:nth-child(2) { animation-delay: 0.10s; }
+    .navbar-links--open > *:nth-child(3) { animation-delay: 0.14s; }
+    .navbar-links--open > *:nth-child(4) { animation-delay: 0.18s; }
+    .navbar-links--open > *:nth-child(5) { animation-delay: 0.22s; }
+    .navbar-links--open > *:nth-child(6) { animation-delay: 0.26s; }
+    .navbar-links--open > *:nth-child(7) { animation-delay: 0.30s; }
+    .navbar-links--open > *:nth-child(8) { animation-delay: 0.34s; }
 }
 
 /* ── Landscape phone: restore hamburger menu (screen too small for desktop nav) ── */

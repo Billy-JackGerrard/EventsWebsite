@@ -83,6 +83,10 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
   const [filtersCollapsed, setFiltersCollapsed] = useState(true);
   const [retryCount, setRetryCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const [dragOffset, setDragOffset] = useState(0);
+  const [isDragging, setIsDragging] = useState(false);
+  const touchStartXRef = useRef<number | null>(null);
+  const currentDragOffsetRef = useRef(0);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchWrapRef = useRef<HTMLDivElement>(null);
 
@@ -297,6 +301,37 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
     });
   }, []);
 
+  const handleStripTouchStart = useCallback((e: React.TouchEvent) => {
+    touchStartXRef.current = e.touches[0].clientX;
+    currentDragOffsetRef.current = 0;
+    setIsDragging(true);
+    setDragOffset(0);
+  }, []);
+
+  const handleStripTouchMove = useCallback((e: React.TouchEvent) => {
+    if (touchStartXRef.current === null) return;
+    const offset = e.touches[0].clientX - touchStartXRef.current;
+    currentDragOffsetRef.current = offset;
+    setDragOffset(offset);
+  }, []);
+
+  const handleStripTouchEnd = useCallback(() => {
+    if (touchStartXRef.current === null) return;
+    const offset = currentDragOffsetRef.current;
+    setIsDragging(false);
+    if (offset < -60) goToNextMonth();
+    else if (offset > 60) goToPrevMonth();
+    touchStartXRef.current = null;
+    currentDragOffsetRef.current = 0;
+    setDragOffset(0);
+  }, [goToNextMonth, goToPrevMonth]);
+
+  const STRIP_OFFSETS = [-3, -2, -1, 0, 1, 2, 3] as const;
+  const stripMonths = STRIP_OFFSETS.map(offset => {
+    const d = new Date(viewYear, viewMonth + offset, 1);
+    return { month: d.getMonth(), year: d.getFullYear(), offset };
+  });
+
   const goToHome = useCallback(() => {
     if (!navigator.geolocation) {
       mapRef.current?.setView(EDINBURGH_CENTER, DEFAULT_ZOOM);
@@ -320,24 +355,44 @@ export default function MapView({ onViewEvent, onNavigate, searchOpen, onToggleS
       <ViewSwitcher activeView="map" onNavigate={v => onNavigate?.(v)} onHome={goToHome} onSearch={onToggleSearch} />
 
       <div className="map-toolbar">
-        <div className="map-month-nav">
-          <button className="map-month-btn" onClick={goToPrevMonth} aria-label="Previous month">&lsaquo;</button>
-          <span className="map-month-label">{MONTHS[viewMonth]} {viewYear}</span>
-          <button className="map-month-btn" onClick={goToNextMonth} aria-label="Next month">&rsaquo;</button>
-          <button className="map-home-btn" onClick={goToHome} aria-label="Go to my location">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-              <polyline points="9 22 9 12 15 12 15 22"/>
-            </svg>
-            Home
-          </button>
-          <ViewSwitcher
-            className="map-toolbar-view-switcher"
-            activeView="map"
-            onNavigate={v => onNavigate?.(v)}
-            onSearch={onToggleSearch}
-          />
+        <div
+          className="map-month-strip-wrap"
+          onTouchStart={handleStripTouchStart}
+          onTouchMove={handleStripTouchMove}
+          onTouchEnd={handleStripTouchEnd}
+        >
+          <div
+            className="map-month-strip"
+            style={{ transform: `translateX(${dragOffset}px)`, transition: isDragging ? 'none' : 'transform 0.22s ease' }}
+          >
+            {stripMonths.map(item => (
+              <button
+                key={`${item.year}-${item.month}`}
+                className={`map-month-item${item.offset === 0 ? ' map-month-item--active' : ''}${Math.abs(item.offset) === 1 ? ' map-month-item--near' : ''}`}
+                onClick={() => { if (Math.abs(currentDragOffsetRef.current) < 8) { setViewMonth(item.month); setViewYear(item.year); } }}
+                tabIndex={item.offset === 0 ? 0 : -1}
+                aria-label={`${MONTHS[item.month]} ${item.year}`}
+                aria-current={item.offset === 0 ? 'date' : undefined}
+              >
+                <span className="map-month-item-name">{MONTHS[item.month]}</span>
+                {item.year !== viewYear && <span className="map-month-item-year">{item.year}</span>}
+              </button>
+            ))}
+          </div>
         </div>
+        <button className="map-home-btn" onClick={goToHome} aria-label="Go to my location">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
+            <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+            <polyline points="9 22 9 12 15 12 15 22"/>
+          </svg>
+          Home
+        </button>
+        <ViewSwitcher
+          className="map-toolbar-view-switcher"
+          activeView="map"
+          onNavigate={v => onNavigate?.(v)}
+          onSearch={onToggleSearch}
+        />
       </div>
 
       {searchOpen && (

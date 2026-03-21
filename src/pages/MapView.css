@@ -11,50 +11,80 @@
   z-index: 1;
 }
 
-/* ── Toolbar: month nav + filters ── */
+/* ── Toolbar: month strip + home + view switcher ── */
 .map-toolbar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.55rem 1rem;
-  background: var(--color-navbar-glass);
+  gap: 0.5rem;
+  padding: 0.45rem 0.75rem;
+  background: var(--color-bg-panel-gradient);
   border-bottom: 1px solid var(--color-border-subtle);
   z-index: 10;
   flex-shrink: 0;
 }
 
-.map-month-nav {
+/* ── Swipeable month strip ── */
+.map-month-strip-wrap {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
   display: flex;
   align-items: center;
-  gap: 0.25rem;
+  justify-content: center;
+  cursor: grab;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: pan-x;
+}
+
+.map-month-strip-wrap:active {
+  cursor: grabbing;
+}
+
+.map-month-strip {
+  display: flex;
+  align-items: center;
+  will-change: transform;
+}
+
+.map-month-item {
   flex-shrink: 0;
-}
-
-.map-month-btn {
-  background: none;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  font-size: 1.2rem;
-  line-height: 1;
-  padding: 0.2rem 0.55rem;
+  width: 110px;
+  padding: 0.15rem 0;
+  background: transparent;
+  border: none;
   cursor: pointer;
-  color: var(--color-text-primary);
-  transition: all 0.15s var(--ease-out);
-}
-
-.map-month-btn:hover {
-  background: var(--color-bg-accent-tint);
-  border-color: var(--color-accent);
-  color: var(--color-accent);
-}
-
-.map-month-label {
   font-family: var(--font-heading);
-  font-weight: 700;
-  font-size: 0.95rem;
-  min-width: 130px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--color-text-muted);
+  opacity: 0.35;
   text-align: center;
+  line-height: 1.3;
+  transition: opacity 0.15s;
+}
+
+.map-month-item--near {
+  opacity: 0.6;
+}
+
+.map-month-item--active {
+  opacity: 1;
+  font-size: 0.95rem;
+  font-weight: 700;
   color: var(--color-text-primary);
+  pointer-events: none;
+}
+
+.map-month-item-name {
+  display: block;
+}
+
+.map-month-item-year {
+  display: block;
+  font-size: 0.62rem;
+  font-weight: 500;
+  opacity: 0.75;
 }
 
 .map-home-btn {
@@ -132,7 +162,7 @@
   width: 235px;
   flex-shrink: 0;
   overflow-y: auto;
-  background: var(--color-bg-panel-gradient);
+  background: var(--color-bg-card-gradient);
   border-right: 1px solid var(--color-border-subtle);
   padding: 0.75rem;
 }
@@ -338,15 +368,19 @@
     left: 0;
     right: 0;
     z-index: calc(var(--z-dropdown) + 1);
-    background: var(--color-navbar-glass);
+    background: var(--color-bg-panel-gradient);
     border-top: 1px solid var(--color-border);
     padding: 0.75rem 1rem;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
   }
 
-  .map-month-label {
-    font-size: 0.85rem;
-    min-width: 110px;
+  .map-month-item {
+    width: 90px;
+    font-size: 0.75rem;
+  }
+
+  .map-month-item--active {
+    font-size: 0.88rem;
   }
 
   .map-online-badge {
@@ -378,7 +412,7 @@
     left: 0;
     right: 0;
     z-index: calc(var(--z-dropdown) + 1);
-    background: var(--color-navbar-glass);
+    background: var(--color-bg-panel-gradient);
     border-top: 1px solid var(--color-border);
     padding: 0.75rem 1rem;
     padding-bottom: calc(0.75rem + env(safe-area-inset-bottom));
@@ -389,9 +423,13 @@
     gap: 0.4rem;
   }
 
-  .map-month-label {
-    font-size: 0.85rem;
-    min-width: 110px;
+  .map-month-item {
+    width: 90px;
+    font-size: 0.75rem;
+  }
+
+  .map-month-item--active {
+    font-size: 0.88rem;
   }
 
   .map-online-badge {

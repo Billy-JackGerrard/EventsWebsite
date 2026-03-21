@@ -5,7 +5,7 @@ export const CONTACT_TYPES: ContactType[] = ["general", "enquiry", "bug", "sugge
 export const CONTACT_TYPE_LABELS: Record<ContactType, string> = {
   general: "General",
   enquiry: "Enquiry",
-  bug: "Bug Report",
+  bug: "Bug",
   suggestion: "Suggestion",
 };
 
@@ -15,7 +15,7 @@ export const CONTACT_TYPE_PLACEHOLDERS: Record<ContactType, string> = {
   bug: "What happened? What did you expect to happen? Any steps to reproduce…",
   suggestion: "What would you like to see on the site?",
 };
-
+ 
 export const CONTACT_TYPE_ICONS: Record<ContactType, string> = {
   general: "✉",
   enquiry: "?",

@@ -703,12 +703,12 @@
     color-scheme: dark;
 
     --color-bg-page:    #1A0A10;
-    --color-bg-card:    #3D2232;
+    --color-bg-card:    #4B2A3C;
     --color-bg-inset:   #2E1422;
     --color-bg-header:  #9F1239;
     --color-bg-error:   #450a0a;
 
-    --color-border:        #4C0519;
+    --color-border:        #5C1A35;
     --color-border-subtle: #350312;
 
     --color-accent: #FB7185;
@@ -751,10 +751,10 @@
     --color-bottom-cta-gradient: linear-gradient(135deg, #0A0206 0%, #1A0A10 25%, #4C0519 55%, #9F1239 100%);
 
     --color-calendar-label-bg:   rgba(26, 10, 16, 0.9);
-    --color-bg-page-gradient: linear-gradient(160deg, #26101a 0%, #1A0A10 40%, #220e18 100%);
+    --color-bg-page-gradient: linear-gradient(160deg, #1e0d15 0%, #1A0A10 40%, #1a0b14 100%);
 
-    --color-bg-panel-gradient: linear-gradient(180deg, #26101a 0%, #3d2232 100%);
-    --color-bg-card-gradient:  linear-gradient(160deg, #301a28 0%, #3d2232 55%);
+    --color-bg-panel-gradient: linear-gradient(180deg, #3d1830 0%, #1a0a10 100%);
+    --color-bg-card-gradient:  linear-gradient(160deg, #4e2438 0%, #4b2a3c 55%);
 }
 
 /* =====================================================

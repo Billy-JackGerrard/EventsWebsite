@@ -1,0 +1,81 @@
+.contact-page {
+    min-height: 100vh;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .contact-card {
+    max-width: 520px;
+    width: 100%;
+  }
+
+  .contact-title {
+    color: var(--color-text-primary);
+    text-align: center;
+    margin: 0 0 0.4rem;
+    font-size: 1.6rem;
+    font-family: var(--font-heading);
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-subtitle {
+    color: var(--color-text-muted);
+    font-size: 0.85rem;
+    text-align: center;
+    margin: 0 0 1.75rem;
+  }
+
+  /* ── Field ── */
+  .contact-optional {
+    color: var(--color-text-muted);
+    text-transform: none;
+    letter-spacing: 0;
+    font-size: 0.7rem;
+  }
+
+  /* ── Inputs ── */
+  .contact-textarea {
+    resize: vertical;
+    min-height: 130px;
+  }
+
+  /* ── Button ── */
+  .contact-btn--primary {
+    margin-top: 0.25rem;
+  }
+
+  @media (max-width: 560px) {
+    .contact-page {
+      padding: 1rem;
+    }
+    .form-input,
+    .contact-textarea {
+      font-size: 16px;
+    }
+  }
+
+  /* ── Success state ── */
+  .contact-success {
+    text-align: center;
+    padding: 1.5rem 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  /* Entry animation handled by Framer Motion (spring scale in Contact.tsx) */
+  .contact-success-icon {
+    flex-shrink: 0;
+  }
+
+  .contact-success-msg {
+    color: var(--color-text-muted);
+    font-size: 0.92rem;
+    margin: 0;
+    line-height: 1.6;
+    max-width: 340px;
+  }

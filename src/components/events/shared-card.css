@@ -1,0 +1,61 @@
+/* ── Shared page / card layout used by AddEvent, EditEvent, DeleteEvent, ScopePrompt ── */
+
+.addevent-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.addevent-card {
+  max-width: 520px;
+  width: 100%;
+}
+
+.addevent-title {
+  color: var(--color-text-primary);
+  font-family: var(--font-heading);
+  text-align: center;
+  margin: 0 0 0.4rem;
+  font-size: 1.6rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.addevent-subtitle {
+  color: var(--color-text-muted);
+  font-size: 0.85rem;
+  text-align: center;
+  margin: 0 0 1.75rem;
+}
+
+/* Section divider label */
+.addevent-section-label {
+  color: var(--color-accent);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-family: var(--font-heading);
+  font-weight: 700;
+  padding: 0.6rem 0 0.75rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--color-border);
+}
+
+.addevent-section-label--centered {
+  text-align: center;
+}
+
+.addevent-section-optional {
+  color: var(--color-text-muted);
+  text-transform: none;
+  letter-spacing: 0;
+  font-size: 0.75rem;
+}
+
+@media (max-width: 560px) {
+  .addevent-page {
+    padding: 1rem;
+  }
+}

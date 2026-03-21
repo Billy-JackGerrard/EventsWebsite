@@ -1,0 +1,29 @@
+/* ── Full-screen event detail page ── */
+
+.eventpage-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.eventpage-card {
+  max-width: 520px;
+  width: 100%;
+}
+
+/* Override EventDetails inline constraints so the card fills the page width */
+.eventpage-card .event-detail-card {
+  width: 100%;
+  max-width: 100%;
+  position: static;
+  flex-shrink: initial;
+  align-self: initial;
+}
+
+@media (max-width: 560px) {
+  .eventpage-page {
+    padding: 1rem;
+  }
+}

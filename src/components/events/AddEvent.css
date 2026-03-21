@@ -1,0 +1,193 @@
+/* Shared page/card/title styles are in shared-card.css */
+
+.addevent-hint {
+  color: var(--color-text-muted);
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  margin-top: 0.35rem;
+}
+
+.addevent-select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23666' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 0.85rem center;
+  background-size: 0.9rem;
+  padding-right: 2.5rem;
+}
+
+[data-dark] .addevent-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23aaa' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+}
+
+/* ── Category custom dropdown ── */
+.category-select {
+  position: relative;
+}
+
+.category-select-trigger {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+
+.category-select-placeholder {
+  color: var(--color-text-muted);
+  flex: 1;
+}
+
+.category-select-arrow {
+  margin-left: auto;
+  color: var(--color-text-muted);
+  font-size: 0.9rem;
+}
+
+.category-select-dropdown {
+  position: absolute;
+  top: calc(100% + 3px);
+  left: 0;
+  right: 0;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: 2px;
+  z-index: var(--z-dropdown);
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.category-select-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.5rem 0.8rem;
+  background: transparent;
+  border: none;
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.category-select-option:hover,
+.category-select-option--active {
+  background: var(--color-bg-inset);
+}
+
+.addevent-textarea {
+  resize: vertical;
+  min-height: 80px;
+}
+
+.addevent-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.addevent-success {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+/* Entry animation handled by Framer Motion (spring scale in AddEvent.tsx) */
+.addevent-success-icon {
+  font-size: 3rem;
+  color: var(--color-accent);
+  margin-bottom: 1rem;
+}
+
+.addevent-success-msg {
+  color: var(--color-text-primary);
+  font-size: 0.95rem;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.addevent-success-actions {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  flex-wrap: wrap;
+}
+
+.addevent-success-actions .btn-primary {
+  width: auto;
+  flex: 1;
+  min-width: 140px;
+}
+
+.addevent-success-actions .btn-secondary {
+  flex: 1;
+  min-width: 140px;
+  background: transparent;
+  color: var(--color-accent);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-full);
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              transform var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out);
+}
+
+.addevent-success-actions .btn-secondary:hover {
+  background: var(--color-accent);
+  color: var(--color-bg-card);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(var(--color-shadow-accent), 0.25);
+}
+
+/* ── Event type toggle ── */
+.event-type-toggle {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.event-type-btn {
+  padding: 0.45rem 1.1rem;
+  background: var(--color-bg-inset);
+  color: var(--color-text-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  font-size: 0.85rem;
+  font-family: var(--font-heading);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s var(--ease-out);
+}
+
+.event-type-btn--active {
+  background: var(--color-accent-gradient);
+  color: var(--color-text-dark);
+  border-color: transparent;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(var(--color-shadow-accent), 0.25);
+}
+
+.event-type-btn:not(.event-type-btn--active):hover {
+  border-color: var(--color-accent);
+  color: var(--color-accent);
+  background: var(--color-bg-accent-tint);
+}
+
+@media (max-width: 560px) {
+  .addevent-row {
+    grid-template-columns: 1fr;
+  }
+
+  /* Prevent iOS Safari from zooming when inputs are focused */
+  .form-input,
+  .addevent-select {
+    font-size: 16px;
+  }
+}

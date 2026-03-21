@@ -1,0 +1,175 @@
+/* ── Wrapper ── */
+.theme-picker {
+  position: relative;
+  flex-shrink: 0;
+}
+
+/* ── Trigger button ── */
+.theme-picker-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  width: auto;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 9px;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: var(--radius-md);
+  color: rgba(255, 255, 255, 0.65);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
+  flex-shrink: 0;
+}
+
+.theme-picker-btn:hover,
+.theme-picker-btn--open {
+  background: rgba(255, 255, 255, 0.15);
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #ffffff;
+}
+
+/* ── Active-theme dot on the trigger button ── */
+.theme-picker-btn-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  flex-shrink: 0;
+}
+
+/* ── Dropdown panel ── */
+.theme-picker-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 210px;
+  background: var(--color-bg-card);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  padding: 0.75rem;
+  z-index: calc(var(--z-navbar) + 1);
+  animation: theme-picker-in 0.15s var(--ease-out);
+}
+
+@keyframes theme-picker-in {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Section labels ── */
+.theme-picker-section-label {
+  font-family: var(--font-heading);
+  font-size: 0.65rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+  margin: 0 0 0.4rem 0.1rem;
+}
+
+.theme-picker-section-label:not(:first-child) {
+  margin-top: 0.75rem;
+}
+
+/* ── Theme swatches ── */
+.theme-picker-swatches {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.theme-picker-swatch {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+  width: 100%;
+  padding: 0.38rem 0.5rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
+  text-align: left;
+}
+
+.theme-picker-swatch:hover {
+  background: var(--color-bg-inset);
+  border-color: var(--color-border-subtle);
+}
+
+.theme-picker-swatch--active {
+  background: var(--color-bg-accent-tint);
+  border-color: var(--color-border-accent);
+}
+
+.theme-picker-swatch-dot {
+  display: block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.theme-picker-swatch-label {
+  font-family: var(--font-heading);
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-text-primary);
+  flex: 1;
+}
+
+.theme-picker-check {
+  color: var(--color-accent);
+  flex-shrink: 0;
+}
+
+/* ── Light / Auto / Dark mode buttons ── */
+.theme-picker-modes {
+  display: flex;
+  gap: 4px;
+}
+
+.theme-picker-mode-btn {
+  flex: 1;
+  padding: 0.35rem 0.2rem;
+  background: transparent;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-family: var(--font-heading);
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  transition: background var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
+  white-space: nowrap;
+}
+
+.theme-picker-mode-btn:hover {
+  background: var(--color-bg-inset);
+  color: var(--color-text-primary);
+}
+
+.theme-picker-mode-btn--active {
+  background: var(--color-bg-accent-tint);
+  border-color: var(--color-border-accent);
+  color: var(--color-accent);
+}
+
+/* ── Mobile: open the dropdown to the right so it doesn't clip off screen ──
+   On very small screens the dropdown stays right-aligned but is nudged
+   so it doesn't overflow the viewport left edge.                          ── */
+@media (max-width: 700px) {
+  .theme-picker-dropdown {
+    width: 200px;
+    right: 0;
+  }
+}

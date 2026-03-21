@@ -838,7 +838,7 @@
     color-scheme: dark;
 
     --color-bg-page:    #1A1612;
-    --color-bg-card:    #24201A;
+    --color-bg-card:    #302820;
     --color-bg-inset:   #1E1A14;
     --color-bg-header:  #1A4D73;
     --color-bg-error:   #3A1818;
@@ -888,6 +888,6 @@
     --color-calendar-label-bg:   rgba(26, 22, 18, 0.9);
     --color-bg-page-gradient: linear-gradient(160deg, #2e2820 0%, #1A1612 40%, #161208 100%);
 
-    --color-bg-panel-gradient: linear-gradient(180deg, #2e2820 0%, #24201a 100%);
-    --color-bg-card-gradient:  linear-gradient(160deg, #2c2418 0%, #24201a 55%);
+    --color-bg-panel-gradient: linear-gradient(180deg, #463C28 0%, #1a1612 100%);
+    --color-bg-card-gradient:  linear-gradient(160deg, #3C3020 0%, #302820 55%);
 }

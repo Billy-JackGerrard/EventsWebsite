@@ -577,7 +577,7 @@
     color-scheme: dark;
 
     --color-bg-page:    #021A12;
-    --color-bg-card:    #0A2E1F;
+    --color-bg-card:    #103D28;
     --color-bg-inset:   #062118;
     --color-bg-header:  #065F46;
     --color-bg-error:   #450a0a;
@@ -628,7 +628,7 @@
     --color-bg-page-gradient: linear-gradient(160deg, #083020 0%, #021A12 40%, #071e12 100%);
 
     --color-bg-panel-gradient: linear-gradient(180deg, #083020 0%, #0a2e1f 100%);
-    --color-bg-card-gradient:  linear-gradient(160deg, #0a3828 0%, #0a2e1f 55%);
+    --color-bg-card-gradient:  linear-gradient(160deg, #0e4832 0%, #103d28 55%);
 }
 
 /* =====================================================

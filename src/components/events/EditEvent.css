@@ -1,0 +1,185 @@
+/* ── Recurrence section wrapper ── */
+.editrecur-section {
+    margin-top: 0.25rem;
+  }
+  
+  /* ── Read-only summary row ── */
+  .editrecur-summary {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.55rem 0.75rem;
+    background: var(--color-bg-accent-tint);
+    border: 1px solid var(--color-border-accent);
+    border-radius: 2px;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+  }
+  
+  .editrecur-summary-icon {
+    font-size: 0.85rem;
+    flex-shrink: 0;
+  }
+  
+  .editrecur-summary-text {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    flex: 1;
+    min-width: 0;
+  }
+  
+  .editrecur-change-btn {
+    background: transparent;
+    border: 1px solid var(--color-border-subtle);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.72rem;
+    padding: 0.25rem 0.6rem;
+    border-radius: var(--radius-btn);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.15s, color 0.15s;
+    flex-shrink: 0;
+  }
+  
+  .editrecur-change-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+  
+  /* ── Picker open state ── */
+  .editrecur-picker-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .editrecur-picker-note {
+    background: var(--color-bg-error);
+    color: var(--color-text-error);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    line-height: 1.5;
+    padding: 0.5rem 0.75rem;
+    border-radius: 2px;
+  }
+  
+  .editrecur-changed-badge {
+    color: var(--color-accent);
+    font-family: var(--font-mono);
+    font-size: 0.75rem;
+    padding: 0.35rem 0.6rem;
+    background: var(--color-bg-accent-tint);
+    border: 1px solid var(--color-border-accent);
+    border-radius: 2px;
+  }
+  
+  /* ── Scope prompt ── */
+  .editrecur-question {
+    color: var(--color-text-primary);
+    font-size: 0.92rem;
+    line-height: 1.6;
+    margin: 0 0 1.25rem;
+  }
+  
+  .editrecur-choices {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+  
+  .editrecur-choice-btn {
+    background: var(--color-accent-gradient);
+    color: var(--color-text-dark);
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+    font-family: inherit;
+    transition: all 0.2s var(--ease-out);
+  }
+  
+  .editrecur-choice-btn:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+  
+  .editrecur-choice-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  
+  .editrecur-choice-btn--secondary {
+    background: var(--color-bg-inset);
+    color: var(--color-accent);
+    border: 1px solid var(--color-border);
+  }
+  
+  .editrecur-choice-btn--secondary:hover:not(:disabled) {
+    border-color: var(--color-accent);
+    opacity: 1;
+  }
+
+  .editrecur-choice-btn--unchosen {
+    opacity: 0.4;
+  }
+  
+  .editrecur-choice-title {
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: bold;
+  }
+  
+  .editrecur-choice-desc {
+    font-size: 0.78rem;
+    font-family: var(--font-mono);
+    opacity: 0.7;
+  }
+  
+  /* ── Destructive confirm button ── */
+  .delete-confirm-btn {
+    background: var(--color-text-error);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-lg);
+    padding: 0.85rem 1rem;
+    cursor: pointer;
+    text-align: left;
+    font-family: var(--font-heading);
+    font-size: 0.9rem;
+    font-weight: bold;
+    transition: all 0.2s var(--ease-out);
+    width: 100%;
+  }
+
+  .delete-confirm-btn:hover:not(:disabled) {
+    opacity: 0.88;
+  }
+
+  .delete-confirm-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  /* ── Back / cancel link ── */
+  .editrecur-back-btn {
+    background: none;
+    border: none;
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: 0.78rem;
+    cursor: pointer;
+    padding: 0;
+    transition: color 0.12s;
+    text-align: left;
+  }
+  
+  .editrecur-back-btn:hover:not(:disabled) {
+    color: var(--color-text-primary);
+  }
